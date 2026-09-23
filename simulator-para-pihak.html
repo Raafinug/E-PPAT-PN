@@ -42,8 +42,23 @@
   h1 { font-size: clamp(1.3rem, 3.4vw, 1.65rem); font-weight: 600; margin: 0 0 0.5rem; }
   .lede { color: var(--ink-soft); font-size: 0.95rem; margin: 0; max-width: 66ch; }
 
-  .solusi { margin-top: 1.2rem; border: 1px solid var(--rule); border-left: 3px solid var(--ok); background: var(--paper-raised); padding: 0.85rem 1.05rem; }
-  .solusi h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ok); font-weight: 500; margin: 0 0 0.45rem; }
+  .info { margin-top: 0.7rem; }
+  .info > summary { list-style: none; cursor: pointer; font-family: var(--mono); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; padding: 0.6rem 1.05rem;
+    display: flex; align-items: center; gap: 0.5rem; }
+  .info > summary::-webkit-details-marker { display: none; }
+  .info > summary::before { content: "\25B8"; font-size: 0.8rem; }
+  .info[open] > summary::before { content: "\25BE"; }
+  .info .isi-info { padding: 0 1.05rem 0.85rem; }
+  .info.solusi > summary { color: var(--ok); }
+  .info.sumber > summary { color: var(--blok); }
+  .info.ttdinfo > summary { color: var(--stamp); }
+  .info.ttdinfo { border: 1px solid var(--rule); border-left: 3px solid var(--stamp); background: var(--paper-raised); }
+  .info.ttdinfo p { margin: 0 0 0.5rem; font-size: 0.9rem; }
+  .info.ttdinfo ol { margin: 0; padding-left: 1.15rem; font-size: 0.9rem; }
+  .info.ttdinfo li { margin-bottom: 0.25rem; }
+  .info.ttdinfo li b { color: var(--stamp); }
+  .solusi { border: 1px solid var(--rule); border-left: 3px solid var(--ok); background: var(--paper-raised); }
   .solusi p { margin: 0 0 0.5rem; font-size: 0.9rem; }
   .solusi ol { margin: 0; padding-left: 1.15rem; font-size: 0.9rem; }
   .solusi li { margin-bottom: 0.25rem; }
@@ -51,8 +66,7 @@
   .solusi code { font-family: var(--mono); font-size: 0.85em; background: var(--paper); border: 1px solid var(--rule); border-radius: 2px; padding: 0.05rem 0.3rem; }
   .solusi .tegas { margin: 0.7rem 0 0; padding-top: 0.6rem; border-top: 1px dashed var(--rule); }
 
-  .sumber { margin-top: 0.7rem; border: 1px solid var(--rule); border-left: 3px solid var(--blok); background: var(--paper-raised); padding: 0.85rem 1.05rem; }
-  .sumber h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--blok); font-weight: 500; margin: 0 0 0.45rem; }
+  .sumber { border: 1px solid var(--rule); border-left: 3px solid var(--blok); background: var(--paper-raised); }
   .sumber p { margin: 0 0 0.5rem; font-size: 0.9rem; }
   .sumber ol { margin: 0; padding-left: 1.15rem; font-size: 0.9rem; }
   .sumber li { margin-bottom: 0.25rem; }
@@ -62,6 +76,60 @@
     border-top: 1px solid var(--rule); margin-top: 0.4rem; padding-top: 0.4rem; font-size: 0.82rem; }
   .kaki-halaman > span:last-child { text-align: right; white-space: nowrap; }
   .kaki-ket { display: block; margin-top: 0.5rem; font-size: 0.78rem; color: var(--ink-soft); font-style: italic; }
+  /* penanda zona: layar Order vs tahap Drafting */
+  .zona { margin-top: 1.1rem; border: 1px solid var(--rule); border-left: 3px solid var(--blok);
+    background: var(--paper-raised); padding: 0.6rem 0.9rem; font-size: 0.85rem; color: var(--ink-soft); }
+  .zona b { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; color: var(--blok); }
+  .zona-profil { border-left-color: var(--ok); }
+  .zona-profil b { color: var(--ok); }
+  .zona-draft { border-left-color: var(--stamp); }
+  .zona-draft b { color: var(--stamp); }
+
+  /* tabel daftar pihak — mengikuti layar Order AJB */
+  .tbl-top { display: flex; justify-content: flex-end; padding: 0.9rem 0 0.6rem; }
+  .btn-utama { font-family: var(--serif); font-size: 0.88rem; padding: 0.42rem 0.9rem; border-radius: 3px;
+    border: 1px solid var(--ok); background: var(--ok); color: var(--paper); cursor: pointer; }
+  .btn-utama:hover { filter: brightness(1.08); }
+  .btn-utama:disabled { opacity: 0.45; cursor: not-allowed; }
+  .tbl-wrap { border: 1px solid var(--rule); border-radius: 3px; background: var(--paper-raised); overflow-x: auto; }
+  .tbl-app { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .tbl-app th { text-align: left; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
+    color: var(--ink-soft); font-weight: 400; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); }
+  .tbl-app td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .tbl-app tr:last-child td { border-bottom: 0; }
+  .tbl-app tr.sub td { background: var(--paper-sunk); }
+  .tbl-app .kosong { text-align: center; color: var(--ink-soft); font-style: italic; padding: 1.4rem 0; }
+  .pil { display: inline-block; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.05em;
+    border: 1px solid var(--ok); color: var(--ok); border-radius: 999px; padding: 0.12rem 0.5rem; }
+  .pil.turunan { border-color: var(--rule); color: var(--ink-soft); }
+  .tbl-app .bentuk { font-size: 0.78rem; color: var(--ink-soft); border: 1px solid var(--rule);
+    border-radius: 2px; padding: 0.1rem 0.4rem; }
+  .tbl-app .sub2 { display: block; font-size: 0.76rem; color: var(--ink-soft); margin-top: 0.15rem; }
+  .tbl-app .aksi { text-align: right; white-space: nowrap; }
+  .tbl-app .aksi button { font-family: var(--serif); font-size: 0.78rem; padding: 0.22rem 0.55rem;
+    margin-left: 0.3rem; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+    border-radius: 2px; cursor: pointer; }
+  .tbl-app .aksi button.bahaya { border-color: var(--stamp); color: var(--stamp); }
+
+  /* modal Tambah / Ubah Para Pihak */
+  .tirai { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 60;
+    display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+  .modal-app { background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 4px;
+    width: 100%; max-width: 620px; }
+  .modal-app > header { display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.85rem 1rem; border-bottom: 1px solid var(--rule); }
+  .modal-app > header h3 { margin: 0; font-size: 1rem; font-weight: 600; flex: 1; }
+  .modal-app > header button { border: 0; background: none; color: var(--ink-soft); font-size: 1.1rem;
+    cursor: pointer; line-height: 1; }
+  .modal-badan { padding: 0.9rem 1rem; max-height: 68vh; overflow-y: auto; }
+  .modal-app > footer { display: flex; justify-content: flex-end; gap: 0.5rem;
+    padding: 0.75rem 1rem; border-top: 1px solid var(--rule); }
+  .modal-app > footer button { font-family: var(--serif); font-size: 0.88rem; padding: 0.42rem 0.9rem;
+    border-radius: 3px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+  .modal-app > footer button.btn-utama { border-color: var(--ok); background: var(--ok); color: var(--paper); }
+  .modal-badan .card { border: 0; background: none; padding: 0; }
+  .modal-badan .card-head { display: none; }
+
   .kunci { font-size: 0.78rem; color: var(--ink-soft); margin: 0.4rem 0 0; padding-left: 0.6rem; border-left: 2px solid var(--rule); }
 
   .toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.8rem; padding: 1rem 0 0.4rem; }
@@ -94,6 +162,28 @@
   .f { display: flex; flex-direction: column; gap: 0.18rem; min-width: 0; }
   .f.wide { grid-column: 1 / -1; }
   .f.span2 { grid-column: span 2; }
+  .f.span3 { grid-column: 1 / -1; }
+  .f .wajib { color: var(--stamp); font-weight: 400; }
+  .f .usul { text-transform: none; letter-spacing: 0; color: var(--stamp); font-size: 0.72rem; }
+  .hint-app { margin: 0.25rem 0 0; font-size: 0.76rem; color: var(--blok); }
+  .hint-bentrok { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--stamp);
+    border-left: 2px solid var(--stamp); padding-left: 0.5rem; }
+  .segmen { display: flex; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+  .segmen button { flex: 1; font-family: var(--serif); font-size: 0.86rem; padding: 0.36rem 0.5rem;
+    border: 0; background: var(--paper); color: var(--ink-soft); cursor: pointer; }
+  .segmen button[aria-pressed="true"] { background: var(--ok); color: var(--paper); }
+  .segmen.tigatab { margin-bottom: 0.2rem; }
+  .modal-app > header h3 .sub-judul { display: block; font-family: var(--mono); font-size: 0.68rem;
+    letter-spacing: 0.08em; color: var(--ink-soft); font-weight: 400; margin-top: 0.15rem; }
+  .profil { border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); padding: 0.7rem 0.85rem; margin-top: 0.7rem; }
+  .profil h5 { margin: 0 0 0.5rem; font-size: 0.92rem; font-weight: 600; }
+  .profil dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem 1rem; margin: 0 0 0.7rem; }
+  .profil dt { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.05em; color: var(--ink-soft); }
+  .profil dd { margin: 0.05rem 0 0; font-size: 0.85rem; }
+  .profil .pit { min-width: 0; }
+  .profil .ubah { font-family: var(--serif); font-size: 0.8rem; padding: 0.26rem 0.6rem;
+    border: 1px solid var(--rule); background: var(--paper-raised); color: var(--ink); border-radius: 2px; cursor: pointer; }
   .f label { font-family: var(--mono); font-size: 0.64rem; color: var(--ink-soft); letter-spacing: 0.04em; text-transform: uppercase; }
   .f input, .f select {
     font-family: var(--serif); font-size: 0.88rem; padding: 0.36rem 0.45rem;
@@ -176,12 +266,12 @@
   .ttd-cell .qq { font-size: 0.86em; color: var(--ink-soft); }
   .raw-box .ttd-cell .nm { border-top-style: dashed; }
 
-  .rules { margin: 1.3rem 0 0; border: 1px solid var(--rule); border-left: 3px solid var(--stamp); background: var(--paper-raised); padding: 0.8rem 1rem; }
-  .rules h3 { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--stamp); margin: 0 0 0.5rem; font-weight: 500; }
-  .rules table { border-collapse: collapse; font-size: 0.85rem; }
-  .rules td { padding: 0.1rem 0.9rem 0.1rem 0; vertical-align: top; }
-  .rules td.k { color: var(--ink-soft); }
-  .rules td.v { font-weight: 600; }
+  .info.aturan { border: 1px solid var(--rule); border-left: 3px solid var(--stamp); background: var(--paper-raised); }
+  .info.aturan > summary { color: var(--stamp); }
+  .info.aturan table { border-collapse: collapse; font-size: 0.85rem; }
+  .info.aturan td { padding: 0.1rem 0.9rem 0.1rem 0; vertical-align: top; }
+  .info.aturan td.k { color: var(--ink-soft); }
+  .info.aturan td.v { font-weight: 600; }
 
   .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 1.6rem 0 3rem; margin-top: 1.3rem; border-top: 1px solid var(--rule); }
   @media (max-width: 940px) { .panes { grid-template-columns: 1fr; } }
@@ -215,18 +305,21 @@
     <p class="lede">Bagian akta nomor 5–11: identitas, kedudukan, dan peran tiap pihak. Nama variabelnya mengikuti workbook <em>Peta Variabel Template Akta PPAT</em>. Sapaan tidak diisi manual — diturunkan dari Jenis Kelamin + Status Perkawinan pada KTP.</p>
   </header>
 
-  <div class="solusi">
-    <h3>Solusi 1 — satu template, penulisan terbentuk otomatis</h3>
+  <details class="info solusi">
+    <summary>Solusi 1 — satu template, penulisan terbentuk otomatis</summary>
+    <div class="isi-info">
     <p>Cukup satu template untuk semua variasi pihak. Susunan kalimat, paragraf yang muncul atau hilang, penomoran, dan terbilang terbentuk sendiri dari data yang diisi — penyusun tidak perlu menyalin-tempel redaksi dari akta lain.</p>
     <ol>
       <li><b>Hasil mentah saat drafting</b> — naskah beserta variabelnya. Inilah yang nanti dibuka dan masih bisa disunting oleh asisten bila ada redaksi yang perlu disesuaikan.</li>
       <li><b>Hasil render</b> — naskah yang variabelnya sudah terisi data sebenarnya. Ini bentuk akhir yang siap diunduh.</li>
     </ol>
     <p class="tegas"><b>Tidak ada lagi variabel gabungan.</b> Hasil drafting tidak lagi berupa satu variabel tunggal seperti <code>{{blok_para_pihak}}</code> yang isinya terkunci dan tidak bisa disentuh saat drafting. Seluruh paragraf para pihak sudah terjabarkan langsung sebagai naskah biasa, sehingga asisten dapat menyunting kalimat mana pun — yang tersisa hanya variabel isian per data, bukan blok.</p>
-  </div>
+    </div>
+  </details>
 
-  <div class="sumber">
-    <h3>Dari mana field identitas ini terisi</h3>
+  <details class="info sumber">
+    <summary>Dari mana field identitas ini terisi</summary>
+    <div class="isi-info">
     <p>Data KTP di bawah tidak diketik ulang setiap membuat order — semuanya tertarik dari data user.</p>
     <ol>
       <li>Diisi sekali saat <b>Asisten PPAT, PPAT, atau Super Admin</b> membuat user, pada bagian “Data KTP” di form user.</li>
@@ -238,28 +331,40 @@
       <span><i class="der"></i> turunan sistem, tidak diisi manual</span>
       <span><i></i> diisi saat membuat order</span>
     </p>
-  </div>
-
-  <div class="toolbar">
-    <div class="f">
-      <label>Jenis Akta</label>
-      <select id="akta-jenis">
-        <option value="Jual Beli">Jual Beli</option>
-        <option value="Hibah">Hibah</option>
-      </select>
     </div>
+  </details>
+
+  <details class="info ttdinfo">
+    <summary>Bagaimana kolom tanda tangan terbentuk</summary>
+    <div class="isi-info">
+      <p>Kolom tanda tangan tidak diisi manual — susunannya mengikuti data para pihak.</p>
+      <ol>
+        <li>Kolom para pihak mengikuti <b>Tipe Pihak</b> dan <b>Bentuk Pihak</b>; pihak berbadan hukum mendapat baris <b>qq.</b> beserta kedudukannya.</li>
+        <li>Pihak yang dikuasakan ditandatangani penerima kuasa, dengan keterangan <b>selaku kuasa dari</b> pemberi kuasanya.</li>
+        <li>Kolom persetujuan muncul bila ada pasangan yang <b>ikut bertindak</b>, atau ahli waris yang turut menyetujui.</li>
+        <li>Kolom saksi mengikuti jumlah saksi, dan <b>NIP</b> hanya tampil bila diisi.</li>
+      </ol>
+      <p>Hasilnya bisa dilihat langsung di panel Menu Drafting di bawah.</p>
+    </div>
+  </details>
+
+  <details class="info aturan">
+    <summary>Aturan pembentukan sapaan (orang.sapaan)</summary>
+    <div class="isi-info">
+      <table>
+        <tr><td class="k">Laki-laki — status apa pun</td><td class="v">Tuan</td></tr>
+        <tr><td class="k">Perempuan — Belum Menikah</td><td class="v">Nona</td></tr>
+        <tr><td class="k">Perempuan — Kawin</td><td class="v">Nyonya</td></tr>
+        <tr><td class="k">Perempuan — Cerai Hidup / Cerai Mati</td><td class="v">Nyonya Janda</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <div class="zona zona-profil">
+    <b>MENU PROFIL KANTOR</b> — data kantor PPAT, diisi sekali dan dipakai semua order.
   </div>
 
-  <div class="tabs" id="tabs">
-    <button data-tab="kop" aria-selected="false">Kop &amp; Pembuka</button>
-    <button data-tab="pihak" aria-selected="true">Para Pihak</button>
-    <button data-tab="objek" aria-selected="false">Objek</button>
-    <button data-tab="saksi" aria-selected="false">Saksi &amp; Penutup</button>
-    <button data-tab="ttd" aria-selected="false">Tanda Tangan</button>
-    <span class="tab-sisa">Pasal-pasal belum disusun</span>
-  </div>
-
-  <div class="tabpane" data-pane="kop" hidden>
+  <div id="isi-profil">
     <div class="card">
       <div class="sect" style="border-top:0;padding-top:0">
         <h4>Profil Kantor PPAT</h4>
@@ -293,55 +398,69 @@
             <input type="text" id="akta-nomor" value="01"></div>
           <div class="f"><label>Tanggal akta (akta_tanggal)</label>
             <input type="date" id="akta-tanggal" value="2026-09-23"></div>
-          <div class="f derived"><label>Lembar (lembar)</label>
-            <select id="akta-lembar"><option>Pertama</option><option>Kedua</option></select></div>
         </div>
         <p class="kunci"><b>Nomor akta</b> dan <b>tanggal akta</b> bukan diisi saat order dibuat, melainkan saat <b>proses finalisasi oleh PPAT</b>. Selama masih draf, keduanya belum terisi.</p>
-        <p class="kunci"><b>Lembar</b> nantinya terbentuk sendiri — satu akta dicetak dua lembar, jadi kata &ldquo;Pertama/Kedua&rdquo; ditentukan sistem saat berkas dihasilkan, bukan dipilih pengguna. Pilihan di sini hanya untuk memperlihatkan bedanya.</p>
+        <p class="kunci"><b>Lembar</b> tidak punya isian. Kata &ldquo;Pertama/Kedua&rdquo; menjadi variabel <b>{{lembar}}</b> yang disisipkan saat membuat template atau saat drafting, lalu diisi sistem ketika berkas dihasilkan — satu akta dicetak dua lembar dari naskah yang sama.</p>
+        <p class="kunci">Tujuan lembar kedua juga tidak lagi berupa isian di sini; di naskah penutup ia tetap berupa variabel <b>{{kantor_pertanahan}}</b>.</p>
         <p class="kunci">Hari, tahun, dan terbilang tanggal dihitung sendiri dari tanggal akta.</p>
       </div>
     </div>
   </div>
 
-  <div class="tabpane" data-pane="pihak">
-    <div class="party-list" id="party-list"></div>
-    <div class="add-row">
-      <button id="add-btn">+ Tambah Pihak</button>
-      <span class="cap">maks. 6</span>
+
+  <div class="zona zona-order">
+    <b>MENU ORDER</b> — pengisian data pada layar Order AJB. Bagian ini ditata seperti aplikasi:
+    daftar pihak berbentuk tabel, penambahan lewat modal.
+  </div>
+
+  <div class="toolbar">
+    <div class="f">
+      <label>Jenis Akta</label>
+      <select id="akta-jenis">
+        <option value="Jual Beli">Jual Beli</option>
+        <option value="Hibah">Hibah</option>
+      </select>
     </div>
-    <div class="rules">
-      <h3>Aturan pembentukan sapaan (orang.sapaan)</h3>
-      <table>
-        <tr><td class="k">Laki-laki — status apa pun</td><td class="v">Tuan</td></tr>
-        <tr><td class="k">Perempuan — Belum Menikah</td><td class="v">Nona</td></tr>
-        <tr><td class="k">Perempuan — Kawin</td><td class="v">Nyonya</td></tr>
-        <tr><td class="k">Perempuan — Cerai Hidup / Cerai Mati</td><td class="v">Nyonya Janda</td></tr>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button data-tab="pihak" aria-selected="true">Para Pihak</button>
+    <button data-tab="objek" aria-selected="false">Objek</button>
+    <span class="tab-sisa">Pasal-pasal belum disusun</span>
+  </div>
+
+  <div class="tabpane" data-pane="pihak">
+    <div class="tbl-top">
+      <button id="add-btn" class="btn-utama">+ Tambah Pihak</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl-app">
+        <thead><tr><th>TIPE</th><th>BENTUK</th><th>NAMA</th><th>KONTAK</th><th></th></tr></thead>
+        <tbody id="tabel-pihak"></tbody>
       </table>
     </div>
+    <p class="kunci">Pasangan, penerima kuasa, dan ahli waris ikut tampil di tabel ini sebagai pihak tersendiri —
+      sesuai keputusan bahwa semua yang berkaitan dengan pihak diletakkan di Para Pihak, dan yang berkaitan
+      dengan objek diletakkan di Data Objek. Baris turunan dibuka lewat pihak induknya.</p>
   </div>
 
   <div class="tabpane" data-pane="objek" hidden>
-    <div id="objek-kartu"></div>
+    <div class="tbl-top">
+      <button id="add-objek" class="btn-utama">+ Tambah Objek</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl-app">
+        <thead><tr><th>HAK</th><th>SERTIFIKAT / NIB</th><th>LUAS</th><th>LOKASI</th><th>NILAI OBJEK</th><th></th></tr></thead>
+        <tbody id="tabel-objek"></tbody>
+      </table>
+    </div>
+    <p class="kunci">Simulator ini baru menangani satu objek. Kolom <b>Nilai Objek</b> dan tab
+      <b>Data Harga</b> belum pernah saya lihat isinya di aplikasi, jadi tidak saya karang.</p>
   </div>
 
-  <div class="tabpane" data-pane="saksi" hidden>
-    <div class="party-list" id="saksi-list"></div>
-    <div class="add-row">
-      <button id="add-saksi">+ Tambah Saksi</button>
-      <span class="cap">min. 2 · maks. 4</span>
-    </div>
-    <div class="card" style="margin-top:0.6rem">
-      <div class="grid">
-        <div class="f wide"><label>Lembar kedua disampaikan kepada (kantor_pertanahan)</label>
-          <input type="text" id="kantor-pertanahan" value="Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="tabpane" data-pane="ttd" hidden>
-    <div class="card">
-      <p class="kunci">Kolom tanda tangan terbentuk sendiri: para pihak mengikuti posisi &amp; bentuk pihak, kolom persetujuan muncul bila ada pasangan, kolom saksi mengikuti jumlah saksi, NIP hanya tampil bila diisi.</p>
-    </div>
+  <div class="zona zona-draft">
+    <b>MENU DRAFTING</b> — bukan layar Order. Ini hasil yang terbentuk dari data di atas,
+    dikerjakan pada tahap Drafting.
   </div>
 
   <div class="panes">
@@ -420,6 +539,7 @@
       nik: '', nama: '', tempatLahir: '', tanggalLahir: '1990-01-01', jenisKelamin: 'Laki-laki', alamat: '', rt: '001', rw: '001', labelKelurahan: 'Kelurahan', kelurahan: '',
       kecamatan: '', labelKota: 'Kota', kota: '', provinsi: '',
       statusKawin: 'Kawin', pekerjaan: '', kewarganegaraan: 'Indonesia',
+      telepon: '', email: '',
       domisiliAktif: false, domisiliSementara: ''
     }, o || {});
   }
@@ -459,13 +579,43 @@
     }, o || {});
   }
 
+  /* user klien contoh — di aplikasi, data diri tertarik dari profil user */
+  const USERS = [
+    { label: 'Contoh Nama Satu — satu@contoh.id', data: { nama:'Contoh Nama Satu', nik:'3273011205800001',
+      tempatLahir:'Bandung', tanggalLahir:'1980-05-12', jenisKelamin:'Laki-laki', statusKawin:'Kawin',
+      pekerjaan:'Karyawan Swasta', alamat:'Jalan Contoh Nomor 1', rt:'004', rw:'007', kelurahan:'Cihapit',
+      kecamatan:'Bandung Wetan', kota:'Bandung', provinsi:'Jawa Barat',
+      telepon:'0812-0000-0001', email:'satu@contoh.id' } },
+    { label: 'Contoh Nama Dua — dua@contoh.id', data: { nama:'Contoh Nama Dua', nik:'3273016107830005',
+      tempatLahir:'Bandung', tanggalLahir:'1983-07-21', jenisKelamin:'Perempuan', statusKawin:'Kawin',
+      pekerjaan:'Ibu Rumah Tangga', alamat:'Jalan Contoh Nomor 1', rt:'004', rw:'007', kelurahan:'Cihapit',
+      kecamatan:'Bandung Wetan', kota:'Bandung', provinsi:'Jawa Barat',
+      telepon:'0812-0000-0002', email:'dua@contoh.id' } },
+    { label: 'Contoh Nama Tiga — tiga@contoh.id', data: { nama:'Contoh Nama Tiga', nik:'3174010101750003',
+      tempatLahir:'Jakarta', tanggalLahir:'1975-01-01', jenisKelamin:'Laki-laki', statusKawin:'Kawin',
+      pekerjaan:'Direktur', alamat:'Jalan Contoh Nomor 3', rt:'001', rw:'002', kelurahan:'Senayan',
+      kecamatan:'Kebayoran Baru', kota:'Administrasi Jakarta Selatan', provinsi:'DKI Jakarta',
+      telepon:'0812-0000-0003', email:'tiga@contoh.id' } }
+  ];
+
+  /* pemetaan pilihan layar (Bentuk Pihak + Jenis Harta + kedudukan) ke bentuk internal */
+  function bentukApp(p) { return p.bentuk === 'pt' ? 'pt' : 'orang'; }
+  function hartaApp(p) { return (p.bentuk === 'pasangan' || p.bentuk === 'harta_waris') ? 'bersama' : 'sendiri'; }
+  function warisApp(p) { return (p.bentuk === 'waris' || p.bentuk === 'harta_waris'); }
+  function susunBentuk(p, b, h, w) {
+    p.bentuk = b === 'pt' ? 'pt'
+      : w ? (h === 'bersama' ? 'harta_waris' : 'waris')
+      : (h === 'bersama' ? 'pasangan' : 'perorangan');
+  }
+
   let pihak = [
     {
       id: 1, posisi: 1, bentuk: 'pasangan',
       orang: ktpKosong({ nik:'3273011205800001', nama:'Contoh Nama Satu', tempatLahir:'Bandung', tanggalLahir:'1980-05-12',
         jenisKelamin:'Laki-laki', alamat:'Jalan Contoh Nomor 1', rt:'004', rw:'007',
         kelurahan:'Cihapit', kecamatan:'Bandung Wetan', kota:'Bandung', provinsi:'Jawa Barat',
-        statusKawin:'Kawin', pekerjaan:'Karyawan Swasta' }),
+        statusKawin:'Kawin', pekerjaan:'Karyawan Swasta',
+        telepon:'0812-0000-0001', email:'satu@contoh.id' }),
       keberadaanAktif: false, keberadaan: 'Jakarta Selatan',
       kuasaAktif: false, kuasa: ktpKosong({ nama: 'Contoh Penerima Kuasa', nik: '3273010101850021', tempatLahir: 'Bandung',
         tanggalLahir: '1985-01-01', jenisKelamin: 'Laki-laki', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
@@ -481,12 +631,13 @@
         tanggalLahir: '1988-04-05', jenisKelamin: 'Perempuan', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
         alamat: 'Jalan Contoh Nomor 22', rt: '001', rw: '002', kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
         kota: 'Bandung', provinsi: 'Jawa Barat' }),
-      nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2007-06-14', nikahNomor: '123/45/VI/2007',
+      pasanganPeran: 'bertindak', nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2007-06-14', nikahNomor: '123/45/VI/2007',
       nikahPenerbit: 'Kantor Urusan Agama Kecamatan Bandung Wetan',
       pasangan: ktpKosong({ nik:'3273016107830005', nama:'Contoh Nama Dua', tempatLahir:'Bandung', tanggalLahir:'1983-07-21',
         jenisKelamin:'Perempuan', alamat:'Jalan Contoh Nomor 1', rt:'004', rw:'007',
         kelurahan:'Cihapit', kecamatan:'Bandung Wetan', kota:'Bandung', provinsi:'Jawa Barat',
-        statusKawin:'Kawin', pekerjaan:'Ibu Rumah Tangga' }),
+        statusKawin:'Kawin', pekerjaan:'Ibu Rumah Tangga',
+        telepon:'0812-0000-0002', email:'dua@contoh.id' }),
       pt: ptKosong()
     },
     {
@@ -494,7 +645,8 @@
       orang: ktpKosong({ nik:'3174012701920003', nama:'Contoh Nama Tiga', tempatLahir:'Jakarta', tanggalLahir:'1992-01-27',
         jenisKelamin:'Laki-laki', alamat:'Jalan Contoh Nomor 3', rt:'002', rw:'005',
         kelurahan:'Senayan', kecamatan:'Kebayoran Baru', kota:'Jakarta Selatan', provinsi:'DKI Jakarta',
-        statusKawin:'Belum Menikah', pekerjaan:'Direktur Utama' }),
+        statusKawin:'Belum Menikah', pekerjaan:'Direktur Utama',
+        telepon:'0812-0000-0003', email:'tiga@contoh.id' }),
       keberadaanAktif: false, keberadaan: '',
       kuasaAktif: false, kuasa: ktpKosong({ nama: 'Contoh Penerima Kuasa', nik: '3273010101850021', tempatLahir: 'Bandung',
         tanggalLahir: '1985-01-01', jenisKelamin: 'Laki-laki', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
@@ -507,7 +659,7 @@
       pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
       pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
       pasanganKuasa: ktpKosong({ jenisKelamin: 'Perempuan', statusKawin: 'Kawin' }),
-      nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2015-01-01', nikahNomor: '', nikahPenerbit: '',
+      pasanganPeran: 'bertindak', nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2015-01-01', nikahNomor: '', nikahPenerbit: '',
       pasangan: ktpKosong({ jenisKelamin:'Perempuan' }),
       pt: ptKosong({
         nama:'PT Contoh Karya Sejahtera', kedudukan:'Jakarta Selatan', jabatanWakil:'Direktur Utama',
@@ -557,15 +709,22 @@
   };
   let akta = { nomor: '01', tanggal: '2026-09-23', lembar: 'Pertama' };
 
-  const list = document.getElementById('party-list');
+  const TIPE_PIHAK = [['1','__peran1__'], ['2','__peran2__'],
+    ['pasangan','Pasangan (harta bersama)'], ['saksi','Saksi']];
+  function tipePihakOpsi() {
+    return TIPE_PIHAK.map(t => [t[0], t[0] === '1' ? peranOf(1, jenisAkta) : t[0] === '2' ? peranOf(2, jenisAkta) : t[1]]);
+  }
+  const tbody = document.getElementById('tabel-pihak');
+  let modalTarget = null, modalEl = null, modalUndo = null, modalPesan = '';
+  const badanModal = () => modalEl && modalEl.querySelector('.modal-badan');
   const saksiList = document.getElementById('saksi-list');
   const addBtn = document.getElementById('add-btn');
-  const addSaksiBtn = document.getElementById('add-saksi');
+  const addSaksiBtn = document.getElementById('add-saksi');   // tombol lama, sudah tidak dipakai
   const kantorInput = document.getElementById('kantor-pertanahan');
   const IKAT_KANTOR = { 'ppat-nama':'nama', 'ppat-gelar-singkat':'gelarSingkat', 'ppat-gelar-panjang':'gelarPanjang',
     'ppat-daerah':'daerah', 'ppat-sk-nomor':'skNomor', 'ppat-sk-tanggal':'skTanggal',
     'ppat-alamat':'alamat', 'ppat-telepon':'telepon', 'ppat-email':'email' };
-  const IKAT_AKTA = { 'akta-nomor':'nomor', 'akta-tanggal':'tanggal', 'akta-lembar':'lembar' };
+  const IKAT_AKTA = { 'akta-nomor':'nomor', 'akta-tanggal':'tanggal' };
   const aktaSel = document.getElementById('akta-jenis');
 
   /* ---------- util form ---------- */
@@ -597,6 +756,28 @@
     const ks = path.split('.');
     ks.slice(0, -1).forEach(k => { o = o[/^\d+$/.test(k) ? +k : k]; });
     o[ks[ks.length - 1]] = val;
+  }
+
+  /* kartu profil ringkas — data diri hanya bisa disunting setelah Ubah Data KTP ditekan */
+  function kartuProfil(pid, base) {
+    const p = objById(pid);
+    p.buka = p.buka || {};
+    const o = base ? getPath(pid, base) : p;
+    const kunci = base || '_diri';
+    const baris = [['NIK', samarNik(o.nik)], ['TELEPON', o.telepon || '—'],
+      ['EMAIL', o.email || '—'], ['KOTA DOMISILI', ((o.labelKota || 'Kota') + ' ' + (o.kota || '')).trim() || '—'],
+      ['ALAMAT', o.alamat || o.jalan || '—']];
+    return '<div class="profil"><h5>' + esc(o.nama || 'Belum ada user klien terpilih') + '</h5><dl>' +
+      baris.map(b => '<div class="pit"><dt>' + b[0] + '</dt><dd>' + esc(b[1]) + '</dd></div>').join('') +
+      '</dl><button type="button" class="ubah" data-pid="' + pid + '" data-app="ktp" data-kunci="' + kunci + '">' +
+      (p.buka[kunci] ? 'Tutup Data KTP' : 'Ubah Data KTP') + '</button></div>';
+  }
+
+  function blokDataDiri(pid, base, judul, kodeBlok) {
+    const p = objById(pid);
+    p.buka = p.buka || {};
+    return '<div class="sect"><h4>' + judul + '</h4></div>' + kartuProfil(pid, base) +
+      (p.buka[base] ? blokKtp(pid, base, 'Data KTP', kodeBlok) : '');
   }
 
   /* ---------- kartu KTP ---------- */
@@ -634,7 +815,7 @@
   function daftarWaris(p, label, judulSeksi) {
     let h = '<div class="sect"><h4>' + judulSeksi + '</h4>';
     h += '<p class="kunci">Identitasnya juga tertarik dari Data KTP user masing-masing.</p></div>';
-    p.waris.forEach((w, i) => { h += blokKtp(p.id, 'waris.' + i, label + ' ' + (i + 1) + ' (KTP)', null); });
+    p.waris.forEach((w, i) => { h += blokDataDiri(p.id, 'waris.' + i, label + ' ' + (i + 1), null); });
     h += '<div class="sect" style="border-top:0;padding-top:0">' +
       '<button class="mini" data-tambahwaris="' + p.id + '">+ Tambah ' + esc(label.toLowerCase()) + '</button> ' +
       (p.waris.length > 1 ? '<button class="mini" data-hapuswaris="' + p.id + '">Hapus yang terakhir</button>' : '') +
@@ -683,16 +864,37 @@
       '<span class="spacer"></span>' +
       (pihak.length > 1 ? '<button class="remove" data-remove="' + p.id + '">Hapus Pihak</button>' : '') +
       '</div><div class="grid">';
-    h += '<div class="f"><label>Posisi</label><select data-pid="' + p.id + '" data-path="posisi">' +
-      [[1, 'Pihak Pertama'], [2, 'Pihak Kedua']].map(o =>
-        '<option value="' + o[0] + '"' + (p.posisi === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
-      '</select></div>';
-    h += '<div class="f span2"><label>Bentuk Pihak</label><select data-pid="' + p.id + '" data-path="bentuk">' +
-      [['perorangan','Perorangan'],['pasangan','Perorangan + persetujuan pasangan'],
-       ['waris','Ahli waris bersama-sama'],['harta_waris','Harta bersama + ahli waris'],
-       ['pt','Badan hukum (Perseroan Terbatas)']]
-        .map(o => '<option value="' + o[0] + '"' + (p.bentuk === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
-      '</select></div>';
+    h += '<div class="f span3"><label>Tipe Pihak <b class="wajib">*</b></label>' +
+      '<select data-pid="' + p.id + '" data-tipe>' +
+      tipePihakOpsi().map(o => '<option value="' + o[0] + '"' +
+        (o[0] === String(p.posisi) ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') +
+      '</select>' +
+      '<p class="hint-app">Mengubahnya ke Pasangan atau Saksi memindahkan pihak ini beserta data dirinya ke entri tipe tersebut.</p></div>';
+    h += '<div class="f span3"><label>Bentuk Pihak <b class="wajib">*</b></label><div class="segmen">' +
+      [['orang','Perorangan'],['pt','Badan Hukum (PT)']].map(o =>
+        '<button type="button" data-pid="' + p.id + '" data-app="bentuk" data-nilai="' + o[0] + '"' +
+        (bentukApp(p) === o[0] ? ' aria-pressed="true"' : '') + '>' + o[1] + '</button>').join('') +
+      '</div></div>';
+    if (bentukApp(p) === 'orang') {
+      h += '<div class="f span3"><label>Jenis Harta <b class="wajib">*</b></label>' +
+        '<select data-pid="' + p.id + '" data-app="harta">' +
+        [['sendiri','Harta Sendiri'],['bersama','Harta Bersama']].map(o =>
+          '<option value="' + o[0] + '"' + (hartaApp(p) === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
+        '</select>' +
+        '<p class="hint-app">Harta Bersama &rarr; pihak ini wajib menambahkan pasangannya (suami/isteri) sebagai pihak Pasangan untuk persetujuan.</p></div>';
+      h += '<div class="f span3"><label>Kedudukan khusus <span class="usul">&middot; usulan, belum ada di aplikasi</span></label>' +
+        '<select data-pid="' + p.id + '" data-app="waris">' +
+        [['0','Tidak ada'],['1','Bertindak selaku ahli waris']].map(o =>
+          '<option value="' + o[0] + '"' + (String(+warisApp(p)) === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
+        '</select></div>';
+    }
+    h += '<div class="f span3"><label>User Klien <b class="wajib">*</b></label>' +
+      '<select data-pid="' + p.id + '" data-app="user">' +
+      '<option value="">Cari nama / email user klien…</option>' +
+      USERS.map((u, i) => '<option value="' + i + '"' +
+        (u.data.nik === p.orang.nik ? ' selected' : '') + '>' + esc(u.label) + '</option>').join('') +
+      '</select>' +
+      '<p class="hint-app">Pihak harus terdaftar sebagai user (fungsi Klien). Data diri terisi otomatis dari profilnya.</p></div>';
     h += '</div>';
 
     // kuasa (perwakilan)
@@ -713,39 +915,18 @@
     }
     h += '</div>';
 
-    if (p.kuasaAktif) h += blokKtp(p.id, 'kuasa', 'Identitas penerima kuasa — yang hadir (KTP)', null);
+    if (p.kuasaAktif) h += blokDataDiri(p.id, 'kuasa', 'Identitas penerima kuasa — yang hadir', null);
 
-    // identitas penghadap / pemberi kuasa
-    h += blokKtp(p.id, 'orang',
-      (p.kuasaAktif ? 'Identitas pemberi kuasa — ' : 'Identitas ') +
-      (p.bentuk === 'pt' ? 'wakil perseroan (KTP)' : (p.kuasaAktif ? 'pihak (KTP)' : 'penghadap (KTP)')), 'IDENTITAS_ORANG');
+    // identitas penghadap / pemberi kuasa — ringkas dulu, seperti kartu profil di aplikasi
+    const judulKtp = (p.kuasaAktif ? 'Identitas pemberi kuasa — ' : 'Identitas ') +
+      (p.bentuk === 'pt' ? 'wakil perseroan (KTP)' : (p.kuasaAktif ? 'pihak (KTP)' : 'penghadap (KTP)'));
+    h += blokDataDiri(p.id, 'orang', judulKtp, 'IDENTITAS_ORANG');
 
-    // kedudukan: pasangan
+    // kedudukan: pasangan — datanya berada pada entri Pasangan tersendiri di tabel
     if (p.bentuk === 'pasangan') {
-      h += '<div class="sect"><h4>Dokumen perkawinan</h4><div class="grid">';
-      h += sel(p.id, 'nikahJenis', 'Jenis Dokumen', ['Kutipan Akta Nikah', 'Kutipan Akta Perkawinan'], 'span2');
-      h += inp(p.id, 'nikahTanggal', 'Tanggal Dokumen', 'date');
-      h += inp(p.id, 'nikahNomor', 'Nomor Dokumen');
-      h += inp(p.id, 'nikahPenerbit', 'Dikeluarkan Oleh', 'text', 'span2');
-      h += '<div class="f derived" data-der="hubungan"><label>Hubungan (turunan)</label><input type="text" value="' + esc(hubunganOf(p)) + '" readonly></div>';
-      h += '</div></div>';
-      h += blokKtp(p.id, 'pasangan', 'Identitas pasangan (KTP)', null);
-
-      h += '<div class="sect"><h4>Perwakilan pasangan <span style="text-transform:none;letter-spacing:0;color:var(--stamp)">· redaksi usulan</span></h4>';
-      h += chk(p.id, 'pasanganKuasaAktif', 'Pasangan tidak bisa hadir — diwakili penerima kuasa');
-      if (p.pasanganKuasaAktif) {
-        h += '<div class="grid">';
-        h += sel(p.id, 'pasanganKuasaJenis', 'Bentuk Kuasa', ['Surat Kuasa di bawah tangan', 'Akta Kuasa notariil'], 'span2');
-        h += inp(p.id, 'pasanganKuasaTanggal', 'Tanggal Kuasa', 'date');
-        if (p.pasanganKuasaJenis === 'Akta Kuasa notariil') {
-          h += inp(p.id, 'pasanganKuasaNomor', 'Nomor Akta Kuasa');
-          h += inp(p.id, 'pasanganKuasaNotaris', 'Notaris', 'text', 'span2');
-          h += inp(p.id, 'pasanganKuasaNotarisKota', 'Notaris di');
-        }
-        h += '</div>';
-      }
-      h += '</div>';
-      if (p.pasanganKuasaAktif) h += blokKtp(p.id, 'pasanganKuasa', 'Identitas penerima kuasa pasangan — yang hadir (KTP)', null);
+      h += '<div class="sect"><h4>Pasangan</h4>' +
+        '<p class="kunci">Harta Bersama &rarr; pasangannya ditambahkan sebagai pihak tersendiri dengan Tipe Pihak ' +
+        '<b>Pasangan</b>. Dokumen perkawinan, identitas, dan perwakilannya disunting di entri itu.</p></div>';
     }
 
     // kedudukan: ahli waris bersama-sama (pola draf 4)
@@ -836,12 +1017,362 @@
     return card;
   }
 
-  function renderList() {
-    list.innerHTML = '';
-    pihak.forEach((p, i) => list.appendChild(renderCard(p, ROMAN[i])));
-    addBtn.disabled = pihak.length >= MAKS;
+  function namaPihak(p) { return p.bentuk === 'pt' ? (p.pt.nama || '—') : (p.orang.nama || '—'); }
+  function kontakOf(o) { return (o && (o.telepon || o.email)) || '—'; }
+  function bentukLabel(p) { return p.bentuk === 'pt' ? 'Badan Hukum (PT)' : 'Perorangan'; }
 
-    list.querySelectorAll('input[data-path], select[data-path]').forEach(el => {
+  /* baris tabel: pihak utama + turunannya (pasangan, penerima kuasa, ahli waris) */
+  function barisPihak() {
+    const rows = [];
+    pihak.forEach(p => {
+      const nama = namaPihak(p);
+      if (p.kuasaAktif) {
+        rows.push({ target: { kind: 'pihak', pid: p.id }, tipe: 'Penerima Kuasa', sub: true, bentuk: 'Perorangan',
+          nama: p.kuasa.nama || '—', nik: p.kuasa.nik, ket: 'mewakili ' + nama,
+          kontak: kontakOf(p.kuasa) });
+      }
+      rows.push({ target: { kind: 'pihak', pid: p.id }, hapus: p.id, tipe: peranOf(p.posisi, jenisAkta), bentuk: bentukLabel(p),
+        nama: nama, nik: p.bentuk === 'pt' ? '' : p.orang.nik,
+        ket: p.bentuk === 'pt' ? ('diwakili ' + (p.orang.nama || '—') + ', ' + p.pt.jabatanWakil) : '',
+        kontak: kontakOf(p.bentuk === 'pt' ? p.orang : p.orang), utama: true });
+      if (p.bentuk === 'pasangan') {
+        rows.push({ target: { kind: 'pasangan', pid: p.id }, tipe: 'Pasangan', sub: true, bentuk: 'Perorangan',
+          nama: p.pasangan.nama || '—', nik: p.pasangan.nik,
+          ket: hubunganOf(p) + ' dari ' + nama + ' — ' +
+            (p.pasanganPeran === 'persetujuan' ? 'memberi persetujuan' : 'ikut bertindak'),
+          kontak: kontakOf(p.pasangan) });
+        if (p.pasanganKuasaAktif) {
+          rows.push({ target: { kind: 'pasangan', pid: p.id }, tipe: 'Penerima Kuasa', sub: true, bentuk: 'Perorangan',
+            nama: p.pasanganKuasa.nama || '—', nik: p.pasanganKuasa.nik,
+            ket: 'mewakili pasangan', kontak: kontakOf(p.pasanganKuasa) });
+        }
+      }
+      if (p.bentuk === 'waris' || p.bentuk === 'harta_waris') {
+        p.waris.forEach((w, i) => rows.push({ target: { kind: 'pihak', pid: p.id }, tipe: 'Ahli Waris', sub: true, bentuk: 'Perorangan',
+          nama: w.nama || '—', nik: w.nik, ket: 'ahli waris ' + (i + 1) + ' dari ' + p.pewaris.nama,
+          kontak: kontakOf(w) }));
+      }
+    });
+    saksi.forEach((sk, i) => rows.push({ target: { kind: 'saksi', sid: sk.id }, tipe: 'Saksi', sub: true,
+      bentuk: 'Perorangan', nama: sk.nama || '—', nik: sk.nik,
+      ket: 'saksi ' + (i + 1), kontak: kontakOf(sk), hapusSaksi: saksi.length > 2 ? sk.id : 0 }));
+    return rows;
+  }
+
+  /* form entri Pasangan — layar tersendiri, seperti Tambah Para Pihak tipe Pasangan */
+  function formPasangan(target) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const pid = target.pid;
+    const p = pid ? pihak.find(x => x.id === pid) : null;
+    if (p) { card.dataset.id = p.id; p.buka = p.buka || {}; }
+
+    let h = '<div class="grid">';
+    h += '<div class="f span3"><label>Tipe Pihak <b class="wajib">*</b></label>' +
+      '<select data-pid="' + (pid || 0) + '" data-tipe>' +
+      tipePihakOpsi().map(t => '<option value="' + t[0] + '"' + (t[0] === 'pasangan' ? ' selected' : '') + '>' +
+        esc(t[1]) + '</option>').join('') + '</select></div>';
+    h += '<div class="f span3"><label>Pasangan Dari <b class="wajib">*</b></label>' +
+      '<select data-app2="induk">' +
+      '<option value="">— pilih pihak —</option>' +
+      pihak.filter(x => x.bentuk !== 'pt').map(x =>
+        '<option value="' + x.id + '"' + (x.id === pid ? ' selected' : '') + '>' +
+        esc(peranOf(x.posisi, jenisAkta) + ': ' + (x.orang.nama || '—')) + '</option>').join('') +
+      '</select>' +
+      '<p class="hint-app">Pihak (penjual/pembeli) yang merupakan suami/isteri dari pasangan ini.</p></div>';
+    if (p) {
+      h += '<div class="f span3"><label>Peran Pasangan <b class="wajib">*</b></label>' +
+        '<select data-pid="' + p.id + '" data-path="pasanganPeran">' +
+        [['persetujuan','Memberi persetujuan (tanpa tanda tangan)'],
+         ['bertindak','Ikut bertindak (ikut menandatangani)']].map(o =>
+          '<option value="' + o[0] + '"' + (p.pasanganPeran === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
+        '</select>' +
+        '<p class="hint-app">&lsquo;Memberi persetujuan&rsquo; &rarr; namanya muncul di akta tanpa tanda tangan. ' +
+        '&lsquo;Ikut bertindak&rsquo; &rarr; ikut menandatangani akta.</p>' +
+        '<p class="hint-bentrok">Kalimat baku persetujuan pasangan menyebut pasangan <b>turut hadir dan menandatangani</b> akta. ' +
+        'Selama redaksi itu dipakai, pilihan &lsquo;tanpa tanda tangan&rsquo; bertentangan dengannya.</p></div>';
+      h += '<div class="f span3"><label>User Klien <b class="wajib">*</b></label>' +
+        '<select data-pid="' + p.id + '" data-app="user" data-target="pasangan">' +
+        '<option value="">Cari nama / email user klien…</option>' +
+        USERS.map((u, i) => '<option value="' + i + '"' +
+          (u.data.nik === p.pasangan.nik ? ' selected' : '') + '>' + esc(u.label) + '</option>').join('') +
+        '</select>' +
+        '<p class="hint-app">Pihak harus terdaftar sebagai user (fungsi Klien). Data diri terisi otomatis dari profilnya.</p></div>';
+    }
+    h += '</div>';
+
+    if (p) {
+      h += kartuProfil(p.id, 'pasangan');
+      if (p.buka['pasangan']) h += blokKtp(p.id, 'pasangan', 'Data KTP', null);
+
+      h += '<div class="sect"><h4>Dokumen perkawinan</h4><div class="grid">';
+      h += sel(p.id, 'nikahJenis', 'Jenis Dokumen', ['Kutipan Akta Nikah', 'Kutipan Akta Perkawinan'], 'span2');
+      h += inp(p.id, 'nikahTanggal', 'Tanggal Dokumen', 'date');
+      h += inp(p.id, 'nikahNomor', 'Nomor Dokumen');
+      h += inp(p.id, 'nikahPenerbit', 'Dikeluarkan Oleh', 'text', 'span2');
+      h += '<div class="f derived" data-der="hubungan"><label>Hubungan (turunan)</label><input type="text" value="' + esc(hubunganOf(p)) + '" readonly></div>';
+      h += '</div></div>';
+
+      h += '<div class="sect"><h4>Perwakilan pasangan <span class="usul">&middot; redaksi usulan</span></h4>';
+      h += chk(p.id, 'pasanganKuasaAktif', 'Pasangan tidak bisa hadir — diwakili penerima kuasa');
+      if (p.pasanganKuasaAktif) {
+        h += '<div class="grid">';
+        h += sel(p.id, 'pasanganKuasaJenis', 'Bentuk Kuasa', ['Surat Kuasa di bawah tangan', 'Akta Kuasa notariil'], 'span2');
+        h += inp(p.id, 'pasanganKuasaTanggal', 'Tanggal Kuasa', 'date');
+        if (p.pasanganKuasaJenis === 'Akta Kuasa notariil') {
+          h += inp(p.id, 'pasanganKuasaNomor', 'Nomor Akta Kuasa');
+          h += inp(p.id, 'pasanganKuasaNotaris', 'Notaris', 'text', 'span2');
+          h += inp(p.id, 'pasanganKuasaNotarisKota', 'Notaris di');
+        }
+        h += '</div>';
+      }
+      h += '</div>';
+      if (p.pasanganKuasaAktif) h += blokDataDiri(p.id, 'pasanganKuasa', 'Identitas penerima kuasa pasangan — yang hadir', null);
+    }
+
+    card.innerHTML = h;
+    return card;
+  }
+
+  function renderTabel() {
+    const rows = barisPihak();
+    tbody.innerHTML = rows.length ? rows.map((r, i) =>
+      '<tr' + (r.sub ? ' class="sub"' : '') + '>' +
+        '<td><span class="pil' + (r.sub ? ' turunan' : '') + '">' + esc(r.tipe.toUpperCase()) + '</span></td>' +
+        '<td><span class="bentuk">' + esc(r.bentuk) + '</span></td>' +
+        '<td>' + esc(r.nama) +
+          (r.nik ? '<span class="sub2">' + esc(samarNik(r.nik)) + '</span>' : '') +
+          (r.ket ? '<span class="sub2">' + esc(r.ket) + '</span>' : '') + '</td>' +
+        '<td>' + esc(r.kontak) + '</td>' +
+        '<td class="aksi">' +
+          '<button data-baris="' + i + '">Ubah</button>' +
+          (r.hapus && pihak.length > 1 ? '<button class="bahaya" data-hapus="' + r.hapus + '">Hapus</button>' : '') +
+          (r.hapusSaksi ? '<button class="bahaya" data-hapussaksi2="' + r.hapusSaksi + '">Hapus</button>' : '') +
+        '</td></tr>').join('')
+      : '<tr><td colspan="5" class="kosong">Belum ada para pihak.</td></tr>';
+
+    tbody.querySelectorAll('[data-baris]').forEach(b =>
+      b.addEventListener('click', () => bukaModal(rows[+b.dataset.baris].target)));
+    tbody.querySelectorAll('[data-hapus]').forEach(b => b.addEventListener('click', () => {
+      pihak = pihak.filter(x => x.id !== +b.dataset.hapus);
+      renderList(); renderAll();
+    }));
+    tbody.querySelectorAll('[data-hapussaksi2]').forEach(b => b.addEventListener('click', () => {
+      saksi = saksi.filter(x => x.id !== +b.dataset.hapussaksi2);
+      renderList(); renderSaksi(); renderAll();
+    }));
+    addBtn.disabled = pihak.length >= MAKS;
+  }
+
+  function samarNik(n) {
+    n = String(n || '');
+    return n.length > 8 ? n.slice(0, 4) + '********' + n.slice(-4) : n;
+  }
+
+  /* ---------- modal Tambah / Ubah Para Pihak ---------- */
+  function judulModal(t) {
+    if (t.kind === 'baru') return 'Tambah Para Pihak';
+    const nama = { pihak: 'Pihak', pasangan: 'Pasangan', saksi: 'Saksi', objek: 'Objek' }[t.kind];
+    return (t.baru ? 'Tambah ' : 'Ubah ') + (t.kind === 'baru' ? 'Para Pihak' : nama);
+  }
+
+  function bukaModal(target) {
+    tutupModal();
+    modalTarget = Object.assign({}, target);
+    modalEl = document.createElement('div');
+    modalEl.className = 'tirai';
+    modalEl.innerHTML =
+      '<div class="modal-app" role="dialog" aria-modal="true">' +
+        '<header><h3></h3><button data-tutup>&#215;</button></header>' +
+        '<div class="modal-badan"></div>' +
+        '<footer><button data-batal>Batal</button><button class="btn-utama" data-simpan>Simpan</button></footer>' +
+      '</div>';
+    document.body.appendChild(modalEl);
+    modalEl.querySelector('[data-tutup]').addEventListener('click', () => tutupModal(true));
+    modalEl.querySelector('[data-batal]').addEventListener('click', () => tutupModal(true));
+    modalEl.querySelector('[data-simpan]').addEventListener('click', () => tutupModal(false));
+    modalEl.addEventListener('mousedown', e => { if (e.target === modalEl) tutupModal(true); });
+    renderModalBadan();
+  }
+
+  function tutupModal(batal) {
+    if (!modalEl) return;
+    if (batal && modalUndo) modalUndo();
+    modalUndo = null;
+    modalEl.remove();
+    modalEl = null; modalTarget = null;
+    renderTabel(); renderSaksi(); renderTabelObjek(); renderAll();
+  }
+
+  function renderModalBadan() {
+    if (!modalEl) return;
+    const box = badanModal();
+    const t = modalTarget;
+    modalEl.querySelector('header h3').textContent = judulModal(t);
+    box.innerHTML = '';
+    if (modalPesan) {
+      const pe = document.createElement('p');
+      pe.className = 'hint-bentrok';
+      pe.textContent = modalPesan;
+      box.appendChild(pe);
+      modalPesan = '';
+    }
+
+    if (t.kind === 'objek') {
+      modalEl.querySelector('header h3').innerHTML = 'Tambah Objek<span class="sub-judul">' + esc(jenisAkta === 'Jual Beli' ? 'AJB' : 'Akta Hibah') + '</span>';
+      gambarObjek();
+      return;
+    }
+    if (t.kind === 'baru') {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = '<div class="grid"><div class="f span3"><label>Tipe Pihak <b class="wajib">*</b></label>' +
+        '<select data-tipebaru><option value="">— pilih tipe pihak —</option>' +
+        tipePihakOpsi().map(o => '<option value="' + o[0] + '">' + esc(o[1]) + '</option>').join('') +
+        '</select><p class="hint-app">Pilih dulu tipe pihaknya; isian berikutnya menyesuaikan.</p></div></div>';
+      box.appendChild(card);
+    } else if (t.kind === 'pasangan') {
+      box.appendChild(formPasangan(t));
+    } else if (t.kind === 'saksi') {
+      const sk = saksi.find(x => x.id === t.sid);
+      box.appendChild(renderKartuSaksi(sk, saksi.indexOf(sk) + 1));
+    } else {
+      const p = pihak.find(x => x.id === t.pid);
+      box.appendChild(renderCard(p, ''));
+    }
+    pasangKartu(box);
+    pasangModalKhusus(box);
+  }
+
+  function pasangModalKhusus(root) {
+    const t = modalTarget;
+    const tb = root.querySelector('[data-tipebaru]');
+    if (tb && !tb.disabled) tb.addEventListener('change', () => pilihTipeBaru(tb.value));
+    root.querySelectorAll('[data-tipe]').forEach(el =>
+      el.addEventListener('change', () => gantiTipe(el.value)));
+    const induk = root.querySelector('[data-app2="induk"]');
+    if (induk) induk.addEventListener('change', () => {
+      const id = +induk.value;
+      const sblm = modalTarget.pid;
+      if (sblm) { const lama = pihak.find(x => x.id === sblm); if (lama && modalTarget.baru) lama.bentuk = 'perorangan'; }
+      const p = pihak.find(x => x.id === id);
+      if (!p) { modalTarget.pid = null; renderModalBadan(); return; }
+      const bentukLama = p.bentuk;
+      susunBentuk(p, 'orang', 'bersama', warisApp(p));
+      if (modalTarget.bawaIdentitas) { isiIdentitas(p.pasangan, modalTarget.bawaIdentitas, false); modalTarget.bawaIdentitas = null; }
+      modalTarget.pid = id;
+      if (modalTarget.baru) modalUndo = () => { p.bentuk = bentukLama; };
+      renderModalBadan(); renderTabel(); renderAll();
+    });
+  }
+
+  const IDENTITAS_KTP = ['nama','nik','tempatLahir','tanggalLahir','jenisKelamin','statusKawin',
+    'pekerjaan','kewarganegaraan','rt','rw','kelurahan','kecamatan','provinsi','telepon','email'];
+
+  function ambilIdentitas(t) {
+    if (t.kind === 'saksi') {
+      const sk = saksi.find(x => x.id === t.sid);
+      return Object.assign({}, sk, { alamat: sk.jalan, labelKota: 'Kota' });
+    }
+    const p = pihak.find(x => x.id === t.pid);
+    if (!p) return null;
+    return Object.assign({}, t.kind === 'pasangan' ? p.pasangan : p.orang);
+  }
+
+  function isiIdentitas(tujuan, sumber, keJalan) {
+    if (!sumber) return tujuan;
+    IDENTITAS_KTP.forEach(k => { if (sumber[k] != null) tujuan[k] = sumber[k]; });
+    tujuan[keJalan ? 'jalan' : 'alamat'] = sumber.alamat || sumber.jalan || '';
+    tujuan.kota = sumber.kota || '';
+    if (!keJalan) tujuan.labelKota = sumber.labelKota || 'Kota';
+    return tujuan;
+  }
+
+  /* ubah tipe sebuah entri — datanya ikut pindah */
+  function gantiTipe(nilai) {
+    const t = modalTarget;
+    if (!t || t.kind === 'baru') return;
+    const sekarang = t.kind === 'pihak' ? String(pihak.find(x => x.id === t.pid).posisi) : t.kind;
+    if (nilai === sekarang) return;
+
+    const identitas = ambilIdentitas(t);
+
+    // pindah tipe di dalam pihak utama: cukup ganti posisi
+    if (t.kind === 'pihak' && (nilai === '1' || nilai === '2')) {
+      pihak.find(x => x.id === t.pid).posisi = +nilai;
+      renderList(); renderAll(); return;
+    }
+    if (t.kind === 'pihak' && pihak.length <= 1) {
+      modalPesan = 'Tidak bisa dipindahkan — harus ada minimal satu pihak penjual/pembeli.';
+      renderModalBadan(); return;
+    }
+
+    // lepaskan entri lama
+    let pulihkan;
+    if (t.kind === 'pihak') {
+      const lama = pihak.find(x => x.id === t.pid), idx = pihak.indexOf(lama);
+      pihak = pihak.filter(x => x.id !== t.pid);
+      pulihkan = () => { pihak.splice(idx, 0, lama); };
+    } else if (t.kind === 'saksi') {
+      const lama = saksi.find(x => x.id === t.sid), idx = saksi.indexOf(lama);
+      if (saksi.length <= 2) {
+        modalPesan = 'Tidak bisa dipindahkan — saksi minimal dua orang.';
+        renderModalBadan(); return;
+      }
+      saksi = saksi.filter(x => x.id !== t.sid);
+      pulihkan = () => { saksi.splice(idx, 0, lama); };
+    } else {
+      const induk = pihak.find(x => x.id === t.pid);
+      const bentukLama = induk ? induk.bentuk : null;
+      if (induk) susunBentuk(induk, 'orang', 'sendiri', warisApp(induk));
+      pulihkan = () => { if (induk) induk.bentuk = bentukLama; };
+    }
+
+    if (nilai === 'saksi') {
+      const sk = saksiBaru();
+      isiIdentitas(sk, identitas, true);
+      saksi.push(sk);
+      modalUndo = () => { saksi = saksi.filter(x => x.id !== sk.id); pulihkan(); };
+      modalTarget = { kind: 'saksi', sid: sk.id };
+    } else if (nilai === 'pasangan') {
+      modalUndo = pulihkan;
+      modalTarget = { kind: 'pasangan', pid: null, bawaIdentitas: identitas };
+    } else {
+      const np = pihakBaru(+nilai);
+      isiIdentitas(np.orang, identitas, false);
+      pihak.push(np);
+      modalUndo = () => { pihak = pihak.filter(x => x.id !== np.id); pulihkan(); };
+      modalTarget = { kind: 'pihak', pid: np.id };
+    }
+    renderModalBadan(); renderTabel(); renderAll();
+  }
+
+  function pilihTipeBaru(v) {
+    if (!v) return;
+    if (v === 'saksi') {
+      const sk = saksiBaru();
+      saksi.push(sk);
+      modalUndo = () => { saksi = saksi.filter(x => x.id !== sk.id); };
+      modalTarget = { kind: 'saksi', sid: sk.id, baru: true };
+    } else if (v === 'pasangan') {
+      modalTarget = { kind: 'pasangan', pid: null, baru: true };
+    } else {
+      const np = pihakBaru(+v);
+      pihak.push(np);
+      modalUndo = () => { pihak = pihak.filter(x => x.id !== np.id); };
+      modalTarget = { kind: 'pihak', pid: np.id, baru: true };
+    }
+    renderModalBadan(); renderTabel(); renderAll();
+  }
+
+  function renderList() {
+    renderTabel();
+    if (modalTarget) renderModalBadan();
+  }
+
+  /* ---------- pengikatan isian di dalam kartu ---------- */
+  function pasangKartu(root) {
+    root.querySelectorAll('input[data-path], select[data-path]').forEach(el => {
       const ev = el.type === 'checkbox' ? 'change' : 'input';
       el.addEventListener(ev, e => {
         const pid = +e.target.dataset.pid;
@@ -859,32 +1390,51 @@
         } else {
           segarkanTurunan(pid);
           if (path === 'posisi') segarkanChip(pid);
+          renderTabel();
         }
         renderAll();
       });
     });
-    list.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', e => {
+    root.querySelectorAll('[data-app]').forEach(el => {
+      const jenis = el.dataset.app;
+      const p = objById(+el.dataset.pid);
+      if (jenis === 'bentuk' || jenis === 'ktp') {
+        el.addEventListener('click', () => {
+          if (jenis === 'ktp') { p.buka = p.buka || {}; p.buka[el.dataset.kunci] = !p.buka[el.dataset.kunci]; }
+          else { susunBentuk(p, el.dataset.nilai, hartaApp(p), warisApp(p)); }
+          renderList(); renderAll();
+        });
+      } else {
+        el.addEventListener('change', () => {
+          if (jenis === 'harta') susunBentuk(p, bentukApp(p), el.value, warisApp(p));
+          else if (jenis === 'waris') susunBentuk(p, bentukApp(p), hartaApp(p), el.value === '1');
+          else if (jenis === 'user' && el.value !== '') Object.assign(getPath(p.id, el.dataset.target || 'orang'), USERS[+el.value].data);
+          renderList(); renderAll();
+        });
+      }
+    });
+    root.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', e => {
       pihak = pihak.filter(p => p.id !== +e.target.dataset.remove);
-      renderList(); renderAll();
+      tutupModal(false);
     }));
-    list.querySelectorAll('[data-tambahwaris]').forEach(b => b.addEventListener('click', e => {
+    root.querySelectorAll('[data-tambahwaris]').forEach(b => b.addEventListener('click', e => {
       const p = pihak.find(x => x.id === +e.target.dataset.tambahwaris);
       if (p.waris.length >= 8) return;
       p.waris.push(warisContoh(p.waris.length + 1));
       renderList(); renderAll();
     }));
-    list.querySelectorAll('[data-hapuswaris]').forEach(b => b.addEventListener('click', e => {
+    root.querySelectorAll('[data-hapuswaris]').forEach(b => b.addEventListener('click', e => {
       const p = pihak.find(x => x.id === +e.target.dataset.hapuswaris);
       if (p.waris.length <= 1) return;
       p.waris.pop(); renderList(); renderAll();
     }));
-    list.querySelectorAll('[data-addubah]').forEach(b => b.addEventListener('click', e => {
+    root.querySelectorAll('[data-addubah]').forEach(b => b.addEventListener('click', e => {
       const p = pihak.find(x => x.id === +e.target.dataset.addubah);
       p.pt.perubahan.push({ jenis:'anggaran dasar', aktaTanggal:'2020-01-01', aktaNomor:'', notaris:'', notarisKota:'',
         buktiJenis:'Surat Keputusan persetujuan', instansi:'Kementerian Hukum dan Hak Asasi Manusia', buktiTanggal:'2020-02-01', buktiNomor:'' });
       renderList(); renderAll();
     }));
-    list.querySelectorAll('[data-delubah]').forEach(b => b.addEventListener('click', e => {
+    root.querySelectorAll('[data-delubah]').forEach(b => b.addEventListener('click', e => {
       const [pid, idx] = e.target.dataset.delubah.split(':');
       pihak.find(x => x.id === +pid).pt.perubahan.splice(+idx, 1);
       renderList(); renderAll();
@@ -892,7 +1442,7 @@
   }
 
   function segarkanTurunan(pid) {
-    const card = list.querySelector('.card[data-id="' + pid + '"]');
+    const card = document.querySelector('.modal-badan .card[data-id="' + pid + '"]');
     if (!card) return;
     const p = pihak.find(x => x.id === pid);
     card.querySelectorAll('.f.derived[data-der]').forEach(el => {
@@ -903,15 +1453,15 @@
     });
   }
   function segarkanChip(pid) {
-    const card = list.querySelector('.card[data-id="' + pid + '"]');
+    const card = document.querySelector('.modal-badan .card[data-id="' + pid + '"]');
     const p = pihak.find(x => x.id === pid);
-    if (card) card.querySelector('.chip').innerHTML = esc(sebutanOf(p.posisi)) + ' <small>· ' + esc(peranOf(p.posisi, jenisAkta)) + '</small>';
+    const chip = card && card.querySelector('.chip');
+    if (chip) chip.innerHTML = esc(sebutanOf(p.posisi)) + ' <small>· ' + esc(peranOf(p.posisi, jenisAkta)) + '</small>';
   }
 
-  addBtn.addEventListener('click', () => {
-    if (pihak.length >= MAKS) return;
-    pihak.push({
-      id: nextId++, posisi: 2, bentuk: 'perorangan',
+  function pihakBaru(posisi) {
+    return {
+      id: nextId++, posisi: posisi, bentuk: 'perorangan',
       orang: ktpKosong({ nama: 'Contoh Nama ' + (pihak.length + 1), tempatLahir: 'Bandung', pekerjaan: 'Wiraswasta',
         alamat: 'Jalan Contoh Nomor ' + (pihak.length + 1), kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
         kota: 'Bandung', provinsi: 'Jawa Barat', nik: '32730101019000' + String(pihak.length + 1).padStart(2, '0') }),
@@ -927,10 +1477,26 @@
       pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
       pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
       pasanganKuasa: ktpKosong({ jenisKelamin: 'Perempuan', statusKawin: 'Kawin' }),
-      nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2015-01-01', nikahNomor: '', nikahPenerbit: '',
+      pasanganPeran: 'bertindak', nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2015-01-01', nikahNomor: '', nikahPenerbit: '',
       pasangan: ktpKosong({ jenisKelamin: 'Perempuan' }), pt: ptKosong()
-    });
-    renderList(); renderAll();
+    };
+  }
+  function saksiBaru() {
+    return saksiKosong({ id: nextSaksiId++, nama: 'Contoh Saksi ' + (saksi.length + 1),
+      tempatLahir: 'Jakarta', pekerjaan: 'Karyawan Swasta', jalan: 'Jalan Contoh',
+      kelurahan: 'Senayan', kecamatan: 'Kebayoran Baru', kota: 'Kota Administrasi Jakarta Selatan', provinsi: 'DKI Jakarta' });
+  }
+
+  addBtn.addEventListener('click', () => {
+    if (pihak.length >= MAKS) return;
+    bukaModal({ kind: 'baru' });
+  });
+
+  document.getElementById('add-objek').addEventListener('click', () => {
+    if (objekAda) return;
+    objekAda = true; objTab = 'umum';
+    renderTabelObjek(); renderAll();
+    bukaModal({ kind: 'objek' });
   });
 
   /* ---------- kartu saksi ---------- */
@@ -943,7 +1509,21 @@
       '<span class="chip">SAKSI ' + no + ' <small>· ' + esc(sapaanOf(sk)) + '</small></span>' +
       '<span class="spacer"></span>' +
       (saksi.length > 2 ? '<button class="remove" data-hapussaksi="' + sk.id + '">Hapus Saksi</button>' : '') +
-      '</div><div class="grid auto">';
+      '</div>';
+    sk.buka = sk.buka || {};
+    h += '<div class="grid"><div class="f span3"><label>Tipe Pihak <b class="wajib">*</b></label>' +
+      '<select data-pid="' + sk.id + '" data-tipe>' +
+      tipePihakOpsi().map(o => '<option value="' + o[0] + '"' +
+        (o[0] === 'saksi' ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') +
+      '</select></div></div>';
+    h += kartuProfil(sk.id, '');
+    if (!sk.buka['_diri']) {
+      h += '<div class="sect"><h4>Diisi saat order</h4><div class="grid">' +
+        inp(sk.id, 'nip', 'NIP (opsional, bila saksi pejabat/ASN)', 'text', 'span2') + '</div></div>';
+      card.innerHTML = h;
+      return card;
+    }
+    h += '<div class="sect"><h4>Data KTP</h4></div><div class="grid auto">';
     h += inp(sk.id, 'nama', 'Nama', 'text', 'span2');
     h += inp(sk.id, 'nik', 'NIK', 'text', 'span2');
     h += inp(sk.id, 'tempatLahir', 'Tempat Lahir');
@@ -969,9 +1549,10 @@
   }
 
   function renderSaksi() {
+    if (!saksiList) { renderTabel(); return; }
     saksiList.innerHTML = '';
     saksi.forEach((sk, i) => saksiList.appendChild(renderKartuSaksi(sk, i + 1)));
-    addSaksiBtn.disabled = saksi.length >= 4;
+    if (addSaksiBtn) addSaksiBtn.disabled = saksi.length >= 4;
 
     saksiList.querySelectorAll('input[data-path], select[data-path]').forEach(el => {
       el.addEventListener('input', e => {
@@ -994,7 +1575,7 @@
     }));
   }
 
-  addSaksiBtn.addEventListener('click', () => {
+  if (addSaksiBtn) addSaksiBtn.addEventListener('click', () => {
     if (saksi.length >= 4) return;
     saksi.push(saksiKosong({ id: nextSaksiId++, nama: 'Contoh Saksi ' + (saksi.length + 1),
       tempatLahir: 'Jakarta', pekerjaan: 'Karyawan Swasta', jalan: 'Jalan Contoh',
@@ -1002,7 +1583,7 @@
     renderSaksi(); renderAll();
   });
 
-  kantorInput.addEventListener('input', e => { kantorPertanahan = e.target.value; renderAll(); });
+  if (kantorInput) kantorInput.addEventListener('input', e => { kantorPertanahan = e.target.value; renderAll(); });
   Object.keys(IKAT_KANTOR).forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', e => { kantor[IKAT_KANTOR[id]] = e.target.value; renderAll(); });
@@ -1290,7 +1871,7 @@
       skNomor: kantor.skNomor || '—', skTanggal: tglAngka(kantor.skTanggal),
       alamat: kantor.alamat || '—', telepon: kantor.telepon || '—', email: kantor.email || '—',
       aktaJenis: jenisAkta, aktaJenisKapital: jenisAkta.toUpperCase(),
-      aktaNomor: akta.nomor || '—', aktaTahun: th, lembar: akta.lembar,
+      aktaNomor: akta.nomor || '—', aktaTahun: th, lembar: '{{lembar}}',
       hari: hariDari(akta.tanggal), aktaTanggal: tglAngka(akta.tanggal), aktaTanggalT: tglKata(akta.tanggal),
       fNama: kantor.nama || '—', fWilayah: kantor.daerah || '—', halaman: '1', total: '6' };
   }
@@ -1400,7 +1981,7 @@
     // persetujuan pasangan
     const sel = [];
     pihak.forEach(p => {
-      if (p.bentuk === 'pasangan') {
+      if (p.bentuk === 'pasangan' && p.pasanganPeran !== 'persetujuan') {
         const wakil = p.pasanganKuasaAktif;
         sel.push({
           label: pakaiToken ? '{{label_persetujuan}}' : 'Persetujuan ' + hubunganOf(p),
@@ -1449,13 +2030,15 @@
      butir 14 (bidang terdaftar), 15 (sebagian bidang), 16 (bekas Hak Adat),
      17 (satuan rumah susun), 18 (letak), 19 (meliputi pula)
      ===================================================================== */
+  let objekAda = true;
+  let objTab = 'umum';
   let objek = {
     statusSertipikat: 'terdaftar', format: 'analog',
     jenisHak: 'Hak Milik', statusObjek: 'utuh',
     redaksiSrs: 'blanko', redaksiMeliputi: 'benda',
     bagianAktif: false, bagian: 'Satu per tiga',
     luas: '120', atasNama: 'Contoh Nama Satu', nib: '09.01.02.03.00123', nop: '32.73.010.001-0012.0',
-    nomorHak: '1024', suTanggal: '2015-11-11', suNomor: '77/2015',
+    nomorHak: '1024', suJenis: 'Surat Ukur', suTanggal: '2015-11-11', suNomor: '77/2015',
     nomorHakAsal: '980', nibAsal: '09.01.02.03.00100', nopAsal: '32.73.010.001-0010.0',
     nibBaru: '09.01.02.03.00124',
     persilNomor: '21', persilBlok: 'D.III', kohirNomor: 'C.1234',
@@ -1473,7 +2056,6 @@
     labelKelurahan: 'Kelurahan', kelurahan: 'Cihapit', jalan: 'Jalan Contoh Nomor 1'
   };
 
-  const objekKartu = document.getElementById('objek-kartu');
   const BUTIR = { b14: 'butir 14 — bidang terdaftar', b15: 'butir 15 — sebagian bidang',
     b16: 'butir 16 — bekas Hak Milik Adat', b17: 'butir 17 — satuan rumah susun',
     elektronik: 'sertipikat elektronik (draf 4)' };
@@ -1503,15 +2085,57 @@
   function ochk(path, label) {
     return '<label class="opt"><input type="checkbox" data-obj="' + path + '"' + (oget(path) ? ' checked' : '') + '> ' + label + '</label>';
   }
+  /* jenis dokumen ukur yang disebut di akta — jadi variabel {{surat_ukur_jenis}} */
+  function selSuJenis() {
+    return osel('suJenis', 'Dokumen ukur (surat_ukur_jenis)',
+      [['Surat Ukur', 'Surat Ukur'], ['Gambar Situasi', 'Gambar Situasi'],
+       ['Gambar Denah', 'Gambar Denah'], ['Peta Bidang', 'Peta Bidang']], 'span2');
+  }
+
   function obatas() {
     return oinp('batasUtara', 'Batas Utara') + oinp('batasTimur', 'Batas Timur') +
            oinp('batasSelatan', 'Batas Selatan') + oinp('batasBarat', 'Batas Barat');
   }
 
-  function gambarObjek() {
+  function renderTabelObjek() {
     const j = jenisUraian();
-    let h = '<div class="card"><div class="card-head">' +
-      '<span class="chip">OBJEK <small>· ' + esc(BUTIR[j]) + '</small></span></div><div class="grid">';
+    const tb = document.getElementById('tabel-objek');
+    if (objekAda) {
+      const nomor = objSarusun() ? objek.sertipikatNomor : (objBelum() ? objek.kohirNomor : objek.nomorHak);
+      tb.innerHTML = '<tr>' +
+        '<td><span class="pil">' + esc(objek.jenisHak.toUpperCase()) + '</span>' +
+          '<span class="sub2">' + esc(BUTIR[j]) + '</span></td>' +
+        '<td>' + esc(nomor || '—') + '<span class="sub2">NIB ' + esc(objek.nib || '—') + '</span></td>' +
+        '<td>' + esc(objek.luas || '—') + ' m&sup2;</td>' +
+        '<td>' + esc(objek.kelurahan || '—') + '<span class="sub2">' +
+          esc(objek.labelKota + ' ' + objek.kota) + '</span></td>' +
+        '<td>—</td>' +
+        '<td class="aksi"><button data-ubahobjek>Ubah</button>' +
+          '<button class="bahaya" data-hapusobjek>Hapus</button></td></tr>';
+      tb.querySelector('[data-ubahobjek]').addEventListener('click', () => bukaModal({ kind: 'objek' }));
+      tb.querySelector('[data-hapusobjek]').addEventListener('click', () => {
+        objekAda = false; renderTabelObjek(); renderAll();
+      });
+    } else {
+      tb.innerHTML = '<tr><td colspan="6" class="kosong">Belum ada objek.</td></tr>';
+    }
+    document.getElementById('add-objek').disabled = objekAda;
+  }
+
+  function objekBadan() {
+    const j = jenisUraian();
+    let h = '<div class="card">';
+    h += '<div class="segmen tigatab">' +
+      [['umum','Data Umum'],['harga','Data Harga']].map(o =>
+        '<button type="button" data-objtab="' + o[0] + '"' + (objTab === o[0] ? ' aria-pressed="true"' : '') +
+        '>' + o[1] + '</button>').join('') + '</div>';
+    if (objTab !== 'umum') {
+      h += '<p class="kunci" style="margin-top:0.9rem">Tab <b>Data Harga</b> ada di aplikasi, ' +
+        'tetapi isinya belum pernah saya lihat — jadi tidak saya karang. ' +
+        'Kirimkan tangkapan layarnya kalau mau saya bangun.</p></div>';
+      return h;
+    }
+    h += '<div class="grid">';
     h += osel('statusSertipikat', 'Status Sertipikat',
       [['terdaftar', 'Sudah Terdaftar'], ['belum', 'Belum Terdaftar (bekas Hak Milik Adat)']], 'span2');
     if (objBelum()) {
@@ -1538,8 +2162,9 @@
     h += '<div class="sect"><h4>Uraian objek — ' + esc(BUTIR[j]) + '</h4><div class="grid">';
     if (j === 'b14') {
       h += oinp('nomorHak', 'Nomor hak');
-      h += oinp('suTanggal', 'Tanggal Surat Ukur / Gambar Situasi', 'date');
-      h += oinp('suNomor', 'Nomor Surat Ukur / Gambar Situasi');
+      h += selSuJenis();
+      h += oinp('suTanggal', 'Tanggal ' + objek.suJenis, 'date');
+      h += oinp('suNomor', 'Nomor ' + objek.suJenis);
       h += oinp('luas', 'Luas (m²)');
       h += oinp('nib', 'NIB');
       h += oinp('nop', 'SPPT PBB — Nomor Objek Pajak', 'text', 'span2');
@@ -1550,8 +2175,9 @@
       h += oinp('nopAsal', 'SPPT PBB NOP tanah asal', 'text', 'span2');
       h += oinp('luas', 'Luas bagian yang dijual (m²)');
       h += obatas();
-      h += oinp('suTanggal', 'Tanggal Surat Ukur / Peta Bidang', 'date');
-      h += oinp('suNomor', 'Nomor Surat Ukur / Peta Bidang');
+      h += selSuJenis();
+      h += oinp('suTanggal', 'Tanggal ' + objek.suJenis, 'date');
+      h += oinp('suNomor', 'Nomor ' + objek.suJenis);
       h += oinp('nibBaru', 'NIB bidang yang dijual');
       h += '</div></div>';
     } else if (j === 'b16') {
@@ -1628,8 +2254,18 @@
     h += '</div>';
 
     h += '</div>';
-    objekKartu.innerHTML = h;
+    return h;
+  }
 
+  function gambarObjek() {
+    renderTabelObjek();
+    if (!modalTarget || modalTarget.kind !== 'objek') return;
+    const objekKartu = badanModal();
+    objekKartu.innerHTML = objekBadan();
+
+    objekKartu.querySelectorAll('[data-objtab]').forEach(b => b.addEventListener('click', () => {
+      objTab = b.dataset.objtab; gambarObjek();
+    }));
     objekKartu.querySelectorAll('[data-obj]').forEach(el => {
       const ev = el.type === 'checkbox' ? 'change' : 'input';
       el.addEventListener(ev, e => {
@@ -1637,7 +2273,7 @@
         let o = objek;
         ks.slice(0, -1).forEach(k => { o = o[/^\d+$/.test(k) ? +k : k]; });
         o[ks[ks.length - 1]] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-        if (/^(statusSertipikat|format|jenisHak|statusObjek|redaksiSrs|redaksiMeliputi|bagianAktif|namaSetempatAktif)$/.test(e.target.dataset.obj)) gambarObjek();
+        if (/^(statusSertipikat|format|jenisHak|statusObjek|redaksiSrs|redaksiMeliputi|bagianAktif|namaSetempatAktif|suJenis)$/.test(e.target.dataset.obj)) gambarObjek();
         renderAll();
       });
     });
@@ -1658,7 +2294,7 @@
 
   function blokB14(d) {
     return '- ' + d.namaHak + ': Nomor ' + d.nomorHak +
-      ' atas sebidang tanah sebagaimana diuraikan dalam Surat Ukur/Gambar Situasi tanggal ' + d.suTanggal +
+      ' atas sebidang tanah sebagaimana diuraikan dalam ' + d.suJenis + ' tanggal ' + d.suTanggal +
       ' Nomor ' + d.suNomor + ' seluas ' + d.luas + ' m2 (' + d.luasT + ' meter persegi)' +
       ' dengan Nomor Identifikasi Bidang Tanah (NIB) : ' + d.nib +
       ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPTPBB) Nomor Objek Pajak (NOP) : ' + d.nop;
@@ -1668,7 +2304,7 @@
       ' dengan Nomor Identifikasi Bidang Tanah (NIB) ' + d.nibAsal +
       ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPTPBB) Nomor Objek Pajak (NOP) : ' + d.nopAsal +
       '\nyaitu seluas ' + d.luas + ' m2 (' + d.luasT + ' meter persegi), dengan batas-batas :' + barisBatas(d) +
-      '\nsebagaimana diuraikan dalam Surat Ukur/Peta Bidang pada tanggal ' + d.suTanggal + ' Nomor ' + d.suNomor +
+      '\nsebagaimana diuraikan dalam ' + d.suJenis + ' pada tanggal ' + d.suTanggal + ' Nomor ' + d.suNomor +
       ' yang dilampirkan pada akta ini, dengan Nomor Identifikasi Bidang Tanah (NIB) : ' + d.nibBaru;
   }
   function blokB16(d) {
@@ -1738,7 +2374,7 @@
     if (pakaiToken) {
       return { namaHak: bagian + '{{jenis_hak}}', namaHakAsal: '{{jenis_hak_asal}}',
         nomorHak: '{{objek_nomor_hak}}', nomorHakAsal: '{{objek_nomor_hak_asal}}',
-        suTanggal: '{{surat_ukur_tanggal}}', suNomor: '{{surat_ukur_nomor}}',
+        suJenis: '{{surat_ukur_jenis}}', suTanggal: '{{surat_ukur_tanggal}}', suNomor: '{{surat_ukur_nomor}}',
         luas: '{{objek_luas}}', luasT: '{{objek_luas_terbilang}}',
         nib: '{{objek_nib}}', nibAsal: '{{objek_nib_asal}}', nibBaru: '{{objek_nib_baru}}',
         nop: '{{objek_nop}}', nopAsal: '{{objek_nop_asal}}', atasNama: '{{objek_atas_nama}}',
@@ -1760,7 +2396,7 @@
     }
     return { namaHak: bagian + o.jenisHak, namaHakAsal: o.jenisHak,
       nomorHak: o.nomorHak || '—', nomorHakAsal: o.nomorHakAsal || '—',
-      suTanggal: tglAngka(o.suTanggal), suNomor: o.suNomor || '—',
+      suJenis: o.suJenis, suTanggal: tglAngka(o.suTanggal), suNomor: o.suNomor || '—',
       luas: o.luas || '—', luasT: terbilang(+o.luas || 0),
       nib: o.nib || '—', nibAsal: o.nibAsal || '—', nibBaru: o.nibBaru || '—',
       nop: o.nop || '—', nopAsal: o.nopAsal || '—', atasNama: o.atasNama || '—',
@@ -1996,7 +2632,8 @@
 
     teks += '\n\n' + blokPengenalan();
     teks += '\n\n@@Objek@@';
-    bagianObjek(true).forEach(b => { teks += '\n\n' + b.teks; });
+    if (objekAda) bagianObjek(true).forEach(b => { teks += '\n\n' + b.teks; });
+    else teks += '\n\n@@Objek belum ditambahkan@@';
 
     LEWATI.forEach(l => {
       teks += '\n\n@@' + l.judul + ' — dilewati dulu@@\n' + l.catatan;
@@ -2041,10 +2678,11 @@
 
     html += '<p class="out-plain">' + esc(blokPengenalan()) + '</p>';
     html += '<div class="out-ph"><b>Objek</b></div>';
-    bagianObjek(false).forEach(b => {
+    if (objekAda) bagianObjek(false).forEach(b => {
       html += '<p class="blok-objek"><span class="lbl">' + esc(b.label) + '</span>' +
         esc(b.teks).replace(/\n/g, '<br>') + '</p>';
     });
+    else html += '<p class="blok-objek"><span class="lbl">Objek</span><i>Belum ada objek ditambahkan.</i></p>';
 
     LEWATI.forEach(l => {
       html += '<div class="out-ph"><b>' + esc(l.judul) + ' — dilewati dulu</b>' + esc(l.catatan) + '</div>';
