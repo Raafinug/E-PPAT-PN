@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Editor Template Dokumen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:#f1ede2; --paper-raised:#e8e2d2; --paper-sunk:#dcd5c2; --ink:#241f18; --ink-soft:#57503f;
+    --rule:#c9bfa4; --stamp:#8a2f22; --stamp-soft:#8a2f2212; --ok:#3d5c3a; --ok-soft:#3d5c3a18;
+    --blok:#4a5f7a; --blok-soft:#4a5f7a18;
+    --serif:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  }
+  :root:not([data-theme="light"]) { @media (prefers-color-scheme: dark) {
+    --paper:#1b1712; --paper-raised:#241f18; --paper-sunk:#15120e; --ink:#ece5d4; --ink-soft:#b7ac93;
+    --rule:#4a4232; --stamp:#d97a63; --stamp-soft:#d97a6322; --ok:#8fb388; --ok-soft:#8fb38822;
+    --blok:#93b1d1; --blok-soft:#93b1d122;
+  } }
+  :root[data-theme="dark"] {
+    --paper:#1b1712; --paper-raised:#241f18; --paper-sunk:#15120e; --ink:#ece5d4; --ink-soft:#b7ac93;
+    --rule:#4a4232; --stamp:#d97a63; --stamp-soft:#d97a6322; --ok:#8fb388; --ok-soft:#8fb38822;
+    --blok:#93b1d1; --blok-soft:#93b1d122;
+  }
+  *{box-sizing:border-box}
+  html{height:100%}
+  body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);
+    font-family:var(--serif);font-size:16px;line-height:1.5;
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 2rem)}
+  .wrap{max-width:1420px;margin:0 auto;padding-inline:1.1rem}
+  header{padding:1.9rem 0 1.1rem;border-bottom:1px solid var(--rule)}
+  .eyebrow{font-family:var(--mono);font-size:0.74rem;color:var(--stamp);margin:0 0 0.5rem}
+  h1{font-size:clamp(1.25rem,3.2vw,1.55rem);font-weight:600;margin:0 0 0.45rem}
+  .lede{color:var(--ink-soft);font-size:0.93rem;margin:0;max-width:72ch}
+
+  .layout{display:grid;grid-template-columns:270px minmax(0,1fr) 390px;gap:1.1rem;padding:1.1rem 0 3rem;align-items:start}
+  @media (max-width:1180px){ .layout{grid-template-columns:240px minmax(0,1fr)} .pane-preview{grid-column:1/-1} }
+  @media (max-width:760px){ .layout{grid-template-columns:1fr} }
+
+  .panel{border:1px solid var(--rule);background:var(--paper-raised);border-radius:3px}
+  .panel > h2{font-family:var(--mono);font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase;
+    color:var(--ink-soft);font-weight:500;margin:0;padding:0.7rem 0.85rem;border-bottom:1px solid var(--rule)}
+
+  /* daftar section */
+  .seclist{max-height:560px;overflow-y:auto;padding:0.5rem}
+  .secitem{display:flex;align-items:center;gap:0.5rem;width:100%;text-align:left;cursor:pointer;
+    font-family:var(--serif);font-size:0.9rem;color:var(--ink);background:var(--paper);
+    border:1px solid var(--rule);border-radius:2px;padding:0.5rem 0.55rem;margin-bottom:0.4rem}
+  .secitem:hover{border-color:var(--stamp)}
+  .secitem[aria-current="true"]{border-color:var(--stamp);background:var(--stamp-soft)}
+  .secitem .no{font-family:var(--mono);font-size:0.72rem;color:var(--ink-soft);min-width:1.5rem;text-align:center}
+  .secitem .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lencana{font-family:var(--mono);font-size:0.6rem;letter-spacing:0.04em;text-transform:uppercase;
+    border:1px solid var(--rule);border-radius:2px;padding:0.08rem 0.3rem;color:var(--ink-soft);white-space:nowrap}
+  .lencana.oto{color:var(--blok);border-color:var(--blok);background:var(--blok-soft)}
+  .secfoot{padding:0.6rem 0.5rem;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:0.4rem}
+  .secfoot button,.secfoot select{font-family:var(--mono);font-size:0.72rem;background:var(--paper);color:var(--ink);
+    border:1px solid var(--rule);border-radius:2px;padding:0.35rem 0.5rem;cursor:pointer}
+
+  /* isi section */
+  .isi{padding:0.85rem}
+  .isi > .judul{font-size:1.02rem;font-weight:600;margin:0 0 0.15rem}
+  .isi > .ket{color:var(--ink-soft);font-size:0.85rem;margin:0 0 0.9rem}
+  textarea{font-family:var(--mono);font-size:0.78rem;line-height:1.65;width:100%;
+    border:1px solid var(--rule);border-radius:2px;background:var(--paper);color:var(--ink);padding:0.6rem 0.65rem;resize:vertical}
+
+  .grup{margin-bottom:0.5rem;border:1px solid var(--rule);border-radius:2px;background:var(--paper)}
+  .grup > .kepala{display:flex;align-items:center;gap:0.5rem;width:100%;cursor:pointer;background:none;border:0;
+    font-family:var(--mono);font-size:0.72rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);
+    padding:0.5rem 0.6rem;text-align:left}
+  .grup > .kepala .chev{color:var(--stamp)}
+  .grup > .isi-grup{padding:0 0.5rem 0.5rem}
+
+  .pot{border:1px solid var(--rule);border-left:3px solid var(--rule);border-radius:2px;background:var(--paper);margin-bottom:0.4rem}
+  .pot.terpakai{border-left-color:var(--ok);background:var(--ok-soft)}
+  .pot .baris{display:flex;align-items:center;gap:0.5rem;width:100%;cursor:pointer;background:none;border:0;
+    color:var(--ink);font-family:var(--serif);font-size:0.88rem;padding:0.5rem 0.6rem;text-align:left}
+  .pot .baris .nm{flex:1;min-width:0}
+  .pot .syarat{font-family:var(--mono);font-size:0.64rem;color:var(--ink-soft);white-space:nowrap}
+  .pot .asal{font-family:var(--mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.04em;
+    border:1px solid var(--rule);border-radius:2px;padding:0.06rem 0.28rem;color:var(--ink-soft)}
+  .pot .asal.kantor{color:var(--blok);border-color:var(--blok)}
+  .pot .asal.khusus{color:var(--stamp);border-color:var(--stamp)}
+  .pot .editor{padding:0 0.6rem 0.6rem;border-top:1px dashed var(--rule);margin-top:0.1rem}
+  .pot .editor .tag{font-family:var(--mono);font-size:0.68rem;color:var(--ink-soft);margin:0.5rem 0 0.3rem}
+  .chips{display:flex;flex-wrap:wrap;gap:0.3rem;margin:0.35rem 0 0.1rem}
+  .chips button{font-family:var(--mono);font-size:0.66rem;background:var(--paper-sunk);color:var(--ink-soft);
+    border:1px solid var(--rule);border-radius:2px;padding:0.15rem 0.35rem;cursor:pointer}
+  .chips button:hover{color:var(--stamp);border-color:var(--stamp)}
+  .aksi{display:flex;flex-wrap:wrap;gap:0.4rem;align-items:center;margin-top:0.5rem}
+  .aksi button{font-family:var(--mono);font-size:0.72rem;border-radius:2px;padding:0.35rem 0.6rem;cursor:pointer}
+  .aksi .simpan{background:var(--stamp);color:var(--paper);border:1px solid var(--stamp)}
+  .aksi .netral{background:var(--paper);color:var(--ink-soft);border:1px solid var(--rule)}
+  .peringatan{font-size:0.78rem;color:var(--stamp);margin:0.4rem 0 0}
+  .dipakai{font-size:0.74rem;color:var(--ink-soft);margin:0.35rem 0 0}
+
+  /* pratinjau */
+  .kasus{display:flex;flex-wrap:wrap;gap:0.35rem;padding:0.6rem 0.7rem;border-bottom:1px solid var(--rule)}
+  .kasus button{font-family:var(--mono);font-size:0.68rem;background:var(--paper);color:var(--ink);
+    border:1px solid var(--rule);border-radius:2px;padding:0.3rem 0.5rem;cursor:pointer}
+  .kasus button[aria-pressed="true"]{background:var(--stamp);color:var(--paper);border-color:var(--stamp)}
+  .kasus .sw{margin-left:auto;display:flex;align-items:center;gap:0.35rem;font-size:0.76rem;color:var(--ink-soft)}
+  .pratinjau{padding:0.85rem;max-height:620px;overflow-y:auto;font-size:0.84rem;line-height:1.6}
+  .pratinjau .blok{margin:0 0 0.75rem;text-align:justify;overflow-wrap:anywhere}
+  .pratinjau .blok .lbl{display:block;font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;
+    letter-spacing:0.05em;color:var(--ok);margin-bottom:0.15rem}
+  .pratinjau .var{color:var(--stamp);font-family:var(--mono);font-size:0.94em}
+  .pratinjau .kosong{color:var(--ink-soft);font-style:italic}
+
+  /* modal */
+  .tirai{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:1rem;z-index:50}
+  .modal{background:var(--paper-raised);border:1px solid var(--rule);border-radius:3px;max-width:480px;width:100%;padding:1rem 1.1rem}
+  .modal h3{margin:0 0 0.5rem;font-size:1rem}
+  .modal p{margin:0 0 0.7rem;font-size:0.88rem;color:var(--ink-soft)}
+  .modal label{display:flex;gap:0.5rem;align-items:flex-start;font-size:0.88rem;margin-bottom:0.5rem;cursor:pointer}
+  .modal label span small{display:block;color:var(--ink-soft);font-size:0.8rem}
+  .modal .aksi{justify-content:flex-end}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Purwarupa · Template Dokumen</p>
+    <h1>Mengedit template yang tersusun otomatis</h1>
+    <p class="lede">Tiga jenis bagian: <b>Catatan</b> dan <b>Pasal</b> berisi naskah bebas, sedangkan <b>Bagian Otomatis</b> berisi potongan redaksi yang muncul-hilang sesuai kondisi order. Struktur dan syaratnya terkunci — yang bisa disunting hanya tulisannya.</p>
+  </header>
+
+  <div class="layout">
+
+    <div class="panel">
+      <h2 id="jml-section">Pasal &amp; Catatan</h2>
+      <div class="seclist" id="seclist"></div>
+      <div class="secfoot">
+        <button id="tambah-pasal">+ Tambah Pasal</button>
+        <button id="tambah-catatan">+ Tambah Catatan</button>
+        <select id="tambah-oto"><option value="">+ Tambah Bagian Otomatis</option></select>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Isi bagian</h2>
+      <div class="isi" id="isi"></div>
+    </div>
+
+    <div class="panel pane-preview">
+      <h2>Pratinjau</h2>
+      <div class="kasus" id="kasus"></div>
+      <div class="pratinjau" id="pratinjau"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===================================================================
+   Purwarupa editor Template Dokumen
+   - Bagian Otomatis: daftar potongan redaksi + syarat tampil (terkunci)
+   - Yang bisa disunting hanya teks redaksinya
+   =================================================================== */
+
+/* ---------- redaksi bawaan ---------- */
+const BAWAAN = {
+  identitas_orang:
+    '{{orang.sapaan}} {{orang.nama}}, lahir di {{orang.tempat_lahir}}, pada tanggal {{orang.tanggal_lahir}} ({{orang.tanggal_lahir_terbilang}}), Warga Negara {{orang.kewarganegaraan}}, {{orang.pekerjaan}}, bertempat tinggal di {{orang.alamat}}, Rukun Tetangga {{orang.rt}}, Rukun Warga {{orang.rw}}, {{orang.label_kelurahan}} {{orang.kelurahan}}, Kecamatan {{orang.kecamatan}}, {{orang.label_kota}} {{orang.kota}}, Provinsi {{orang.provinsi}}, Pemegang Kartu Tanda Penduduk Nomor: {{orang.nik}}.',
+  domisili:
+    'Untuk sementara berada di {{orang.domisili_sementara}};',
+  kuasa_bawah_tangan:
+    'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak berdasarkan Surat Kuasa di bawah tangan, bermeterai cukup, tertanggal {{kuasa_tanggal}} ({{kuasa_tanggal_terbilang}}), yang aslinya dilekatkan pada minuta akta ini, dari dan oleh karena itu sah bertindak untuk dan atas nama:',
+  kuasa_notariil:
+    'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak berdasarkan Akta Kuasa tertanggal {{kuasa_tanggal}} ({{kuasa_tanggal_terbilang}}) Nomor {{kuasa_nomor}}, yang dibuat di hadapan {{kuasa_notaris}}, Notaris di {{kuasa_notaris_kota}}, yang salinannya dilekatkan pada minuta akta ini, dari dan oleh karena itu sah bertindak untuk dan atas nama:',
+  pasangan_hadir:
+    'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini telah mendapat persetujuan dari {{pasangan_hubungan}}nya yang sah dan satu-satunya demikian berdasarkan {{nikah_dokumen_jenis}} tertanggal {{nikah_dokumen_tanggal}} ({{nikah_dokumen_tanggal_terbilang}}) Nomor: {{nikah_dokumen_nomor}}, yang dikeluarkan oleh {{nikah_dokumen_penerbit}}, yang fotokopinya dilekatkan pada minuta akta ini, yaitu {{pasangan.nama}}, lahir di {{pasangan.tempat_lahir}}, pada tanggal {{pasangan.tanggal_lahir}} ({{pasangan.tanggal_lahir_terbilang}}), Warga Negara {{pasangan.kewarganegaraan}}, {{pasangan.pekerjaan}}, bertempat tinggal sama dengan {{pasangan_hubungan_balik}} {{pihak.sapaan}} {{pihak.nama}}, tersebut, pemegang Kartu Tanda Penduduk Nomor: {{pasangan.nik}}, yang turut hadir di hadapan saya, PPAT, dan menandatangani akta ini sebagai bukti persetujuannya.',
+  pasangan_diwakili:
+    'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini telah mendapat persetujuan dari {{pasangan_hubungan}}nya yang sah dan satu-satunya demikian berdasarkan {{nikah_dokumen_jenis}} tertanggal {{nikah_dokumen_tanggal}} ({{nikah_dokumen_tanggal_terbilang}}) Nomor: {{nikah_dokumen_nomor}}, yang dikeluarkan oleh {{nikah_dokumen_penerbit}}, yang fotokopinya dilekatkan pada minuta akta ini, yaitu {{pasangan.nama}}, lahir di {{pasangan.tempat_lahir}}, pada tanggal {{pasangan.tanggal_lahir}} ({{pasangan.tanggal_lahir_terbilang}}), Warga Negara {{pasangan.kewarganegaraan}}, {{pasangan.pekerjaan}}, bertempat tinggal sama dengan {{pasangan_hubungan_balik}} {{pihak.sapaan}} {{pihak.nama}}, tersebut, pemegang Kartu Tanda Penduduk Nomor: {{pasangan.nik}}, yang dalam hal ini tidak hadir dan diwakili oleh:',
+  kuasa_pasangan:
+    'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak berdasarkan {{kuasa_pasangan_jenis}} tertanggal {{kuasa_pasangan_tanggal}} ({{kuasa_pasangan_tanggal_terbilang}}), yang aslinya dilekatkan pada minuta akta ini, dari dan oleh karena itu sah bertindak untuk dan atas nama {{pasangan.nama}} tersebut, dan turut menandatangani akta ini sebagai bukti persetujuannya.',
+  pt_kedudukan:
+    'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak dalam jabatannya selaku {{pt.jabatan_wakil}} dari perseroan terbatas {{pt.nama}}, yang disebutkan dalam akta ini, dari dan oleh karena itu sah bertindak mewakili untuk dan atas nama {{pt.nama}}, berkedudukan di {{pt.kedudukan}},',
+  pt_komisaris:
+    'dan telah memperoleh persetujuan dari Komisaris Perseroan tersebut demikian berdasarkan Surat Persetujuan Dewan Komisaris tertanggal {{pt.komisaris_tanggal}} ({{pt.komisaris_tanggal_terbilang}}) Nomor {{pt.komisaris_nomor}}, yang aslinya diperlihatkan kepada saya, PPAT dan fotokopinya dilekatkan pada minuta akta ini,',
+  pt_pendirian:
+    'yang didirikan berdasarkan Akta tertanggal {{pt.pendirian_tanggal}} ({{pt.pendirian_tanggal_terbilang}}) Nomor {{pt.pendirian_nomor}}, yang dibuat di hadapan {{pt.pendirian_notaris}}, Notaris di {{pt.pendirian_notaris_kota}}, dan telah mendapat pengesahan dari {{pt.pendirian_pengesah}} Republik Indonesia sebagaimana tercantum dalam Surat Keputusannya tertanggal {{pt.pendirian_sk_tanggal}} ({{pt.pendirian_sk_tanggal_terbilang}}), Nomor: {{pt.pendirian_sk_nomor}}',
+  pt_uu40:
+    ', anggaran dasar mana telah disesuaikan dengan Undang-Undang Nomor 40 tahun 2007 (dua ribu tujuh) tentang Perseroan Terbatas, sebagaimana tercantum dalam Akta tertanggal {{pt.uu40_tanggal}} ({{pt.uu40_tanggal_terbilang}}) Nomor {{pt.uu40_nomor}}, yang dibuat di hadapan {{pt.uu40_notaris}}, Notaris di {{pt.uu40_notaris_kota}}',
+  pt_perubahan:
+    '. Anggaran Dasar dan data perseroan mana telah beberapa kali mengalami perubahan terakhir, yang mana:\n- {{jenis_perubahan}} terakhir termuat dalam Akta tertanggal {{akta_tanggal}} ({{akta_tanggal_terbilang}}) Nomor {{akta_nomor}}, yang dibuat di hadapan {{notaris}}, Notaris di {{notaris_kota}};',
+  peran:
+    'Selaku {{peran}}, selanjutnya disebut “{{sebutan_pihak}}”.',
+
+  /* Objek */
+  objek_adat:
+    '- {{jenis_hak}} atas sebidang tanah Milik Adat : Persil nomor {{persil_nomor}} Blok {{persil_blok}} seluas {{objek_luas}} ({{objek_luas_terbilang}}) M2 (meter persegi), dengan batas-batas : Utara {{batas_utara}}; Timur {{batas_timur}}; Selatan {{batas_selatan}}; Barat {{batas_barat}}, yang terletak di:',
+  objek_shmsrs:
+    '- Sertipikat Hak Milik Atas Satuan Rumah Susun (SHMSRS) Nomor {{sertipikat_nomor}}/{{sertipikat_kelurahan}}, atas unit hunian dalam Gambar Denah tertanggal {{gambar_denah_tanggal}} Nomor : {{gambar_denah_nomor}}, seluas {{objek_luas}} ({{objek_luas_terbilang}}) m2, terdaftar atas nama {{objek_atas_nama}}, dengan NIB {{objek_nib}} dan SPPT PBB NOP: {{objek_nop}}, yang terletak di:',
+  objek_elektronik:
+    '- {{jenis_hak}} Sertipikat Elektronik dengan Nomor Identifikasi Bidang Tanah (NIB) : {{objek_nib}}, Nomor Kode Sertipikat : {{objek_kode_sertipikat}}, atas sebidang {{objek_bentuk}} seluas {{objek_luas}} ({{objek_luas_terbilang}}) M2, terdaftar atas nama {{objek_atas_nama}} dan SPPT PBB NOP: {{objek_nop}}, yang terletak di:',
+  letak_objek:
+    '- Provinsi : {{objek_provinsi}};\n- {{objek_label_kota}} : {{objek_kota}};\n- Kecamatan : {{objek_kecamatan}};\n- {{objek_label_kelurahan}} : {{objek_kelurahan}};\n- Jalan : {{objek_jalan}}.',
+  meliputi_srs:
+    'Jual beli ini meliputi pula hak atas bagian bersama, benda bersama, tanah bersama, dan fasilitas bersama dengan nilai perbandingan proporsional {{objek_npp}} ({{objek_npp_terbilang}})%;',
+  meliputi_tanah:
+    'Jual beli ini meliputi pula segala sesuatu yang berada, berdiri, tertanam atau terpasang di atas dan/atau di dalam tanah tersebut yang dapat dianggap sebagai barang tidak bergerak;',
+  sebutan_objek:
+    'Selanjutnya semua yang diuraikan di atas dalam akta ini disebut “Objek {{akta_jenis}}”.',
+
+  /* Saksi & penutup */
+  penutup_pembuka:
+    '- Akhirnya hadir juga di hadapan saya, dengan dihadiri oleh saksi-saksi yang sama dan disebutkan pada bagian akhir akta ini :\n- Demikianlah akta ini dibuat di hadapan PARA PIHAK dan Saksi:',
+  identitas_saksi:
+    '{{saksi_gelar}} {{saksi_nama}}, lahir di {{saksi_tempat_lahir}}, pada tanggal {{saksi_tanggal_lahir}} ({{saksi_tanggal_lahir_terbilang}}), {{saksi_pekerjaan}}, Warga Negara Indonesia, bertempat tinggal di {{saksi_jalan}}, Rukun Tetangga {{saksi_rt}}, Rukun Warga {{saksi_rw}}, Kelurahan {{saksi_kelurahan}}, Kecamatan {{saksi_kecamatan}}, {{saksi_kota}}, Provinsi {{saksi_provinsi}}, pemegang Kartu Tanda Penduduk dengan Nomor Induk Kependudukan (NIK): {{saksi_nik}}.',
+  domisili_saksi:
+    '- {{saksi_domisili}}',
+  penutup_akhir:
+    '- Sebagai saksi-saksi, dan setelah dibacakan serta dijelaskan, maka sebagai bukti kebenaran pernyataan yang dikemukakan oleh PIHAK PERTAMA dan PIHAK KEDUA tersebut di atas, akta ini ditandatangani oleh PIHAK PERTAMA, PIHAK KEDUA, para saksi dan saya, PPAT, sebanyak 2 (dua) rangkap asli, yaitu 1 (satu) rangkap lembar pertama disimpan di kantor saya, PPAT dan 1 (satu) rangkap lembar kedua disampaikan kepada {{kantor_pertanahan}}.',
+
+  /* Tanda tangan */
+  ttd_para_pihak: '{{sebutan_pihak_pertama}}     /     {{sebutan_pihak_kedua}}\n({{pihak_pertama.nama}})     /     ({{pihak_kedua.nama}})',
+  ttd_qq_pt: 'qq. {{pt.nama}}\nberkedudukan di {{pt.kedudukan}}',
+  ttd_persetujuan: '{{label_persetujuan}}\n({{pasangan.nama}})',
+  ttd_saksi: 'SAKSI     /     SAKSI\n({{saksi1_nama}})     /     ({{saksi2_nama}})',
+  ttd_ppat: 'PEJABAT PEMBUAT AKTA TANAH\n({{ppat_nama}})'
+};
+
+/* ---------- daftar potongan per Bagian Otomatis ---------- */
+const POTONGAN = {
+  para_pihak: [
+    {kode:'identitas_orang', judul:'Identitas orang', syarat:'selalu', wajib:['orang.nama','orang.nik']},
+    {kode:'domisili', judul:'Domisili sementara', syarat:'bila diisi', wajib:['orang.domisili_sementara']},
+    {grup:'Perwakilan / kuasa', anak:[
+      {kode:'kuasa_bawah_tangan', judul:'Dasar kuasa — di bawah tangan', syarat:'bila dikuasakan, kuasa di bawah tangan', wajib:['kuasa_tanggal']},
+      {kode:'kuasa_notariil', judul:'Dasar kuasa — notariil', syarat:'bila dikuasakan, akta kuasa notariil', wajib:['kuasa_nomor','kuasa_notaris']}
+    ]},
+    {grup:'Pasangan', anak:[
+      {kode:'pasangan_hadir', judul:'Persetujuan pasangan — hadir', syarat:'bila ada pasangan & hadir', wajib:['pasangan.nama','pasangan.nik']},
+      {kode:'pasangan_diwakili', judul:'Persetujuan pasangan — diwakili', syarat:'bila pasangan diwakili', wajib:['pasangan.nama','pasangan.nik']},
+      {kode:'kuasa_pasangan', judul:'Dasar kuasa pasangan', syarat:'bila pasangan diwakili', wajib:['kuasa_pasangan_tanggal']}
+    ]},
+    {grup:'Perseroan', anak:[
+      {kode:'pt_kedudukan', judul:'Kedudukan wakil perseroan', syarat:'bila berbentuk PT', wajib:['pt.nama','pt.jabatan_wakil']},
+      {kode:'pt_komisaris', judul:'Persetujuan Dewan Komisaris', syarat:'bila disyaratkan', wajib:['pt.komisaris_nomor']},
+      {kode:'pt_pendirian', judul:'Akta pendirian', syarat:'bila berbentuk PT', wajib:['pt.pendirian_nomor']},
+      {kode:'pt_uu40', judul:'Penyesuaian UU 40/2007', syarat:'bila ada', wajib:['pt.uu40_nomor']},
+      {kode:'pt_perubahan', judul:'Riwayat perubahan (berulang)', syarat:'bila ada', wajib:[]}
+    ]},
+    {kode:'peran', judul:'Peran pihak', syarat:'selalu', wajib:['peran','sebutan_pihak']}
+  ],
+  objek: [
+    {grup:'Uraian objek', anak:[
+      {kode:'objek_adat', judul:'Tanah bekas Milik Adat', syarat:'bila belum terdaftar', wajib:['objek_luas']},
+      {kode:'objek_shmsrs', judul:'Satuan Rumah Susun', syarat:'bila jenis hak SHMSRS', wajib:['sertipikat_nomor']},
+      {kode:'objek_elektronik', judul:'Sertipikat Elektronik', syarat:'bila sertipikat elektronik', wajib:['objek_nib']}
+    ]},
+    {kode:'letak_objek', judul:'Letak objek', syarat:'selalu', wajib:['objek_provinsi']},
+    {grup:'Meliputi pula', anak:[
+      {kode:'meliputi_srs', judul:'Bagian bersama (sarusun)', syarat:'bila satuan rumah susun', wajib:['objek_npp']},
+      {kode:'meliputi_tanah', judul:'Benda tidak bergerak', syarat:'bila tanah / bangunan', wajib:[]}
+    ]},
+    {kode:'sebutan_objek', judul:'Sebutan objek', syarat:'selalu', wajib:['akta_jenis']}
+  ],
+  saksi: [
+    {kode:'penutup_pembuka', judul:'Pembuka penutup', syarat:'selalu', wajib:[]},
+    {kode:'identitas_saksi', judul:'Identitas saksi (berulang)', syarat:'selalu, tiap saksi', wajib:['saksi_nama','saksi_nik']},
+    {kode:'domisili_saksi', judul:'Keterangan domisili saksi', syarat:'bila diisi', wajib:[]},
+    {kode:'penutup_akhir', judul:'Penutup akhir', syarat:'selalu', wajib:['kantor_pertanahan']}
+  ],
+  ttd: [
+    {kode:'ttd_para_pihak', judul:'Kolom para pihak', syarat:'selalu', wajib:[]},
+    {kode:'ttd_qq_pt', judul:'Baris qq. perseroan', syarat:'bila berbentuk PT', wajib:['pt.nama']},
+    {kode:'ttd_persetujuan', judul:'Kolom persetujuan', syarat:'bila ada pemberi persetujuan', wajib:[]},
+    {kode:'ttd_saksi', judul:'Kolom saksi', syarat:'selalu', wajib:[]},
+    {kode:'ttd_ppat', judul:'Kolom PPAT', syarat:'selalu', wajib:['ppat_nama']}
+  ]
+};
+
+/* ---------- kasus untuk pratinjau ---------- */
+const KASUS = {
+  para_pihak: [
+    {id:'perorangan', nama:'Perorangan', urut:[['identitas_orang'],['peran']]},
+    {id:'pasangan', nama:'+ pasangan', urut:[['identitas_orang'],['pasangan_hadir'],['peran']]},
+    {id:'pasangan_wakil', nama:'+ pasangan diwakili', urut:[['identitas_orang'],['pasangan_diwakili'],['identitas_orang','penerima kuasa pasangan'],['kuasa_pasangan'],['peran']]},
+    {id:'kuasa', nama:'Dikuasakan', urut:[['identitas_orang','penerima kuasa'],['domisili'],['kuasa_bawah_tangan'],['identitas_orang','pemberi kuasa'],['peran']]},
+    {id:'pt', nama:'Perseroan', urut:[['identitas_orang','wakil perseroan'],['pt_kedudukan'],['pt_komisaris'],['pt_pendirian'],['pt_uu40'],['pt_perubahan'],['peran']]},
+    {id:'pt_kuasa', nama:'Perseroan + kuasa', urut:[['identitas_orang','penerima kuasa'],['kuasa_notariil'],['identitas_orang','wakil perseroan'],['pt_kedudukan'],['pt_pendirian'],['peran']]}
+  ],
+  objek: [
+    {id:'adat', nama:'Bekas Milik Adat', urut:[['objek_adat'],['letak_objek'],['meliputi_tanah'],['sebutan_objek']]},
+    {id:'srs', nama:'Satuan Rumah Susun', urut:[['objek_shmsrs'],['letak_objek'],['meliputi_srs'],['sebutan_objek']]},
+    {id:'elektronik', nama:'Sertipikat Elektronik', urut:[['objek_elektronik'],['letak_objek'],['meliputi_tanah'],['sebutan_objek']]}
+  ],
+  saksi: [
+    {id:'dua', nama:'2 saksi', urut:[['penutup_pembuka'],['identitas_saksi','saksi 1'],['domisili_saksi'],['identitas_saksi','saksi 2'],['domisili_saksi'],['penutup_akhir']]},
+    {id:'tanpa_domisili', nama:'tanpa domisili', urut:[['penutup_pembuka'],['identitas_saksi','saksi 1'],['identitas_saksi','saksi 2'],['penutup_akhir']]}
+  ],
+  ttd: [
+    {id:'biasa', nama:'Perorangan', urut:[['ttd_para_pihak'],['ttd_saksi'],['ttd_ppat']]},
+    {id:'pasangan', nama:'+ persetujuan', urut:[['ttd_para_pihak'],['ttd_persetujuan'],['ttd_saksi'],['ttd_ppat']]},
+    {id:'pt', nama:'Perseroan', urut:[['ttd_para_pihak'],['ttd_qq_pt'],['ttd_saksi'],['ttd_ppat']]}
+  ]
+};
+
+/* ---------- data contoh untuk pratinjau ---------- */
+const CONTOH = {
+  'orang.sapaan':'Tuan','orang.nama':'Contoh Nama Satu','orang.tempat_lahir':'Bandung',
+  'orang.tanggal_lahir':'12-05-1980','orang.tanggal_lahir_terbilang':'dua belas Mei seribu sembilan ratus delapan puluh',
+  'orang.kewarganegaraan':'Indonesia','orang.pekerjaan':'Karyawan Swasta','orang.alamat':'Jalan Contoh Nomor 1',
+  'orang.rt':'004','orang.rw':'007','orang.label_kelurahan':'Kelurahan','orang.kelurahan':'Cihapit',
+  'orang.kecamatan':'Bandung Wetan','orang.label_kota':'Kota','orang.kota':'Bandung','orang.provinsi':'Jawa Barat',
+  'orang.nik':'3273011205800001','orang.domisili_sementara':'Kota Jakarta',
+  'kuasa_tanggal':'01-09-2026','kuasa_tanggal_terbilang':'satu September dua ribu dua puluh enam',
+  'kuasa_nomor':'45','kuasa_notaris':'Contoh Notaris Empat, S.H.','kuasa_notaris_kota':'Jakarta',
+  'pasangan_hubungan':'Istri','pasangan_hubungan_balik':'suaminya','pihak.sapaan':'Tuan','pihak.nama':'Contoh Nama Satu',
+  'nikah_dokumen_jenis':'Kutipan Akta Nikah','nikah_dokumen_tanggal':'14-06-2007',
+  'nikah_dokumen_tanggal_terbilang':'empat belas Juni dua ribu tujuh','nikah_dokumen_nomor':'123/45/VI/2007',
+  'nikah_dokumen_penerbit':'Kantor Urusan Agama Kecamatan Bandung Wetan',
+  'pasangan.nama':'Contoh Nama Dua','pasangan.tempat_lahir':'Bandung','pasangan.tanggal_lahir':'21-07-1983',
+  'pasangan.tanggal_lahir_terbilang':'dua puluh satu Juli seribu sembilan ratus delapan puluh tiga',
+  'pasangan.kewarganegaraan':'Indonesia','pasangan.pekerjaan':'Ibu Rumah Tangga','pasangan.nik':'3273016107830005',
+  'kuasa_pasangan_jenis':'Surat Kuasa di bawah tangan','kuasa_pasangan_tanggal':'01-09-2026',
+  'kuasa_pasangan_tanggal_terbilang':'satu September dua ribu dua puluh enam',
+  'pt.nama':'PT Contoh Karya Sejahtera','pt.kedudukan':'Jakarta Selatan','pt.jabatan_wakil':'Direktur Utama',
+  'pt.komisaris_tanggal':'20-08-2026','pt.komisaris_tanggal_terbilang':'dua puluh Agustus dua ribu dua puluh enam',
+  'pt.komisaris_nomor':'007/DK/VIII/2026','pt.pendirian_tanggal':'10-03-2005',
+  'pt.pendirian_tanggal_terbilang':'sepuluh Maret dua ribu lima','pt.pendirian_nomor':'12',
+  'pt.pendirian_notaris':'Contoh Notaris Satu, S.H.','pt.pendirian_notaris_kota':'Jakarta',
+  'pt.pendirian_pengesah':'Menteri Hukum dan Hak Asasi Manusia','pt.pendirian_sk_tanggal':'02-05-2005',
+  'pt.pendirian_sk_tanggal_terbilang':'dua Mei dua ribu lima','pt.pendirian_sk_nomor':'C-11223 HT.01.01.TH.2005',
+  'pt.uu40_tanggal':'15-07-2008','pt.uu40_tanggal_terbilang':'lima belas Juli dua ribu delapan','pt.uu40_nomor':'27',
+  'pt.uu40_notaris':'Contoh Notaris Dua, S.H., M.Kn.','pt.uu40_notaris_kota':'Jakarta',
+  'jenis_perubahan':'susunan Direksi dan Komisaris','akta_tanggal':'19-02-2024',
+  'akta_tanggal_terbilang':'sembilan belas Februari dua ribu dua puluh empat','akta_nomor':'08',
+  'notaris':'Contoh Notaris Tiga, S.H., M.Kn.','notaris_kota':'Jakarta',
+  'peran':'Penjual','sebutan_pihak':'PIHAK PERTAMA',
+  'jenis_hak':'Hak Milik','persil_nomor':'21','persil_blok':'D.III','objek_luas':'120',
+  'objek_luas_terbilang':'seratus dua puluh','batas_utara':'tanah milik A','batas_timur':'tanah milik B',
+  'batas_selatan':'jalan','batas_barat':'tanah milik C','sertipikat_nomor':'1024','sertipikat_kelurahan':'Senayan',
+  'gambar_denah_tanggal':'11-11-2015','gambar_denah_nomor':'77/2015','objek_atas_nama':'Contoh Nama Satu',
+  'objek_nib':'09.01.02.03.00123','objek_nop':'32.73.010.001-0012.0','objek_kode_sertipikat':'AB12-CD34',
+  'objek_bentuk':'tanah dan bangunan','objek_provinsi':'Jawa Barat','objek_label_kota':'Kota','objek_kota':'Bandung',
+  'objek_kecamatan':'Bandung Wetan','objek_label_kelurahan':'Kelurahan','objek_kelurahan':'Cihapit',
+  'objek_jalan':'Jalan Contoh Nomor 1','objek_npp':'0,85','objek_npp_terbilang':'nol koma delapan lima',
+  'akta_jenis':'Jual Beli',
+  'saksi_gelar':'Nona','saksi_nama':'Contoh Saksi Satu','saksi_tempat_lahir':'Jakarta','saksi_tanggal_lahir':'25-03-1995',
+  'saksi_tanggal_lahir_terbilang':'dua puluh lima Maret seribu sembilan ratus sembilan puluh lima',
+  'saksi_pekerjaan':'Karyawan Swasta','saksi_jalan':'Jalan Contoh Nomor 10','saksi_rt':'003','saksi_rw':'006',
+  'saksi_kelurahan':'Senayan','saksi_kecamatan':'Kebayoran Baru','saksi_kota':'Kota Administrasi Jakarta Selatan',
+  'saksi_provinsi':'DKI Jakarta','saksi_nik':'3174016503950011',
+  'saksi_domisili':'Keduanya untuk sementara berada di Jakarta Selatan',
+  'kantor_pertanahan':'Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan',
+  'sebutan_pihak_pertama':'PIHAK PERTAMA','sebutan_pihak_kedua':'PIHAK KEDUA',
+  'pihak_pertama.nama':'Contoh Nama Satu','pihak_kedua.nama':'Contoh Nama Tiga',
+  'label_persetujuan':'Persetujuan Istri','saksi1_nama':'Contoh Saksi Satu','saksi2_nama':'Contoh Saksi Dua',
+  'ppat_nama':'Contoh Nama PPAT, S.H., M.Kn.'
+};
+
+/* ---------- keadaan ---------- */
+let sections = [
+  {id:'pembukaan', jenis:'catatan', judul:'PEMBUKAAN AKTA', teks:'SURAT PERJANJIAN …\n(naskah bebas, diketik biasa)'},
+  {id:'para_pihak', jenis:'otomatis', kode:'para_pihak', judul:'Para Pihak'},
+  {id:'objek', jenis:'otomatis', kode:'objek', judul:'Objek Jual Beli'},
+  {id:'p1', jenis:'pasal', judul:'Pasal 1', teks:'Mulai hari ini Objek Jual Beli yang diuraikan dalam akta ini telah menjadi milik PIHAK KEDUA …'},
+  {id:'p2', jenis:'pasal', judul:'Pasal 2', teks:'PIHAK PERTAMA menjamin bahwa Objek Jual Beli tersebut tidak tersangkut dalam suatu sengketa …'},
+  {id:'p3', jenis:'pasal', judul:'Pasal 3', teks:'PIHAK KEDUA dengan ini menyatakan bahwa dengan jual beli ini kepemilikan tanahnya tidak melebihi ketentuan maksimum …'},
+  {id:'saksi', jenis:'otomatis', kode:'saksi', judul:'Saksi & Penutup'},
+  {id:'ttd', jenis:'otomatis', kode:'ttd', judul:'Tanda Tangan'}
+];
+
+const OTO_TERSEDIA = {para_pihak:'Para Pihak', objek:'Objek Jual Beli', saksi:'Saksi & Penutup', ttd:'Tanda Tangan'};
+
+let redaksi = {};               // kode -> {teks, asal:'bawaan'|'kantor'|'khusus'}
+Object.keys(BAWAAN).forEach(k => redaksi[k] = {teks: BAWAAN[k], asal: 'bawaan'});
+
+let aktif = 'para_pihak';       // section terpilih
+let potAktif = null;            // potongan yang sedang diedit
+let kasusAktif = {};            // kode section -> id kasus
+let pakaiContoh = false;
+let grupTutup = {};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ---------- daftar section ---------- */
+function gambarSections() {
+  const box = $('#seclist');
+  $('#jml-section').textContent = 'Pasal & Catatan (' + sections.length + ')';
+  let no = 0;
+  box.innerHTML = sections.map(s => {
+    const n = s.jenis === 'pasal' ? (++no) : '';
+    const lencana = s.jenis === 'otomatis' ? '<span class="lencana oto">otomatis</span>'
+      : '<span class="lencana">' + (s.jenis === 'pasal' ? 'pasal' : 'catatan') + '</span>';
+    return '<button class="secitem" data-sec="' + s.id + '" aria-current="' + (aktif === s.id) + '">' +
+      '<span class="no">' + (n || '•') + '</span>' +
+      '<span class="nm">' + esc(s.judul) + '</span>' + lencana + '</button>';
+  }).join('');
+  box.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => {
+    aktif = b.dataset.sec; potAktif = null; gambarSemua();
+  }));
+
+  const sel = $('#tambah-oto');
+  const dipakai = sections.filter(s => s.jenis === 'otomatis').map(s => s.kode);
+  sel.innerHTML = '<option value="">+ Tambah Bagian Otomatis</option>' +
+    Object.keys(OTO_TERSEDIA).filter(k => dipakai.indexOf(k) < 0)
+      .map(k => '<option value="' + k + '">' + OTO_TERSEDIA[k] + '</option>').join('');
+}
+
+/* ---------- isi section ---------- */
+function ratakan(kode) {                       // daftar potongan tanpa grup
+  const out = [];
+  (POTONGAN[kode] || []).forEach(x => x.grup ? x.anak.forEach(a => out.push(a)) : out.push(x));
+  return out;
+}
+function cariPot(kode, kodePot) { return ratakan(kode).filter(p => p.kode === kodePot)[0]; }
+
+function kasusSekarang(kodeSec) {
+  const daftar = KASUS[kodeSec] || [];
+  const id = kasusAktif[kodeSec] || (daftar[0] && daftar[0].id);
+  return daftar.filter(k => k.id === id)[0];
+}
+function terpakaiDiKasus(kodeSec) {
+  const k = kasusSekarang(kodeSec);
+  return k ? k.urut.map(u => u[0]) : [];
+}
+function dipakaiPada(kodeSec, kodePot) {
+  return (KASUS[kodeSec] || []).filter(k => k.urut.some(u => u[0] === kodePot)).map(k => k.nama);
+}
+
+function gambarIsi() {
+  const s = sections.filter(x => x.id === aktif)[0];
+  const box = $('#isi');
+  if (!s) { box.innerHTML = ''; return; }
+
+  if (s.jenis !== 'otomatis') {
+    box.innerHTML = '<p class="judul">' + esc(s.judul) + '</p>' +
+      '<p class="ket">Naskah bebas — diketik seperti dokumen biasa, tanpa kondisi.</p>' +
+      '<textarea rows="14" id="teks-bebas">' + esc(s.teks || '') + '</textarea>';
+    $('#teks-bebas').addEventListener('input', e => { s.teks = e.target.value; });
+    return;
+  }
+
+  const terpakai = terpakaiDiKasus(s.kode);
+  let h = '<p class="judul">' + esc(s.judul) + '</p>' +
+    '<p class="ket">Bagian Otomatis — struktur, syarat tampil, dan urutannya terkunci. Klik potongan untuk menyunting tulisannya.</p>';
+
+  (POTONGAN[s.kode] || []).forEach(x => {
+    if (x.grup) {
+      const tutup = grupTutup[s.kode + '|' + x.grup];
+      h += '<div class="grup"><button class="kepala" data-grup="' + esc(x.grup) + '">' +
+        '<span class="chev">' + (tutup ? '▸' : '▾') + '</span>' + esc(x.grup) +
+        ' <span style="opacity:.6">(' + x.anak.length + ')</span></button>';
+      if (!tutup) { h += '<div class="isi-grup">' + x.anak.map(a => kartuPot(s.kode, a, terpakai)).join('') + '</div>'; }
+      h += '</div>';
+    } else {
+      h += kartuPot(s.kode, x, terpakai);
+    }
+  });
+  box.innerHTML = h;
+
+  box.querySelectorAll('[data-grup]').forEach(b => b.addEventListener('click', () => {
+    const k = s.kode + '|' + b.dataset.grup;
+    grupTutup[k] = !grupTutup[k]; gambarIsi();
+  }));
+  box.querySelectorAll('[data-pot]').forEach(b => b.addEventListener('click', () => {
+    potAktif = (potAktif === b.dataset.pot) ? null : b.dataset.pot; gambarIsi();
+  }));
+  pasangEditor(s.kode);
+}
+
+function kartuPot(kodeSec, p, terpakai) {
+  const r = redaksi[p.kode] || {teks:'', asal:'bawaan'};
+  const buka = potAktif === p.kode;
+  const asalLbl = r.asal === 'kantor' ? '<span class="asal kantor">redaksi kantor</span>'
+    : r.asal === 'khusus' ? '<span class="asal khusus">khusus template</span>'
+    : '<span class="asal">bawaan</span>';
+  let h = '<div class="pot' + (terpakai.indexOf(p.kode) > -1 ? ' terpakai' : '') + '">' +
+    '<button class="baris" data-pot="' + p.kode + '">' +
+      '<span class="nm">' + esc(p.judul) + '</span>' +
+      '<span class="syarat">' + esc(p.syarat) + '</span>' + asalLbl +
+    '</button>';
+  if (buka) {
+    const vars = [...new Set((r.teks.match(/\{\{[^}]+\}\}/g) || []).map(v => v.slice(2, -2)))];
+    const hilang = (p.wajib || []).filter(w => vars.indexOf(w) < 0);
+    h += '<div class="editor">' +
+      '<p class="tag">Tulisan</p>' +
+      '<textarea rows="7" data-teks="' + p.kode + '">' + esc(r.teks) + '</textarea>' +
+      (hilang.length ? '<p class="peringatan">Variabel wajib belum ada: ' + hilang.map(esc).join(', ') + ' — tidak bisa disimpan.</p>' : '') +
+      '<p class="tag">Sisipkan variabel</p><div class="chips">' +
+        vars.map(v => '<button data-sisip="' + esc(v) + '" data-ke="' + p.kode + '">{{' + esc(v) + '}}</button>').join('') +
+      '</div>' +
+      '<p class="dipakai">Dipakai pada: ' + (dipakaiPada(kodeSec, p.kode).join(', ') || '—') + '</p>' +
+      '<div class="aksi">' +
+        '<button class="simpan" data-simpan="' + p.kode + '"' + (hilang.length ? ' disabled' : '') + '>Simpan</button>' +
+        (r.asal !== 'bawaan' ? '<button class="netral" data-reset="' + p.kode + '">Kembalikan ke bawaan</button>' : '') +
+      '</div></div>';
+  }
+  return h + '</div>';
+}
+
+function pasangEditor(kodeSec) {
+  const box = $('#isi');
+  box.querySelectorAll('[data-teks]').forEach(t => t.addEventListener('input', e => {
+    redaksi[e.target.dataset.teks].teks = e.target.value;
+    gambarPratinjau();
+  }));
+  box.querySelectorAll('[data-sisip]').forEach(b => b.addEventListener('click', () => {
+    const ta = box.querySelector('[data-teks="' + b.dataset.ke + '"]');
+    const v = '{{' + b.dataset.sisip + '}}';
+    const i = ta.selectionStart, j = ta.selectionEnd;
+    ta.value = ta.value.slice(0, i) + v + ta.value.slice(j);
+    redaksi[b.dataset.ke].teks = ta.value;
+    ta.focus(); ta.selectionStart = ta.selectionEnd = i + v.length;
+    gambarPratinjau();
+  }));
+  box.querySelectorAll('[data-simpan]').forEach(b => b.addEventListener('click', () => tanyaLingkup(b.dataset.simpan)));
+  box.querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => {
+    redaksi[b.dataset.reset] = {teks: BAWAAN[b.dataset.reset], asal: 'bawaan'};
+    gambarSemua();
+  }));
+}
+
+/* ---------- modal lingkup simpan ---------- */
+function tanyaLingkup(kode) {
+  const t = document.createElement('div');
+  t.className = 'tirai';
+  t.innerHTML = '<div class="modal">' +
+    '<h3>Simpan redaksi</h3>' +
+    '<p>Potongan ini juga dipakai di template <b>Hibah</b>, <b>APHT</b>, dan <b>SKMHT</b>.</p>' +
+    '<label><input type="radio" name="lingkup" value="kantor" checked><span>Berlaku untuk semua template kantor' +
+      '<small>Sekali diubah, seluruh template kantor ikut memakai redaksi ini.</small></span></label>' +
+    '<label><input type="radio" name="lingkup" value="khusus"><span>Berlaku untuk template ini saja' +
+      '<small>Template lain tetap memakai redaksi sebelumnya.</small></span></label>' +
+    '<div class="aksi"><button class="netral" data-batal>Batal</button>' +
+    '<button class="simpan" data-ok>Simpan</button></div></div>';
+  document.body.appendChild(t);
+  t.querySelector('[data-batal]').addEventListener('click', () => t.remove());
+  t.querySelector('[data-ok]').addEventListener('click', () => {
+    redaksi[kode].asal = t.querySelector('input[name="lingkup"]:checked').value;
+    t.remove(); gambarSemua();
+  });
+}
+
+/* ---------- pratinjau ---------- */
+function gambarKasus() {
+  const s = sections.filter(x => x.id === aktif)[0];
+  const box = $('#kasus');
+  if (!s || s.jenis !== 'otomatis') { box.innerHTML = '<span style="font-size:.8rem;color:var(--ink-soft)">Naskah bebas — tidak berkondisi.</span>'; return; }
+  const daftar = KASUS[s.kode] || [];
+  const aktifId = (kasusSekarang(s.kode) || {}).id;
+  box.innerHTML = daftar.map(k => '<button data-kasus="' + k.id + '" aria-pressed="' + (k.id === aktifId) + '">' + esc(k.nama) + '</button>').join('') +
+    '<label class="sw"><input type="checkbox" id="sw-contoh"' + (pakaiContoh ? ' checked' : '') + '> data contoh</label>';
+  box.querySelectorAll('[data-kasus]').forEach(b => b.addEventListener('click', () => {
+    kasusAktif[s.kode] = b.dataset.kasus; gambarIsi(); gambarKasus(); gambarPratinjau();
+  }));
+  $('#sw-contoh').addEventListener('change', e => { pakaiContoh = e.target.checked; gambarPratinjau(); });
+}
+
+function isiVariabel(t) {
+  return esc(t).replace(/\{\{([^}]+)\}\}/g, (m, v) => {
+    if (!pakaiContoh) return '<span class="var">' + m + '</span>';
+    const nilai = CONTOH[v.trim()];
+    return nilai == null ? '<span class="var">' + m + '</span>' : esc(nilai);
+  }).replace(/\n/g, '<br>');
+}
+
+function gambarPratinjau() {
+  const s = sections.filter(x => x.id === aktif)[0];
+  const box = $('#pratinjau');
+  if (!s) { box.innerHTML = ''; return; }
+  if (s.jenis !== 'otomatis') {
+    box.innerHTML = '<p class="blok">' + isiVariabel(s.teks || '') + '</p>';
+    return;
+  }
+  const k = kasusSekarang(s.kode);
+  if (!k) { box.innerHTML = '<p class="kosong">Belum ada kasus.</p>'; return; }
+  box.innerHTML = k.urut.map(u => {
+    const p = cariPot(s.kode, u[0]);
+    const r = redaksi[u[0]];
+    if (!p || !r) return '';
+    return '<p class="blok"><span class="lbl">' + esc(p.judul) + (u[1] ? ' · ' + esc(u[1]) : '') + '</span>' +
+      isiVariabel(r.teks) + '</p>';
+  }).join('');
+}
+
+/* ---------- tombol tambah ---------- */
+$('#tambah-pasal').addEventListener('click', () => {
+  const n = sections.filter(s => s.jenis === 'pasal').length + 1;
+  sections.push({id:'p' + Date.now(), jenis:'pasal', judul:'Pasal ' + n, teks:''});
+  gambarSemua();
+});
+$('#tambah-catatan').addEventListener('click', () => {
+  sections.push({id:'c' + Date.now(), jenis:'catatan', judul:'Catatan baru', teks:''});
+  gambarSemua();
+});
+$('#tambah-oto').addEventListener('change', e => {
+  const k = e.target.value;
+  if (!k) return;
+  sections.push({id:'o' + Date.now(), jenis:'otomatis', kode:k, judul:OTO_TERSEDIA[k]});
+  e.target.value = '';
+  gambarSemua();
+});
+
+function gambarSemua() { gambarSections(); gambarIsi(); gambarKasus(); gambarPratinjau(); }
+gambarSemua();
+</script>
+</body>
+</html>

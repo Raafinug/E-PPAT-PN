@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulator Para Pihak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f1ede2; --paper-raised: #e8e2d2; --paper-sunk: #dcd5c2; --ink: #241f18; --ink-soft: #57503f;
+    --rule: #c9bfa4; --stamp: #8a2f22; --stamp-soft: #8a2f2212;
+    --ok: #3d5c3a; --blok: #4a5f7a;
+    --auto-bg: #e0e7ef; --auto-line: #8298b0; --auto-ink: #3f5872;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --paper: #1b1712; --paper-raised: #241f18; --paper-sunk: #15120e; --ink: #ece5d4; --ink-soft: #b7ac93;
+      --rule: #4a4232; --stamp: #d97a63; --stamp-soft: #d97a6320; --ok: #8fb388; --blok: #93b1d1;
+      --auto-bg: #1d2530; --auto-line: #53698a; --auto-ink: #9db6d4;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1b1712; --paper-raised: #241f18; --paper-sunk: #15120e; --ink: #ece5d4; --ink-soft: #b7ac93;
+    --rule: #4a4232; --stamp: #d97a63; --stamp-soft: #d97a6320; --ok: #8fb388; --blok: #93b1d1;
+    --auto-bg: #1d2530; --auto-line: #53698a; --auto-ink: #9db6d4;
+  }
+  * { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    margin: 0; min-height: 100%; background: var(--paper); color: var(--ink);
+    font-family: var(--serif); font-size: 16.5px; line-height: 1.55;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem);
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 1.2rem; }
+  header { padding: 2.2rem 0 1.2rem; border-bottom: 1px solid var(--rule); }
+  .eyebrow { font-family: var(--mono); font-size: 0.75rem; color: var(--stamp); margin: 0 0 0.6rem; }
+  h1 { font-size: clamp(1.3rem, 3.4vw, 1.65rem); font-weight: 600; margin: 0 0 0.5rem; }
+  .lede { color: var(--ink-soft); font-size: 0.95rem; margin: 0; max-width: 66ch; }
+
+  .solusi { margin-top: 1.2rem; border: 1px solid var(--rule); border-left: 3px solid var(--ok); background: var(--paper-raised); padding: 0.85rem 1.05rem; }
+  .solusi h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ok); font-weight: 500; margin: 0 0 0.45rem; }
+  .solusi p { margin: 0 0 0.5rem; font-size: 0.9rem; }
+  .solusi ol { margin: 0; padding-left: 1.15rem; font-size: 0.9rem; }
+  .solusi li { margin-bottom: 0.25rem; }
+  .solusi li b { color: var(--stamp); }
+  .solusi code { font-family: var(--mono); font-size: 0.85em; background: var(--paper); border: 1px solid var(--rule); border-radius: 2px; padding: 0.05rem 0.3rem; }
+  .solusi .tegas { margin: 0.7rem 0 0; padding-top: 0.6rem; border-top: 1px dashed var(--rule); }
+
+  .sumber { margin-top: 0.7rem; border: 1px solid var(--rule); border-left: 3px solid var(--blok); background: var(--paper-raised); padding: 0.85rem 1.05rem; }
+  .sumber h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--blok); font-weight: 500; margin: 0 0 0.45rem; }
+  .sumber p { margin: 0 0 0.5rem; font-size: 0.9rem; }
+  .sumber ol { margin: 0; padding-left: 1.15rem; font-size: 0.9rem; }
+  .sumber li { margin-bottom: 0.25rem; }
+  .sumber li b { color: var(--stamp); }
+
+  .kunci { font-size: 0.78rem; color: var(--ink-soft); margin: 0.4rem 0 0; padding-left: 0.6rem; border-left: 2px solid var(--rule); }
+
+  .toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.8rem; padding: 1rem 0 0.4rem; }
+  .toolbar .f { max-width: 230px; }
+
+  .party-list { padding: 0.8rem 0 0.2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .card { border: 1px solid var(--rule); background: var(--paper-raised); border-radius: 3px; padding: 0.9rem 1rem; }
+  .card-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+  .card-head .num { font-family: var(--mono); color: var(--stamp); font-size: 0.9rem; min-width: 1.9rem; }
+  .chip {
+    font-family: var(--mono); font-size: 0.72rem; border: 1px solid var(--stamp); color: var(--stamp);
+    background: var(--stamp-soft); border-radius: 2px; padding: 0.15rem 0.45rem;
+  }
+  .chip small { opacity: 0.75; }
+  .card-head .spacer { flex: 1; }
+  button.remove, button.mini {
+    font-family: var(--mono); font-size: 0.72rem; background: none; color: var(--stamp);
+    border: 1px solid var(--stamp); border-radius: 2px; padding: 0.3rem 0.5rem; cursor: pointer;
+  }
+  button.mini { color: var(--ink-soft); border-color: var(--rule); }
+
+  .sect { margin-top: 0.7rem; padding-top: 0.6rem; border-top: 1px dashed var(--rule); }
+  .sect > h4 {
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 500; margin: 0 0 0.45rem;
+    display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  }
+  .sect > h4 .blokcode { color: var(--blok); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem 0.65rem; }
+  .f { display: flex; flex-direction: column; gap: 0.18rem; min-width: 0; }
+  .f.wide { grid-column: 1 / -1; }
+  .f.span2 { grid-column: span 2; }
+  .f label { font-family: var(--mono); font-size: 0.64rem; color: var(--ink-soft); letter-spacing: 0.04em; text-transform: uppercase; }
+  .f input, .f select {
+    font-family: var(--serif); font-size: 0.88rem; padding: 0.36rem 0.45rem;
+    border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); color: var(--ink);
+    width: 100%; min-width: 0;
+  }
+  .f.derived input { background: var(--paper-sunk); color: var(--ink-soft); }
+
+  /* field yang terisi otomatis dari Data KTP user */
+  .grid.auto > .f input, .grid.auto > .f select { background: var(--auto-bg); border-color: var(--auto-line); }
+  .grid.auto > .f label { color: var(--auto-ink); }
+  .grid.auto > .f.derived input { background: var(--paper-sunk); border-color: var(--rule); color: var(--ink-soft); }
+  .grid.auto > .f.derived label { color: var(--ink-soft); }
+
+  .legenda { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; margin: 0.7rem 0 0; font-size: 0.82rem; color: var(--ink-soft); }
+  .legenda span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .legenda i { width: 1.6rem; height: 1rem; border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); display: inline-block; }
+  .legenda i.auto { background: var(--auto-bg); border-color: var(--auto-line); }
+  .legenda i.der { background: var(--paper-sunk); }
+  .opt { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--ink-soft); margin: 0.35rem 0; }
+  .opt input { accent-color: var(--stamp); }
+  .note { font-size: 0.78rem; color: var(--ink-soft); margin: 0.35rem 0 0; }
+
+  .ubah-row { border: 1px solid var(--rule); border-left: 3px solid var(--blok); background: var(--paper); padding: 0.55rem 0.65rem; margin-bottom: 0.5rem; }
+  .ubah-row .ubah-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+  .ubah-row .ubah-head span { font-family: var(--mono); font-size: 0.68rem; color: var(--blok); }
+
+  .add-row { padding: 0.9rem 0 0.2rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .add-row button {
+    font-family: var(--mono); font-size: 0.82rem; background: var(--paper-raised); color: var(--ink);
+    border: 1px solid var(--rule); border-radius: 2px; padding: 0.5rem 0.9rem; cursor: pointer;
+  }
+  .add-row button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .add-row .cap { color: var(--ink-soft); font-size: 0.8rem; }
+
+  .band { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--stamp); margin: 1.6rem 0 0.5rem; display: flex; align-items: center; gap: 0.7rem; }
+  .band::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+
+  .lewati { border: 1px dashed var(--rule); background: transparent; padding: 0.8rem 1rem; margin-bottom: 0.8rem; }
+  .lewati h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--ink-soft); font-weight: 500; margin: 0 0 0.3rem; }
+  .lewati p { margin: 0; font-size: 0.86rem; color: var(--ink-soft); }
+
+  .raw-box .ph { display: block; color: var(--ink-soft); border-top: 1px dashed var(--rule);
+    border-bottom: 1px dashed var(--rule); padding: 0.5rem 0; margin: 0.4rem 0; }
+  .out-ph { border-top: 1px dashed var(--rule); border-bottom: 1px dashed var(--rule);
+    padding: 0.55rem 0; margin: 0.7rem 0; color: var(--ink-soft); font-size: 0.84rem; }
+  .out-ph b { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stamp); display: block; }
+  .out-num { display: grid; grid-template-columns: 1.6rem 1fr; gap: 0.5rem; padding: 0.3rem 0; text-align: justify; }
+  .out-num .no { font-family: var(--mono); color: var(--stamp); font-size: 0.85rem; }
+  .out-plain { margin: 0.35rem 0; text-align: justify; }
+
+  .ttd { margin-top: 1.3rem; padding-top: 0.9rem; border-top: 1px dashed var(--rule); }
+  .ttd-cap { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.7rem; }
+  .ttd-row { display: grid; gap: 0.9rem; margin-bottom: 1.3rem; }
+  .ttd-cell { text-align: center; line-height: 1.4; overflow-wrap: anywhere; }
+  .ttd-cell .hd { font-weight: 600; }
+  .ttd-cell .sp { height: 2.9rem; }
+  .ttd-cell .nm { border-top: 1px solid var(--rule); padding-top: 0.25rem; display: inline-block; min-width: 60%; }
+  .ttd-cell .qq { font-size: 0.86em; color: var(--ink-soft); }
+  .raw-box .ttd-cell .nm { border-top-style: dashed; }
+
+  .rules { margin: 1.3rem 0 0; border: 1px solid var(--rule); border-left: 3px solid var(--stamp); background: var(--paper-raised); padding: 0.8rem 1rem; }
+  .rules h3 { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--stamp); margin: 0 0 0.5rem; font-weight: 500; }
+  .rules table { border-collapse: collapse; font-size: 0.85rem; }
+  .rules td { padding: 0.1rem 0.9rem 0.1rem 0; vertical-align: top; }
+  .rules td.k { color: var(--ink-soft); }
+  .rules td.v { font-weight: 600; }
+
+  .panes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 1.6rem 0 3rem; margin-top: 1.3rem; border-top: 1px solid var(--rule); }
+  @media (max-width: 940px) { .panes { grid-template-columns: 1fr; } }
+  .pane h2 { font-size: 0.9rem; font-weight: 600; margin: 0 0 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+  .pane h2 .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--rule); flex-shrink: 0; }
+  .pane.raw h2 .dot { background: var(--stamp); }
+  .pane.rendered h2 .dot { background: var(--ok); }
+  .raw-box {
+    font-family: var(--mono); font-size: 0.73rem; line-height: 1.75;
+    border: 1px solid var(--rule); background: var(--paper-raised);
+    padding: 1rem 1.1rem; white-space: pre-wrap; overflow-wrap: anywhere;
+    max-height: 620px; overflow-y: auto;
+  }
+  .raw-box .tag { color: var(--stamp); }
+  .raw-box .blk { color: var(--blok); font-weight: 500; }
+  .out-box { border: 1px solid var(--rule); background: var(--paper-raised); padding: 1rem 1.1rem; max-height: 620px; overflow-y: auto; font-size: 0.9rem; }
+  .out-line { display: grid; grid-template-columns: 2rem 1fr; gap: 0.6rem; padding: 0.3rem 0; text-align: justify; }
+  .out-line .roman { font-family: var(--mono); color: var(--stamp); font-size: 0.85rem; }
+  .out-sub { padding-left: 2.6rem; margin: 0.25rem 0 0.45rem; text-align: justify; color: var(--ink-soft); font-size: 0.86rem; }
+  .out-sub::before { content: "— "; color: var(--stamp); }
+  .out-seb { padding-left: 2.6rem; margin: 0.4rem 0 1rem; font-size: 0.89rem; }
+  .out-seb b { color: var(--stamp); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Peta Variabel Template Akta PPAT · bagian Para Pihak</p>
+    <h1>Simulator Para Pihak — perorangan &amp; perseroan</h1>
+    <p class="lede">Bagian akta nomor 5–11: identitas, kedudukan, dan peran tiap pihak. Nama variabelnya mengikuti workbook <em>Peta Variabel Template Akta PPAT</em>. Sapaan tidak diisi manual — diturunkan dari Jenis Kelamin + Status Perkawinan pada KTP.</p>
+  </header>
+
+  <div class="solusi">
+    <h3>Solusi 1 — satu template, penulisan terbentuk otomatis</h3>
+    <p>Cukup satu template untuk semua variasi pihak. Susunan kalimat, paragraf yang muncul atau hilang, penomoran, dan terbilang terbentuk sendiri dari data yang diisi — penyusun tidak perlu menyalin-tempel redaksi dari akta lain.</p>
+    <ol>
+      <li><b>Hasil mentah saat drafting</b> — naskah beserta variabelnya. Inilah yang nanti dibuka dan masih bisa disunting oleh asisten bila ada redaksi yang perlu disesuaikan.</li>
+      <li><b>Hasil render</b> — naskah yang variabelnya sudah terisi data sebenarnya. Ini bentuk akhir yang siap diunduh.</li>
+    </ol>
+    <p class="tegas"><b>Tidak ada lagi variabel gabungan.</b> Hasil drafting tidak lagi berupa satu variabel tunggal seperti <code>{{blok_para_pihak}}</code> yang isinya terkunci dan tidak bisa disentuh saat drafting. Seluruh paragraf para pihak sudah terjabarkan langsung sebagai naskah biasa, sehingga asisten dapat menyunting kalimat mana pun — yang tersisa hanya variabel isian per data, bukan blok.</p>
+  </div>
+
+  <div class="sumber">
+    <h3>Dari mana field identitas ini terisi</h3>
+    <p>Data KTP di bawah tidak diketik ulang setiap membuat order — semuanya tertarik dari data user.</p>
+    <ol>
+      <li>Diisi sekali saat <b>Asisten PPAT, PPAT, atau Super Admin</b> membuat user, pada bagian “Data KTP” di form user.</li>
+      <li>Ketika order dibuat, data itu <b>terisi otomatis</b> ke field-field ini dan <b>masih bisa disunting</b> bila ada yang perlu diperbaiki.</li>
+      <li>Begitu status user <b>sudah terverifikasi ke Dukcapil</b>, field-field ini <b>terkunci</b> — tidak bisa lagi diubah dari layar order.</li>
+    </ol>
+    <p class="legenda">
+      <span><i class="auto"></i> terisi otomatis dari Data KTP user</span>
+      <span><i class="der"></i> turunan sistem, tidak diisi manual</span>
+      <span><i></i> diisi saat membuat order</span>
+    </p>
+  </div>
+
+  <div class="toolbar">
+    <div class="f">
+      <label>Jenis Akta</label>
+      <select id="akta-jenis">
+        <option value="Jual Beli">Jual Beli</option>
+        <option value="Hibah">Hibah</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="band">Para Pihak</div>
+  <div class="party-list" id="party-list"></div>
+
+  <div class="add-row">
+    <button id="add-btn">+ Tambah Pihak</button>
+    <span class="cap">maks. 6</span>
+  </div>
+
+  <div class="band">Objek</div>
+  <div class="lewati">
+    <h3>Dilewati dulu</h3>
+    <p>Uraian objek, letak objek, cakupan “meliputi pula”, dan sebutan objek. Belum disusun.</p>
+  </div>
+
+  <div class="band">Pasal-pasal</div>
+  <div class="lewati">
+    <h3>Dilewati dulu</h3>
+    <p>Pasal 1 sampai pasal terakhir, termasuk paragraf pajak dan penanggung biaya akta. Belum disusun.</p>
+  </div>
+
+  <div class="band">Saksi &amp; penutup</div>
+  <div class="party-list" id="saksi-list"></div>
+
+  <div class="add-row">
+    <button id="add-saksi">+ Tambah Saksi</button>
+    <span class="cap">min. 2 · maks. 4</span>
+  </div>
+
+  <div class="card" style="margin-top:0.6rem">
+    <div class="grid">
+      <div class="f wide"><label>Lembar kedua disampaikan kepada (kantor_pertanahan)</label>
+        <input type="text" id="kantor-pertanahan" value="Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan"></div>
+    </div>
+  </div>
+
+  <div class="band">Tanda tangan</div>
+  <div class="card">
+    <div class="grid">
+      <div class="f span2"><label>Nama PPAT (ppat_nama)</label>
+        <input type="text" id="ppat-nama" value="Contoh Nama PPAT, S.H., M.Kn."></div>
+    </div>
+    <p class="kunci">Kolom tanda tangan terbentuk sendiri: para pihak mengikuti posisi &amp; bentuk pihak, kolom persetujuan muncul bila ada pasangan, kolom saksi mengikuti jumlah saksi, NIP hanya tampil bila diisi.</p>
+  </div>
+
+  <div class="rules">
+    <h3>Aturan pembentukan sapaan (orang.sapaan)</h3>
+    <table>
+      <tr><td class="k">Laki-laki — status apa pun</td><td class="v">Tuan</td></tr>
+      <tr><td class="k">Perempuan — Belum Menikah</td><td class="v">Nona</td></tr>
+      <tr><td class="k">Perempuan — Kawin</td><td class="v">Nyonya</td></tr>
+      <tr><td class="k">Perempuan — Cerai Hidup / Cerai Mati</td><td class="v">Nyonya Janda</td></tr>
+    </table>
+  </div>
+
+  <div class="panes">
+    <div class="pane raw">
+      <h2><span class="dot"></span>Hasil mentah saat drafting</h2>
+      <div class="raw-box" id="raw-box"></div>
+    </div>
+    <div class="pane rendered">
+      <h2><span class="dot"></span>Hasil render</h2>
+      <div class="out-box" id="out-box"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =======================================================================
+   Simulator Para Pihak — mengikuti blok & konvensi workbook
+   Blok yang dipakai: IDENTITAS_ORANG, KEDUDUKAN_PASANGAN, KEBERADAAN_SEMENTARA,
+   KEDUDUKAN_PT, PT_PERSETUJUAN_KOMISARIS, PT_PENDIRIAN, PT_PENYESUAIAN_UU40,
+   PT_PERUBAHAN, PERAN_PIHAK
+   ======================================================================= */
+
+  const ROMAN = ['I','II','III','IV','V','VI'];
+  const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const MAKS = 6;
+
+  /* ---------- terbilang ---------- */
+  const SATUAN = ['nol','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];
+  function terbilang(n) {
+    n = Math.floor(Math.abs(n));
+    if (n < 12) return SATUAN[n];
+    if (n < 20) return terbilang(n - 10) + ' belas';
+    if (n < 100) return terbilang(Math.floor(n / 10)) + ' puluh' + (n % 10 ? ' ' + terbilang(n % 10) : '');
+    if (n < 200) return 'seratus' + (n - 100 ? ' ' + terbilang(n - 100) : '');
+    if (n < 1000) return terbilang(Math.floor(n / 100)) + ' ratus' + (n % 100 ? ' ' + terbilang(n % 100) : '');
+    if (n < 2000) return 'seribu' + (n - 1000 ? ' ' + terbilang(n - 1000) : '');
+    return terbilang(Math.floor(n / 1000)) + ' ribu' + (n % 1000 ? ' ' + terbilang(n % 1000) : '');
+  }
+  function pecahTgl(v) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); return m ? { th:+m[1], bl:+m[2], tg:+m[3] } : null; }
+  function tglAngka(v) { const d = pecahTgl(v); return d ? String(d.tg).padStart(2,'0') + '-' + String(d.bl).padStart(2,'0') + '-' + d.th : '—'; }
+  function tglKata(v)  { const d = pecahTgl(v); return d ? terbilang(d.tg) + ' ' + BULAN[d.bl-1] + ' ' + terbilang(d.th) : '—'; }
+
+  /* ---------- turunan ---------- */
+  function sapaanOf(o) {
+    if (o.jenisKelamin === 'Laki-laki') return 'Tuan';
+    if (o.statusKawin === 'Belum Menikah') return 'Nona';
+    if (o.statusKawin === 'Kawin') return 'Nyonya';
+    return 'Nyonya Janda';
+  }
+  function peranOf(posisi, jenisAkta) {
+    if (jenisAkta === 'Hibah') return posisi === 1 ? 'Pemberi Hibah' : 'Penerima Hibah';
+    return posisi === 1 ? 'Penjual' : 'Pembeli';
+  }
+  function sebutanOf(posisi) { return posisi === 1 ? 'PIHAK PERTAMA' : 'PIHAK KEDUA'; }
+  function hubunganOf(p) { return p.orang.jenisKelamin === 'Laki-laki' ? 'Istri' : 'Suami'; }
+  function hubunganBalikOf(p) { return p.orang.jenisKelamin === 'Laki-laki' ? 'suaminya' : 'istrinya'; }
+  function sebutanJumlah(n) { return ['','Penghadap','Keduanya','Ketiganya','Keempatnya'][n] || 'Mereka'; }
+  function frasaBukti(jenis) {
+    return jenis === 'Surat Keputusan persetujuan'
+      ? 'mendapatkan persetujuan dari'
+      : 'diterima dan dicatat di dalam Sistem Administrasi Badan Hukum';
+  }
+  function jenisBukti(jenis) {
+    return jenis === 'Surat Keputusan persetujuan'
+      ? 'Surat Keputusannya'
+      : 'Surat Penerimaan Pemberitahuan Perubahan Data';
+  }
+
+  /* ---------- data awal ---------- */
+  let nextId = 3;
+  let jenisAkta = 'Jual Beli';
+
+  function ktpKosong(o) {
+    return Object.assign({
+      nik: '', nama: '', tempatLahir: '', tanggalLahir: '1990-01-01', jenisKelamin: 'Laki-laki', alamat: '', rt: '001', rw: '001', labelKelurahan: 'Kelurahan', kelurahan: '',
+      kecamatan: '', labelKota: 'Kota', kota: '', provinsi: '',
+      statusKawin: 'Kawin', pekerjaan: '', kewarganegaraan: 'Indonesia',
+      domisiliAktif: false, domisiliSementara: ''
+    }, o || {});
+  }
+  function ptKosong(o) {
+    return Object.assign({
+      nama: '', kedudukan: '', jabatanWakil: 'Direktur Utama',
+      komisarisAktif: false, komisarisTanggal: '2020-01-01', komisarisNomor: '',
+      pendirianTanggal: '2005-03-10', pendirianNomor: '', pendirianNotaris: '', pendirianNotarisKota: '',
+      pendirianPengesah: 'Menteri Hukum dan Hak Asasi Manusia', pendirianSkTanggal: '2005-05-02', pendirianSkNomor: '',
+      uu40Aktif: false, uu40Tanggal: '2008-07-15', uu40Nomor: '', uu40Notaris: '', uu40NotarisKota: '',
+      uu40SkTanggal: '2008-09-01', uu40SkNomor: '',
+      perubahan: []
+    }, o || {});
+  }
+
+  let pihak = [
+    {
+      id: 1, posisi: 1, bentuk: 'pasangan',
+      orang: ktpKosong({ nik:'3273011205800001', nama:'Contoh Nama Satu', tempatLahir:'Bandung', tanggalLahir:'1980-05-12',
+        jenisKelamin:'Laki-laki', alamat:'Jalan Contoh Nomor 1', rt:'004', rw:'007',
+        kelurahan:'Cihapit', kecamatan:'Bandung Wetan', kota:'Bandung', provinsi:'Jawa Barat',
+        statusKawin:'Kawin', pekerjaan:'Karyawan Swasta' }),
+      keberadaanAktif: false, keberadaan: 'Jakarta Selatan',
+      kuasaAktif: false, kuasa: ktpKosong({ nama: 'Contoh Penerima Kuasa', nik: '3273010101850021', tempatLahir: 'Bandung',
+        tanggalLahir: '1985-01-01', jenisKelamin: 'Laki-laki', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
+        alamat: 'Jalan Contoh Nomor 20', rt: '001', rw: '002', kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
+        kota: 'Bandung', provinsi: 'Jawa Barat' }),
+      kuasaJenis: 'Surat Kuasa di bawah tangan', kuasaTanggal: '2026-09-01', kuasaNomor: '',
+      kuasaNotaris: '', kuasaNotarisKota: '',
+      pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
+      pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
+      pasanganKuasa: ktpKosong({ nama: 'Contoh Kuasa Pasangan', nik: '3273014504880031', tempatLahir: 'Bandung',
+        tanggalLahir: '1988-04-05', jenisKelamin: 'Perempuan', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
+        alamat: 'Jalan Contoh Nomor 22', rt: '001', rw: '002', kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
+        kota: 'Bandung', provinsi: 'Jawa Barat' }),
+      nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2007-06-14', nikahNomor: '123/45/VI/2007',
+      nikahPenerbit: 'Kantor Urusan Agama Kecamatan Bandung Wetan',
+      pasangan: ktpKosong({ nik:'3273016107830005', nama:'Contoh Nama Dua', tempatLahir:'Bandung', tanggalLahir:'1983-07-21',
+        jenisKelamin:'Perempuan', alamat:'Jalan Contoh Nomor 1', rt:'004', rw:'007',
+        kelurahan:'Cihapit', kecamatan:'Bandung Wetan', kota:'Bandung', provinsi:'Jawa Barat',
+        statusKawin:'Kawin', pekerjaan:'Ibu Rumah Tangga' }),
+      pt: ptKosong()
+    },
+    {
+      id: 2, posisi: 2, bentuk: 'pt',
+      orang: ktpKosong({ nik:'3174012701920003', nama:'Contoh Nama Tiga', tempatLahir:'Jakarta', tanggalLahir:'1992-01-27',
+        jenisKelamin:'Laki-laki', alamat:'Jalan Contoh Nomor 3', rt:'002', rw:'005',
+        kelurahan:'Senayan', kecamatan:'Kebayoran Baru', kota:'Jakarta Selatan', provinsi:'DKI Jakarta',
+        statusKawin:'Belum Menikah', pekerjaan:'Direktur Utama' }),
+      keberadaanAktif: false, keberadaan: '',
+      kuasaAktif: false, kuasa: ktpKosong({ nama: 'Contoh Penerima Kuasa', nik: '3273010101850021', tempatLahir: 'Bandung',
+        tanggalLahir: '1985-01-01', jenisKelamin: 'Laki-laki', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
+        alamat: 'Jalan Contoh Nomor 20', rt: '001', rw: '002', kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
+        kota: 'Bandung', provinsi: 'Jawa Barat' }),
+      kuasaJenis: 'Surat Kuasa di bawah tangan', kuasaTanggal: '2026-09-01', kuasaNomor: '',
+      kuasaNotaris: '', kuasaNotarisKota: '',
+      pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
+      pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
+      pasanganKuasa: ktpKosong({ jenisKelamin: 'Perempuan', statusKawin: 'Kawin' }),
+      nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2015-01-01', nikahNomor: '', nikahPenerbit: '',
+      pasangan: ktpKosong({ jenisKelamin:'Perempuan' }),
+      pt: ptKosong({
+        nama:'PT Contoh Karya Sejahtera', kedudukan:'Jakarta Selatan', jabatanWakil:'Direktur Utama',
+        komisarisAktif: true, komisarisTanggal:'2026-08-20', komisarisNomor:'007/DK/VIII/2026',
+        pendirianTanggal:'2005-03-10', pendirianNomor:'12', pendirianNotaris:'Contoh Notaris Satu, S.H.', pendirianNotarisKota:'Jakarta',
+        pendirianPengesah:'Menteri Hukum dan Hak Asasi Manusia', pendirianSkTanggal:'2005-05-02', pendirianSkNomor:'C-11223 HT.01.01.TH.2005',
+        uu40Aktif: true, uu40Tanggal:'2008-07-15', uu40Nomor:'27', uu40Notaris:'Contoh Notaris Dua, S.H., M.Kn.', uu40NotarisKota:'Jakarta',
+        uu40SkTanggal:'2008-09-01', uu40SkNomor:'AHU-55555.AH.01.02.Tahun 2008',
+        perubahan: [{
+          jenis:'susunan Direksi dan Komisaris', aktaTanggal:'2024-02-19', aktaNomor:'08',
+          notaris:'Contoh Notaris Tiga, S.H., M.Kn.', notarisKota:'Jakarta',
+          buktiJenis:'Surat Penerimaan Pemberitahuan', instansi:'Kementerian Hukum',
+          buktiTanggal:'2024-02-26', buktiNomor:'AHU-AH.01.09-0123456'
+        }]
+      })
+    }
+  ];
+
+  /* ---------- data saksi ---------- */
+  function saksiKosong(o) {
+    return Object.assign({
+      nama: '', nik: '', tempatLahir: '', tanggalLahir: '1990-01-01', jenisKelamin: 'Laki-laki',
+      statusKawin: 'Belum Menikah', pekerjaan: '', jalan: '', rt: '001', rw: '001',
+      kelurahan: '', kecamatan: '', kota: '', provinsi: '', domisili: '', nip: ''
+    }, o || {});
+  }
+  let saksi = [
+    saksiKosong({ id: 101, nama: 'Contoh Saksi Satu', nik: '3174016503950011', tempatLahir: 'Jakarta',
+      tanggalLahir: '1995-03-25', jenisKelamin: 'Perempuan', statusKawin: 'Belum Menikah', pekerjaan: 'Karyawan Swasta',
+      jalan: 'Jalan Contoh Nomor 10', rt: '003', rw: '006', kelurahan: 'Senayan', kecamatan: 'Kebayoran Baru',
+      kota: 'Kota Administrasi Jakarta Selatan', provinsi: 'DKI Jakarta',
+      domisili: 'Keduanya untuk sementara berada di Jakarta Selatan' }),
+    saksiKosong({ id: 102, nama: 'Contoh Saksi Dua', nik: '3174011108930012', tempatLahir: 'Bogor',
+      tanggalLahir: '1993-08-11', jenisKelamin: 'Laki-laki', statusKawin: 'Belum Menikah', pekerjaan: 'Karyawan Swasta',
+      jalan: 'Jalan Contoh Nomor 12', rt: '003', rw: '006', kelurahan: 'Senayan', kecamatan: 'Kebayoran Baru',
+      kota: 'Kota Administrasi Jakarta Selatan', provinsi: 'DKI Jakarta',
+      domisili: 'Keduanya untuk sementara berada di Jakarta Selatan' })
+  ];
+  let nextSaksiId = 103;
+  let kantorPertanahan = 'Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan';
+  let ppatNama = 'Contoh Nama PPAT, S.H., M.Kn.';
+
+  const list = document.getElementById('party-list');
+  const saksiList = document.getElementById('saksi-list');
+  const addBtn = document.getElementById('add-btn');
+  const addSaksiBtn = document.getElementById('add-saksi');
+  const kantorInput = document.getElementById('kantor-pertanahan');
+  const ppatInput = document.getElementById('ppat-nama');
+  const aktaSel = document.getElementById('akta-jenis');
+
+  /* ---------- util form ---------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function inp(pid, path, label, type, cls) {
+    const v = getPath(pid, path);
+    return '<div class="f' + (cls ? ' ' + cls : '') + '"><label>' + label + '</label>' +
+      '<input type="' + (type || 'text') + '" data-pid="' + pid + '" data-path="' + path + '" value="' + esc(v) + '"></div>';
+  }
+  function sel(pid, path, label, opts, cls) {
+    const v = String(getPath(pid, path));
+    return '<div class="f' + (cls ? ' ' + cls : '') + '"><label>' + label + '</label>' +
+      '<select data-pid="' + pid + '" data-path="' + path + '">' +
+      opts.map(o => '<option value="' + esc(o) + '"' + (v === String(o) ? ' selected' : '') + '>' + esc(o) + '</option>').join('') +
+      '</select></div>';
+  }
+  function chk(pid, path, label) {
+    return '<label class="opt"><input type="checkbox" data-pid="' + pid + '" data-path="' + path + '"' +
+      (getPath(pid, path) ? ' checked' : '') + '> ' + label + '</label>';
+  }
+  function objById(id) { return pihak.find(p => p.id === id) || saksi.find(x => x.id === id); }
+  function getPath(pid, path) {
+    let o = objById(pid);
+    path.split('.').forEach(k => { o = o == null ? o : o[/^\d+$/.test(k) ? +k : k]; });
+    return o;
+  }
+  function setPath(pid, path, val) {
+    let o = objById(pid);
+    const ks = path.split('.');
+    ks.slice(0, -1).forEach(k => { o = o[/^\d+$/.test(k) ? +k : k]; });
+    o[ks[ks.length - 1]] = val;
+  }
+
+  /* ---------- kartu KTP ---------- */
+  function blokKtp(pid, base, judul, kodeBlok) {
+    let h = '<div class="sect"><h4>' + judul + '</h4><div class="grid auto">';
+    h += inp(pid, base + '.nama', 'Nama', 'text', 'span2');
+    h += inp(pid, base + '.nik', 'NIK', 'text', 'span2');
+    h += inp(pid, base + '.tempatLahir', 'Tempat Lahir');
+    h += inp(pid, base + '.tanggalLahir', 'Tanggal Lahir', 'date');
+    h += sel(pid, base + '.jenisKelamin', 'Jenis Kelamin', ['Laki-laki', 'Perempuan']);
+    h += sel(pid, base + '.statusKawin', 'Status Perkawinan', ['Belum Menikah', 'Kawin', 'Cerai Hidup', 'Cerai Mati']);
+    h += '<div class="f derived" data-der="' + base + '"><label>Sapaan (turunan)</label><input type="text" value="' + esc(sapaanOf(getPath(pid, base))) + '" readonly></div>';
+    h += inp(pid, base + '.pekerjaan', 'Pekerjaan');
+    h += inp(pid, base + '.kewarganegaraan', 'Kewarganegaraan');
+    h += inp(pid, base + '.alamat', 'Alamat (Jalan/Nomor)', 'text', 'span2');
+    h += inp(pid, base + '.rt', 'RT');
+    h += inp(pid, base + '.rw', 'RW');
+    h += sel(pid, base + '.labelKelurahan', 'Label', ['Kelurahan', 'Desa']);
+    h += inp(pid, base + '.kelurahan', 'Kelurahan/Desa');
+    h += inp(pid, base + '.kecamatan', 'Kecamatan');
+    h += sel(pid, base + '.labelKota', 'Label', ['Kota', 'Kabupaten']);
+    h += inp(pid, base + '.kota', 'Kota/Kabupaten');
+    h += inp(pid, base + '.provinsi', 'Provinsi');
+    h += '</div>';
+    h += chk(pid, base + '.domisiliAktif', 'Sedang berada di kota lain — cetak baris “Untuk sementara berada di …”');
+    if (getPath(pid, base + '.domisiliAktif')) {
+      h += '<div class="grid auto">' + inp(pid, base + '.domisiliSementara', 'Untuk sementara berada di', 'text', 'span2') + '</div>';
+    }
+    h += '<p class="kunci">Terisi otomatis dari Data KTP user. Masih bisa disunting di sini, kecuali user sudah terverifikasi Dukcapil — maka terkunci.</p></div>';
+    return h;
+  }
+
+  /* ---------- kartu pihak ---------- */
+  function renderCard(p, roman) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = p.id;
+
+    let h = '<div class="card-head">' +
+      '<span class="num">' + roman + '.</span>' +
+      '<span class="chip">' + esc(sebutanOf(p.posisi)) + ' <small>· ' + esc(peranOf(p.posisi, jenisAkta)) +
+        (p.kuasaAktif ? ' · dikuasakan' : '') + '</small></span>' +
+      '<span class="spacer"></span>' +
+      (pihak.length > 1 ? '<button class="remove" data-remove="' + p.id + '">Hapus Pihak</button>' : '') +
+      '</div><div class="grid">';
+    h += '<div class="f"><label>Posisi</label><select data-pid="' + p.id + '" data-path="posisi">' +
+      [[1, 'Pihak Pertama'], [2, 'Pihak Kedua']].map(o =>
+        '<option value="' + o[0] + '"' + (p.posisi === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
+      '</select></div>';
+    h += '<div class="f span2"><label>Bentuk Pihak</label><select data-pid="' + p.id + '" data-path="bentuk">' +
+      [['perorangan','Perorangan'],['pasangan','Perorangan + persetujuan pasangan'],['pt','Badan hukum (Perseroan Terbatas)']]
+        .map(o => '<option value="' + o[0] + '"' + (p.bentuk === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
+      '</select></div>';
+    h += '</div>';
+
+    // kuasa (perwakilan)
+    h += '<div class="sect"><h4>Perwakilan / kuasa <span style="text-transform:none;letter-spacing:0;color:var(--stamp)">· redaksi usulan</span></h4>';
+    h += chk(p.id, 'kuasaAktif', p.bentuk === 'pt'
+      ? 'Wakil perseroan tidak hadir sendiri — diwakili penerima kuasa'
+      : 'Pihak tidak hadir sendiri — diwakili penerima kuasa');
+    if (p.kuasaAktif) {
+      h += '<div class="grid">';
+      h += sel(p.id, 'kuasaJenis', 'Bentuk Kuasa', ['Surat Kuasa di bawah tangan', 'Akta Kuasa notariil'], 'span2');
+      h += inp(p.id, 'kuasaTanggal', 'Tanggal Kuasa', 'date');
+      if (p.kuasaJenis === 'Akta Kuasa notariil') {
+        h += inp(p.id, 'kuasaNomor', 'Nomor Akta Kuasa');
+        h += inp(p.id, 'kuasaNotaris', 'Notaris', 'text', 'span2');
+        h += inp(p.id, 'kuasaNotarisKota', 'Notaris di');
+      }
+      h += '</div>';
+    }
+    h += '</div>';
+
+    if (p.kuasaAktif) h += blokKtp(p.id, 'kuasa', 'Identitas penerima kuasa — yang hadir (KTP)', null);
+
+    // identitas penghadap / pemberi kuasa
+    h += blokKtp(p.id, 'orang',
+      (p.kuasaAktif ? 'Identitas pemberi kuasa — ' : 'Identitas ') +
+      (p.bentuk === 'pt' ? 'wakil perseroan (KTP)' : (p.kuasaAktif ? 'pihak (KTP)' : 'penghadap (KTP)')), 'IDENTITAS_ORANG');
+
+    // kedudukan: pasangan
+    if (p.bentuk === 'pasangan') {
+      h += '<div class="sect"><h4>Dokumen perkawinan</h4><div class="grid">';
+      h += sel(p.id, 'nikahJenis', 'Jenis Dokumen', ['Kutipan Akta Nikah', 'Kutipan Akta Perkawinan'], 'span2');
+      h += inp(p.id, 'nikahTanggal', 'Tanggal Dokumen', 'date');
+      h += inp(p.id, 'nikahNomor', 'Nomor Dokumen');
+      h += inp(p.id, 'nikahPenerbit', 'Dikeluarkan Oleh', 'text', 'span2');
+      h += '<div class="f derived" data-der="hubungan"><label>Hubungan (turunan)</label><input type="text" value="' + esc(hubunganOf(p)) + '" readonly></div>';
+      h += '</div></div>';
+      h += blokKtp(p.id, 'pasangan', 'Identitas pasangan (KTP)', null);
+
+      h += '<div class="sect"><h4>Perwakilan pasangan <span style="text-transform:none;letter-spacing:0;color:var(--stamp)">· redaksi usulan</span></h4>';
+      h += chk(p.id, 'pasanganKuasaAktif', 'Pasangan tidak bisa hadir — diwakili penerima kuasa');
+      if (p.pasanganKuasaAktif) {
+        h += '<div class="grid">';
+        h += sel(p.id, 'pasanganKuasaJenis', 'Bentuk Kuasa', ['Surat Kuasa di bawah tangan', 'Akta Kuasa notariil'], 'span2');
+        h += inp(p.id, 'pasanganKuasaTanggal', 'Tanggal Kuasa', 'date');
+        if (p.pasanganKuasaJenis === 'Akta Kuasa notariil') {
+          h += inp(p.id, 'pasanganKuasaNomor', 'Nomor Akta Kuasa');
+          h += inp(p.id, 'pasanganKuasaNotaris', 'Notaris', 'text', 'span2');
+          h += inp(p.id, 'pasanganKuasaNotarisKota', 'Notaris di');
+        }
+        h += '</div>';
+      }
+      h += '</div>';
+      if (p.pasanganKuasaAktif) h += blokKtp(p.id, 'pasanganKuasa', 'Identitas penerima kuasa pasangan — yang hadir (KTP)', null);
+    }
+
+    // kedudukan: PT
+    if (p.bentuk === 'pt') {
+      h += '<div class="sect"><h4>Perseroan</h4><div class="grid">';
+      h += inp(p.id, 'pt.nama', 'Nama Perseroan', 'text', 'span2');
+      h += inp(p.id, 'pt.kedudukan', 'Berkedudukan di');
+      h += sel(p.id, 'pt.jabatanWakil', 'Jabatan Wakil', ['Direktur Utama','Direktur','Wakil Direktur Utama','Direktur Keuangan']);
+      h += '</div>';
+
+      h += chk(p.id, 'pt.komisarisAktif', 'Ada persetujuan Dewan Komisaris');
+      if (p.pt.komisarisAktif) {
+        h += '<div class="grid">' + inp(p.id, 'pt.komisarisTanggal', 'Tanggal Surat Persetujuan', 'date') +
+          inp(p.id, 'pt.komisarisNomor', 'Nomor Surat Persetujuan') + '</div>';
+      }
+      h += '</div>';
+
+      h += '<div class="sect"><h4>Akta pendirian</h4><div class="grid">';
+      h += inp(p.id, 'pt.pendirianTanggal', 'Tanggal Akta Pendirian', 'date');
+      h += inp(p.id, 'pt.pendirianNomor', 'Nomor Akta Pendirian');
+      h += inp(p.id, 'pt.pendirianNotaris', 'Notaris', 'text', 'span2');
+      h += inp(p.id, 'pt.pendirianNotarisKota', 'Notaris di');
+      h += sel(p.id, 'pt.pendirianPengesah', 'Pejabat Pengesah', ['Menteri Hukum dan Hak Asasi Manusia', 'Menteri Kehakiman'], 'span2');
+      h += inp(p.id, 'pt.pendirianSkTanggal', 'Tanggal SK Pengesahan', 'date');
+      h += inp(p.id, 'pt.pendirianSkNomor', 'Nomor SK Pengesahan', 'text', 'span2');
+      h += '</div></div>';
+
+      h += '<div class="sect"><h4>Penyesuaian UU 40/2007</h4>';
+      h += chk(p.id, 'pt.uu40Aktif', 'Anggaran dasar telah disesuaikan dengan UU 40/2007');
+      if (p.pt.uu40Aktif) {
+        h += '<div class="grid">';
+        h += inp(p.id, 'pt.uu40Tanggal', 'Tanggal Akta Penyesuaian', 'date');
+        h += inp(p.id, 'pt.uu40Nomor', 'Nomor Akta Penyesuaian');
+        h += inp(p.id, 'pt.uu40Notaris', 'Notaris', 'text', 'span2');
+        h += inp(p.id, 'pt.uu40NotarisKota', 'Notaris di');
+        h += inp(p.id, 'pt.uu40SkTanggal', 'Tanggal SK Penyesuaian', 'date');
+        h += inp(p.id, 'pt.uu40SkNomor', 'Nomor SK Penyesuaian', 'text', 'span2');
+        h += '</div>';
+      }
+      h += '</div>';
+
+      h += '<div class="sect"><h4>Riwayat perubahan terakhir</h4>';
+      p.pt.perubahan.forEach((u, i) => {
+        h += '<div class="ubah-row"><div class="ubah-head"><span>baris ' + (i + 1) + '</span>' +
+          '<button class="mini" data-delubah="' + p.id + ':' + i + '">Hapus baris</button></div><div class="grid">';
+        h += sel(p.id, 'pt.perubahan.' + i + '.jenis', 'Jenis Perubahan', ['susunan Pemegang Saham','anggaran dasar','susunan Direksi dan Komisaris'], 'span2');
+        h += inp(p.id, 'pt.perubahan.' + i + '.aktaTanggal', 'Tanggal Akta', 'date');
+        h += inp(p.id, 'pt.perubahan.' + i + '.aktaNomor', 'Nomor Akta');
+        h += inp(p.id, 'pt.perubahan.' + i + '.notaris', 'Notaris', 'text', 'span2');
+        h += inp(p.id, 'pt.perubahan.' + i + '.notarisKota', 'Notaris di');
+        h += sel(p.id, 'pt.perubahan.' + i + '.buktiJenis', 'Jenis Bukti', ['Surat Keputusan persetujuan','Surat Penerimaan Pemberitahuan'], 'span2');
+        h += inp(p.id, 'pt.perubahan.' + i + '.instansi', 'Instansi', 'text', 'span2');
+        h += inp(p.id, 'pt.perubahan.' + i + '.buktiTanggal', 'Tanggal Bukti', 'date');
+        h += inp(p.id, 'pt.perubahan.' + i + '.buktiNomor', 'Nomor Bukti', 'text', 'span2');
+        h += '</div></div>';
+      });
+      h += '<button class="mini" data-addubah="' + p.id + '">+ Tambah baris perubahan</button>';
+      h += '</div>';
+    }
+
+    card.innerHTML = h;
+    return card;
+  }
+
+  function renderList() {
+    list.innerHTML = '';
+    pihak.forEach((p, i) => list.appendChild(renderCard(p, ROMAN[i])));
+    addBtn.disabled = pihak.length >= MAKS;
+
+    list.querySelectorAll('input[data-path], select[data-path]').forEach(el => {
+      const ev = el.type === 'checkbox' ? 'change' : 'input';
+      el.addEventListener(ev, e => {
+        const pid = +e.target.dataset.pid;
+        const path = e.target.dataset.path;
+        let val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        if (path === 'posisi') val = +val;
+        setPath(pid, path, val);
+
+        // hanya perubahan yang mengubah susunan kartu yang disusun ulang,
+        // sisanya diperbarui di tempat supaya fokus mengetik tidak lepas
+        const strukturil = /(^|\.)(bentuk|komisarisAktif|uu40Aktif|kuasaAktif|kuasaJenis|pasanganKuasaAktif|pasanganKuasaJenis|domisiliAktif)$/;
+        if (strukturil.test(path)) {
+          renderList();
+        } else {
+          segarkanTurunan(pid);
+          if (path === 'posisi') segarkanChip(pid);
+        }
+        renderAll();
+      });
+    });
+    list.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', e => {
+      pihak = pihak.filter(p => p.id !== +e.target.dataset.remove);
+      renderList(); renderAll();
+    }));
+    list.querySelectorAll('[data-addubah]').forEach(b => b.addEventListener('click', e => {
+      const p = pihak.find(x => x.id === +e.target.dataset.addubah);
+      p.pt.perubahan.push({ jenis:'anggaran dasar', aktaTanggal:'2020-01-01', aktaNomor:'', notaris:'', notarisKota:'',
+        buktiJenis:'Surat Keputusan persetujuan', instansi:'Kementerian Hukum dan Hak Asasi Manusia', buktiTanggal:'2020-02-01', buktiNomor:'' });
+      renderList(); renderAll();
+    }));
+    list.querySelectorAll('[data-delubah]').forEach(b => b.addEventListener('click', e => {
+      const [pid, idx] = e.target.dataset.delubah.split(':');
+      pihak.find(x => x.id === +pid).pt.perubahan.splice(+idx, 1);
+      renderList(); renderAll();
+    }));
+  }
+
+  function segarkanTurunan(pid) {
+    const card = list.querySelector('.card[data-id="' + pid + '"]');
+    if (!card) return;
+    const p = pihak.find(x => x.id === pid);
+    card.querySelectorAll('.f.derived[data-der]').forEach(el => {
+      const k = el.dataset.der;
+      el.querySelector('input').value = k === 'hubungan' ? hubunganOf(p) : sapaanOf(p[k]);
+    });
+  }
+  function segarkanChip(pid) {
+    const card = list.querySelector('.card[data-id="' + pid + '"]');
+    const p = pihak.find(x => x.id === pid);
+    if (card) card.querySelector('.chip').innerHTML = esc(sebutanOf(p.posisi)) + ' <small>· ' + esc(peranOf(p.posisi, jenisAkta)) + '</small>';
+  }
+
+  addBtn.addEventListener('click', () => {
+    if (pihak.length >= MAKS) return;
+    pihak.push({
+      id: nextId++, posisi: 2, bentuk: 'perorangan',
+      orang: ktpKosong({ nama: 'Contoh Nama ' + (pihak.length + 1), tempatLahir: 'Bandung', pekerjaan: 'Wiraswasta',
+        alamat: 'Jalan Contoh Nomor ' + (pihak.length + 1), kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
+        kota: 'Bandung', provinsi: 'Jawa Barat', nik: '32730101019000' + String(pihak.length + 1).padStart(2, '0') }),
+      keberadaanAktif: false, keberadaan: '',
+      kuasaAktif: false, kuasa: ktpKosong({ nama: 'Contoh Penerima Kuasa', nik: '3273010101850021', tempatLahir: 'Bandung',
+        tanggalLahir: '1985-01-01', jenisKelamin: 'Laki-laki', statusKawin: 'Kawin', pekerjaan: 'Karyawan Swasta',
+        alamat: 'Jalan Contoh Nomor 20', rt: '001', rw: '002', kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan',
+        kota: 'Bandung', provinsi: 'Jawa Barat' }),
+      kuasaJenis: 'Surat Kuasa di bawah tangan', kuasaTanggal: '2026-09-01', kuasaNomor: '',
+      kuasaNotaris: '', kuasaNotarisKota: '',
+      pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
+      pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
+      pasanganKuasa: ktpKosong({ jenisKelamin: 'Perempuan', statusKawin: 'Kawin' }),
+      nikahJenis: 'Kutipan Akta Nikah', nikahTanggal: '2015-01-01', nikahNomor: '', nikahPenerbit: '',
+      pasangan: ktpKosong({ jenisKelamin: 'Perempuan' }), pt: ptKosong()
+    });
+    renderList(); renderAll();
+  });
+
+  /* ---------- kartu saksi ---------- */
+  function renderKartuSaksi(sk, no) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = sk.id;
+    let h = '<div class="card-head">' +
+      '<span class="num">' + no + '.</span>' +
+      '<span class="chip">SAKSI ' + no + ' <small>· ' + esc(sapaanOf(sk)) + '</small></span>' +
+      '<span class="spacer"></span>' +
+      (saksi.length > 2 ? '<button class="remove" data-hapussaksi="' + sk.id + '">Hapus Saksi</button>' : '') +
+      '</div><div class="grid auto">';
+    h += inp(sk.id, 'nama', 'Nama', 'text', 'span2');
+    h += inp(sk.id, 'nik', 'NIK', 'text', 'span2');
+    h += inp(sk.id, 'tempatLahir', 'Tempat Lahir');
+    h += inp(sk.id, 'tanggalLahir', 'Tanggal Lahir', 'date');
+    h += sel(sk.id, 'jenisKelamin', 'Jenis Kelamin', ['Laki-laki', 'Perempuan']);
+    h += sel(sk.id, 'statusKawin', 'Status Perkawinan', ['Belum Menikah', 'Kawin', 'Cerai Hidup', 'Cerai Mati']);
+    h += '<div class="f derived"><label>Gelar (turunan)</label><input type="text" value="' + esc(sapaanOf(sk)) + '" readonly></div>';
+    h += inp(sk.id, 'pekerjaan', 'Pekerjaan');
+    h += inp(sk.id, 'jalan', 'Jalan', 'text', 'span2');
+    h += inp(sk.id, 'rt', 'RT');
+    h += inp(sk.id, 'rw', 'RW');
+    h += inp(sk.id, 'kelurahan', 'Kelurahan');
+    h += inp(sk.id, 'kecamatan', 'Kecamatan');
+    h += inp(sk.id, 'kota', 'Kota/Kabupaten');
+    h += inp(sk.id, 'provinsi', 'Provinsi');
+    h += inp(sk.id, 'domisili', 'Keterangan domisili (baris di bawah identitas)', 'text', 'wide');
+    h += '</div>';
+    h += '<p class="kunci">Terisi otomatis dari Data KTP user. Masih bisa disunting di sini, kecuali user sudah terverifikasi Dukcapil — maka terkunci.</p>';
+    h += '<div class="sect"><h4>Diisi saat order</h4><div class="grid">' +
+      inp(sk.id, 'nip', 'NIP (opsional, bila saksi pejabat/ASN)', 'text', 'span2') + '</div></div>';
+    card.innerHTML = h;
+    return card;
+  }
+
+  function renderSaksi() {
+    saksiList.innerHTML = '';
+    saksi.forEach((sk, i) => saksiList.appendChild(renderKartuSaksi(sk, i + 1)));
+    addSaksiBtn.disabled = saksi.length >= 4;
+
+    saksiList.querySelectorAll('input[data-path], select[data-path]').forEach(el => {
+      el.addEventListener('input', e => {
+        const id = +e.target.dataset.pid;
+        setPath(id, e.target.dataset.path, e.target.value);
+        const sk = objById(id);
+        const card = saksiList.querySelector('.card[data-id="' + id + '"]');
+        if (card) {
+          card.querySelector('.f.derived input').value = sapaanOf(sk);
+          const chip = card.querySelector('.chip');
+          chip.innerHTML = chip.textContent.split('·')[0].trim() + ' <small>· ' + esc(sapaanOf(sk)) + '</small>';
+        }
+        renderAll();
+      });
+    });
+    saksiList.querySelectorAll('[data-hapussaksi]').forEach(b => b.addEventListener('click', e => {
+      if (saksi.length <= 2) return;
+      saksi = saksi.filter(x => x.id !== +e.target.dataset.hapussaksi);
+      renderSaksi(); renderAll();
+    }));
+  }
+
+  addSaksiBtn.addEventListener('click', () => {
+    if (saksi.length >= 4) return;
+    saksi.push(saksiKosong({ id: nextSaksiId++, nama: 'Contoh Saksi ' + (saksi.length + 1),
+      tempatLahir: 'Jakarta', pekerjaan: 'Karyawan Swasta', jalan: 'Jalan Contoh',
+      kelurahan: 'Senayan', kecamatan: 'Kebayoran Baru', kota: 'Kota Administrasi Jakarta Selatan', provinsi: 'DKI Jakarta' }));
+    renderSaksi(); renderAll();
+  });
+
+  kantorInput.addEventListener('input', e => { kantorPertanahan = e.target.value; renderAll(); });
+  ppatInput.addEventListener('input', e => { ppatNama = e.target.value; renderAll(); });
+
+  aktaSel.addEventListener('change', e => { jenisAkta = e.target.value; renderList(); renderAll(); });
+
+  /* =====================================================================
+     KALIMAT BAKU — satu fungsi dipakai dua kali:
+     v = token {{...}} untuk panel mentah, v = nilai untuk panel render
+     ===================================================================== */
+
+  function blokIdentitas(v) {
+    return v.sapaan + ' ' + v.nama + ', lahir di ' + v.tempatLahir + ', pada tanggal ' + v.tanggalLahir +
+      ' (' + v.tanggalLahirTerbilang + '), Warga Negara ' + v.kewarganegaraan + ', ' + v.pekerjaan +
+      ', bertempat tinggal di ' + v.alamat + ', Rukun Tetangga ' + v.rt + ', Rukun Warga ' + v.rw + ', ' +
+      v.labelKelurahan + ' ' + v.kelurahan + ', Kecamatan ' + v.kecamatan + ', ' + v.labelKota + ' ' + v.kota +
+      ', Provinsi ' + v.provinsi + ', Pemegang Kartu Tanda Penduduk Nomor: ' + v.nik + '.';
+  }
+
+  function blokKedudukanPasangan(v, s, d, dk) {
+    return 'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini telah mendapat persetujuan dari ' +
+      d.hubungan + 'nya yang sah dan satu-satunya demikian berdasarkan ' + d.nikahJenis + ' tertanggal ' +
+      d.nikahTanggal + ' (' + d.nikahTanggalTerbilang + ') Nomor: ' + d.nikahNomor + ', yang dikeluarkan oleh ' +
+      d.nikahPenerbit + ', yang fotokopinya dilekatkan pada minuta akta ini, yaitu ' + s.nama + ', lahir di ' +
+      s.tempatLahir + ', pada tanggal ' + s.tanggalLahir + ' (' + s.tanggalLahirTerbilang + '), Warga Negara ' +
+      s.kewarganegaraan + ', ' + s.pekerjaan + ', bertempat tinggal sama dengan ' + d.hubunganBalik + ' ' +
+      v.sapaan + ' ' + v.nama + ', tersebut, pemegang Kartu Tanda Penduduk Nomor: ' + s.nik + ekorPasangan(dk);
+  }
+
+  function ekorPasangan(dk) {
+    if (!dk) return ', yang turut hadir di hadapan saya, PPAT, dan menandatangani akta ini sebagai bukti persetujuannya.';
+    return ', yang dalam hal ini tidak hadir dan diwakili oleh:';
+  }
+
+  // dasar kuasa, ditulis SESUDAH identitas penerima kuasa
+  function blokKuasaPasangan(dk, namaPasangan) {
+    const dasar = dk.notariil
+      ? dk.jenis + ' tertanggal ' + dk.tanggal + ' (' + dk.terbilang + ') Nomor ' + dk.nomor +
+        ', yang dibuat di hadapan ' + dk.notaris + ', Notaris di ' + dk.notarisKota + ', yang salinannya'
+      : dk.jenis + ', bermeterai cukup, tertanggal ' + dk.tanggal + ' (' + dk.terbilang + '), yang aslinya';
+    return 'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak berdasarkan ' +
+      dasar + ' dilekatkan pada minuta akta ini, dari dan oleh karena itu sah bertindak untuk dan atas nama ' +
+      namaPasangan + ' tersebut, dan turut menandatangani akta ini sebagai bukti persetujuannya.';
+  }
+
+  function dataKuasaPasangan(p, pakaiToken) {
+    const notariil = p.pasanganKuasaJenis === 'Akta Kuasa notariil';
+    if (pakaiToken) {
+      return { notariil: notariil, jenis: '{{kuasa_pasangan_jenis}}', tanggal: '{{kuasa_pasangan_tanggal}}',
+        terbilang: '{{kuasa_pasangan_tanggal_terbilang}}', nomor: '{{kuasa_pasangan_nomor}}',
+        notaris: '{{kuasa_pasangan_notaris}}', notarisKota: '{{kuasa_pasangan_notaris_kota}}' };
+    }
+    return { notariil: notariil, jenis: notariil ? 'Akta Kuasa' : 'Surat Kuasa di bawah tangan',
+      tanggal: tglAngka(p.pasanganKuasaTanggal), terbilang: tglKata(p.pasanganKuasaTanggal),
+      nomor: p.pasanganKuasaNomor || '\u2014', notaris: p.pasanganKuasaNotaris || '\u2014',
+      notarisKota: p.pasanganKuasaNotarisKota || '\u2014' };
+  }
+
+  function barisDomisili(ns, o, pakaiToken) {
+    if (!o || !o.domisiliAktif) return null;
+    return 'Untuk sementara berada di ' +
+      (pakaiToken ? '{{' + ns + '.domisili_sementara}}' : (o.domisiliSementara || '—')) + ';';
+  }
+
+  function blokKedudukanKuasa(d) {
+    const awal = 'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak berdasarkan ';
+    if (d.notariil) {
+      return awal + d.jenis + ' tertanggal ' + d.tanggal + ' (' + d.terbilang + ') Nomor ' + d.nomor +
+        ', yang dibuat di hadapan ' + d.notaris + ', Notaris di ' + d.notarisKota +
+        ', yang salinannya dilekatkan pada minuta akta ini, dari dan oleh karena itu sah bertindak untuk dan atas nama:';
+    }
+    return awal + d.jenis + ', bermeterai cukup, tertanggal ' + d.tanggal + ' (' + d.terbilang +
+      '), yang aslinya dilekatkan pada minuta akta ini, dari dan oleh karena itu sah bertindak untuk dan atas nama:';
+  }
+
+  function dataKuasa(p, pakaiToken) {
+    const notariil = p.kuasaJenis === 'Akta Kuasa notariil';
+    if (pakaiToken) {
+      return { notariil: notariil, jenis: '{{kuasa_jenis}}', tanggal: '{{kuasa_tanggal}}',
+        terbilang: '{{kuasa_tanggal_terbilang}}', nomor: '{{kuasa_nomor}}',
+        notaris: '{{kuasa_notaris}}', notarisKota: '{{kuasa_notaris_kota}}' };
+    }
+    return { notariil: notariil, jenis: notariil ? 'Akta Kuasa' : 'Surat Kuasa di bawah tangan',
+      tanggal: tglAngka(p.kuasaTanggal), terbilang: tglKata(p.kuasaTanggal),
+      nomor: p.kuasaNomor || '\u2014', notaris: p.kuasaNotaris || '\u2014', notarisKota: p.kuasaNotarisKota || '\u2014' };
+  }
+
+  function blokKeberadaan(d) {
+    return d.jumlahSebutan + ' untuk sementara berada di ' + d.keberadaan + ';';
+  }
+
+  function blokKedudukanPt(t) {
+    let s = 'Menurut keterangannya dalam melakukan tindakan hukum yang dimaksud dalam akta ini bertindak dalam jabatannya selaku ' +
+      t.jabatanWakil + ' dari perseroan terbatas ' + t.nama + ', yang disebutkan dalam akta ini, ';
+    if (t.komisarisAktif) {
+      s += 'dan telah memperoleh persetujuan dari Komisaris Perseroan tersebut demikian berdasarkan Surat Persetujuan Dewan Komisaris tertanggal ' +
+        t.komisarisTanggal + ' (' + t.komisarisTanggalTerbilang + ') Nomor ' + t.komisarisNomor +
+        ', yang aslinya diperlihatkan kepada saya, PPAT dan fotokopinya dilekatkan pada minuta akta ini, ';
+    }
+    s += 'dari dan oleh karena itu sah bertindak mewakili untuk dan atas nama ' + t.nama + ', berkedudukan di ' + t.kedudukan + ', ';
+    s += 'yang didirikan berdasarkan Akta tertanggal ' + t.pendirianTanggal + ' (' + t.pendirianTanggalTerbilang + ') Nomor ' +
+      t.pendirianNomor + ', yang dibuat di hadapan ' + t.pendirianNotaris + ', Notaris di ' + t.pendirianNotarisKota +
+      ', dan telah mendapat pengesahan dari ' + t.pendirianPengesah + ' Republik Indonesia sebagaimana tercantum dalam Surat Keputusannya tertanggal ' +
+      t.pendirianSkTanggal + ' (' + t.pendirianSkTanggalTerbilang + '), Nomor: ' + t.pendirianSkNomor;
+    if (t.uu40Aktif) {
+      s += ', anggaran dasar mana telah disesuaikan dengan Undang-Undang Nomor 40 tahun 2007 (dua ribu tujuh) tentang Perseroan Terbatas, sebagaimana tercantum dalam Akta tertanggal ' +
+        t.uu40Tanggal + ' (' + t.uu40TanggalTerbilang + ') Nomor ' + t.uu40Nomor + ', yang dibuat di hadapan ' +
+        t.uu40Notaris + ', Notaris di ' + t.uu40NotarisKota +
+        ', dan telah mendapatkan pengesahan dari Menteri Hukum dan Hak Asasi Manusia Republik Indonesia sebagaimana tercantum dalam Surat Keputusannya tertanggal ' +
+        t.uu40SkTanggal + ' (' + t.uu40SkTanggalTerbilang + ') Nomor ' + t.uu40SkNomor;
+    }
+    if (t.perubahan.length) {
+      s += '. Anggaran Dasar dan data perseroan mana telah beberapa kali mengalami perubahan terakhir, yang mana:';
+      t.perubahan.forEach(u => {
+        s += '\n- ' + u.jenis + ' terakhir termuat dalam Akta tertanggal ' + u.aktaTanggal + ' (' + u.aktaTanggalTerbilang +
+          ') Nomor ' + u.aktaNomor + ', yang dibuat di hadapan ' + u.notaris + ', Notaris di ' + u.notarisKota +
+          ', yang telah ' + u.frasaBukti + ' ' + u.instansi + ' Republik Indonesia sebagaimana tercantum dalam ' +
+          u.jenisBuktiTeks + ' tertanggal ' + u.buktiTanggal + ' (' + u.buktiTanggalTerbilang + ') Nomor ' + u.buktiNomor + ';';
+      });
+    }
+    return s;
+  }
+
+  function blokPeran(d) {
+    return 'Selaku ' + d.peran + ', selanjutnya disebut “' + d.sebutan + '”.';
+  }
+
+  /* ---------- penutup & saksi ---------- */
+  function blokPenutupPembuka() {
+    return '- Akhirnya hadir juga di hadapan saya, dengan dihadiri oleh saksi-saksi yang sama dan disebutkan pada bagian akhir akta ini :\n' +
+      '- Demikianlah akta ini dibuat di hadapan PARA PIHAK dan Saksi:';
+  }
+  function blokSaksi(v) {
+    return v.gelar + ' ' + v.nama + ', lahir di ' + v.tempatLahir + ', pada tanggal ' + v.tanggalLahir +
+      ' (' + v.terbilang + '), ' + v.pekerjaan + ', Warga Negara Indonesia, bertempat tinggal di ' + v.jalan +
+      ', Rukun Tetangga ' + v.rt + ', Rukun Warga ' + v.rw + ', Kelurahan ' + v.kelurahan +
+      ', Kecamatan ' + v.kecamatan + ', ' + v.kota + ', Provinsi ' + v.provinsi +
+      ', pemegang Kartu Tanda Penduduk dengan Nomor Induk Kependudukan (NIK): ' + v.nik + '.';
+  }
+  function blokPenutupAkhir(d) {
+    return '- Sebagai saksi-saksi, dan setelah dibacakan serta dijelaskan, maka sebagai bukti kebenaran pernyataan yang dikemukakan oleh PIHAK PERTAMA dan PIHAK KEDUA tersebut di atas, akta ini ditandatangani oleh PIHAK PERTAMA, PIHAK KEDUA, para saksi dan saya, PPAT, sebanyak 2 (dua) rangkap asli, yaitu 1 (satu) rangkap lembar pertama disimpan di kantor saya, PPAT dan 1 (satu) rangkap lembar kedua disampaikan kepada ' + d.kantorPertanahan + '.\n' +
+      '- Untuk keperluan pendaftaran peralihan hak akibat ' + d.aktaJenisKecil + ' dalam akta ini';
+  }
+  function tokenSaksi(n) {
+    const t = {};
+    [['gelar','gelar'],['nama','nama'],['tempatLahir','tempat_lahir'],['tanggalLahir','tanggal_lahir'],
+     ['pekerjaan','pekerjaan'],['jalan','jalan'],['rt','rt'],['rw','rw'],['kelurahan','kelurahan'],
+     ['kecamatan','kecamatan'],['kota','kota'],['provinsi','provinsi'],['nik','nik'],['domisili','domisili']]
+      .forEach(k => { t[k[0]] = '{{saksi' + n + '_' + k[1] + '}}'; });
+    t.terbilang = '{{saksi' + n + '_tanggal_lahir:terbilang}}';
+    return t;
+  }
+  function nilaiSaksi(sk) {
+    return { gelar: sapaanOf(sk), nama: sk.nama || '—', tempatLahir: sk.tempatLahir || '—',
+      tanggalLahir: tglAngka(sk.tanggalLahir), terbilang: tglKata(sk.tanggalLahir),
+      pekerjaan: sk.pekerjaan || '—', jalan: sk.jalan || '—', rt: sk.rt || '—', rw: sk.rw || '—',
+      kelurahan: sk.kelurahan || '—', kecamatan: sk.kecamatan || '—', kota: sk.kota || '—',
+      provinsi: sk.provinsi || '—', nik: sk.nik || '—', domisili: sk.domisili || '—' };
+  }
+  function bagianSaksi(pakaiToken) {
+    const isi = [{ jenis: 'plain', teks: blokPenutupPembuka() }];
+    saksi.forEach((sk, i) => {
+      const v = pakaiToken ? tokenSaksi(i + 1) : nilaiSaksi(sk);
+      isi.push({ jenis: 'nomor', no: i + 1, teks: blokSaksi(v) });
+      isi.push({ jenis: 'sub', teks: v.domisili });
+    });
+    const d = pakaiToken
+      ? { kantorPertanahan: '{{kantor_pertanahan}}', aktaJenisKecil: '{{akta_jenis_kecil}}' }
+      : { kantorPertanahan: kantorPertanahan || '—', aktaJenisKecil: jenisAkta.toLowerCase() };
+    isi.push({ jenis: 'plain', teks: blokPenutupAkhir(d) });
+    return isi;
+  }
+
+  /* ---------- blok tanda tangan ---------- */
+  function kelompokPosisi() {
+    const g = []; let i = 0;
+    while (i < pihak.length) {
+      const pos = pihak[i].posisi; const ang = [];
+      while (i < pihak.length && pihak[i].posisi === pos) { ang.push(pihak[i]); i++; }
+      g.push({ posisi: pos, anggota: ang });
+    }
+    return g;
+  }
+
+  function htmlTtd(pakaiToken) {
+    const grup = kelompokPosisi();
+    let h = '<div class="ttd"><div class="ttd-cap">Tanda tangan</div>';
+
+    // para pihak
+    h += '<div class="ttd-row" style="grid-template-columns:repeat(' + Math.max(grup.length, 1) + ',1fr)">';
+    grup.forEach(g => {
+      const ns = g.posisi === 1 ? 'pihak_pertama' : 'pihak_kedua';
+      const banyak = g.anggota.length > 1;
+      h += '<div class="ttd-cell"><div class="hd">' +
+        esc(pakaiToken ? '{{sebutan_' + ns + '}}' : sebutanOf(g.posisi)) + '</div><div class="sp"></div>';
+      g.anggota.forEach((p, idx) => {
+        const nama = pakaiToken
+          ? (p.kuasaAktif ? '({{kuasa.nama}})' : (banyak ? '({{' + ns + '.orang[' + (idx + 1) + '].nama}})' : '({{' + ns + '.nama}})'))
+          : '(' + ((p.kuasaAktif ? p.kuasa.nama : p.orang.nama) || '\u2014') + ')';
+        h += '<div class="nm">' + esc(nama) + '</div>';
+        if (p.kuasaAktif) {
+          h += '<div class="qq">' + esc(pakaiToken ? 'selaku kuasa dari {{orang.nama}}' : 'selaku kuasa dari ' + (p.orang.nama || '\u2014')) + '</div>';
+        }
+        if (p.bentuk === 'pt') {
+          h += '<div class="qq">' + esc(pakaiToken ? 'qq. {{pt.nama}}' : 'qq. ' + (p.pt.nama || '\u2014')) + '</div>' +
+               '<div class="qq">' + esc(pakaiToken ? 'berkedudukan di {{pt.kedudukan}}' : 'berkedudukan di ' + (p.pt.kedudukan || '\u2014')) + '</div>';
+        }
+      });
+      h += '</div>';
+    });
+    h += '</div>';
+
+    // persetujuan pasangan
+    const pemberi = pihak.filter(p => p.bentuk === 'pasangan');
+    if (pemberi.length) {
+      h += '<div class="ttd-row" style="grid-template-columns:repeat(' + Math.max(pemberi.length, 2) + ',1fr)">';
+      pemberi.forEach(p => {
+        const label = pakaiToken ? '{{label_persetujuan}}' : 'Persetujuan ' + hubunganOf(p);
+        const wakil = p.pasanganKuasaAktif;
+        const nama = pakaiToken
+          ? (wakil ? '({{kuasa_pasangan.nama}})' : '({{pasangan.nama}})')
+          : '(' + ((wakil ? p.pasanganKuasa.nama : p.pasangan.nama) || '\u2014') + ')';
+        h += '<div class="ttd-cell"><div class="hd">' + esc(label) + '</div><div class="sp"></div>' +
+             '<div class="nm">' + esc(nama) + '</div>' +
+             (wakil ? '<div class="qq">' + esc(pakaiToken ? 'selaku kuasa dari {{pasangan.nama}}' : 'selaku kuasa dari ' + (p.pasangan.nama || '\u2014')) + '</div>' : '') +
+             '</div>';
+      });
+      h += '</div>';
+    }
+
+    // saksi
+    h += '<div class="ttd-row" style="grid-template-columns:repeat(' + Math.max(saksi.length, 1) + ',1fr)">';
+    saksi.forEach((sk, idx) => {
+      const nama = pakaiToken ? '({{saksi' + (idx + 1) + '_nama}})' : '(' + (sk.nama || '\u2014') + ')';
+      h += '<div class="ttd-cell"><div class="hd">SAKSI</div><div class="sp"></div><div class="nm">' + esc(nama) + '</div>';
+      if (sk.nip) h += '<div class="qq">' + esc(pakaiToken ? 'NIP. {{saksi' + (idx + 1) + '_nip}}' : 'NIP. ' + sk.nip) + '</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    // PPAT
+    h += '<div class="ttd-row" style="grid-template-columns:1fr"><div class="ttd-cell">' +
+      '<div class="hd">PEJABAT PEMBUAT AKTA TANAH</div><div class="sp"></div>' +
+      '<div class="nm">' + esc(pakaiToken ? '({{ppat_nama}})' : '(' + (ppatNama || '\u2014') + ')') + '</div></div></div>';
+
+    return h + '</div>';
+  }
+
+  const LEWATI = [
+    { judul: 'Objek', catatan: 'Uraian objek, letak objek, cakupan “meliputi pula”, dan sebutan objek — belum disusun.' },
+    { judul: 'Pasal-pasal', catatan: 'Pasal 1 sampai pasal terakhir, termasuk paragraf pajak dan penanggung biaya akta — belum disusun.' }
+  ];
+
+  /* ---------- kumpulan token ---------- */
+  function tokenOrang(ns) {
+    const t = {};
+    ['sapaan','nama','tempatLahir','tanggalLahir','kewarganegaraan','pekerjaan','alamat','rt','rw',
+     'labelKelurahan','kelurahan','kecamatan','labelKota','kota','provinsi','nik'].forEach(k => {
+      t[k] = '{{' + ns + '.' + snake(k) + '}}';
+    });
+    t.tanggalLahirTerbilang = '{{' + ns + '.tanggal_lahir_terbilang}}';
+    return t;
+  }
+  function snake(k) { return k.replace(/[A-Z]/g, m => '_' + m.toLowerCase()); }
+
+  function nilaiOrang(o) {
+    return {
+      sapaan: sapaanOf(o), nama: o.nama || '—', tempatLahir: o.tempatLahir || '—',
+      tanggalLahir: tglAngka(o.tanggalLahir), tanggalLahirTerbilang: tglKata(o.tanggalLahir),
+      kewarganegaraan: o.kewarganegaraan || '—', pekerjaan: o.pekerjaan || '—', alamat: o.alamat || '—',
+      rt: o.rt || '—', rw: o.rw || '—', labelKelurahan: o.labelKelurahan, kelurahan: o.kelurahan || '—',
+      kecamatan: o.kecamatan || '—', labelKota: o.labelKota, kota: o.kota || '—', provinsi: o.provinsi || '—',
+      nik: o.nik || '—'
+    };
+  }
+
+  function tokenPasanganData() {
+    return { hubungan: '{{pasangan_hubungan}}', hubunganBalik: '{{pasangan_hubungan_balik}}',
+      nikahJenis: '{{nikah_dokumen_jenis}}', nikahTanggal: '{{nikah_dokumen_tanggal}}',
+      nikahTanggalTerbilang: '{{nikah_dokumen_tanggal_terbilang}}', nikahNomor: '{{nikah_dokumen_nomor}}',
+      nikahPenerbit: '{{nikah_dokumen_penerbit}}' };
+  }
+  function nilaiPasanganData(p) {
+    return { hubungan: hubunganOf(p), hubunganBalik: hubunganBalikOf(p),
+      nikahJenis: p.nikahJenis, nikahTanggal: tglAngka(p.nikahTanggal),
+      nikahTanggalTerbilang: tglKata(p.nikahTanggal), nikahNomor: p.nikahNomor || '—',
+      nikahPenerbit: p.nikahPenerbit || '—' };
+  }
+
+  function tokenPt() {
+    const t = {};
+    ['nama','kedudukan','jabatan_wakil','komisaris_tanggal','komisaris_nomor','pendirian_tanggal','pendirian_nomor',
+     'pendirian_notaris','pendirian_notaris_kota','pendirian_pengesah','pendirian_sk_tanggal','pendirian_sk_nomor',
+     'uu40_tanggal','uu40_nomor','uu40_notaris','uu40_notaris_kota','uu40_sk_tanggal','uu40_sk_nomor'].forEach(k => {
+      t[camel(k)] = '{{pt.' + k + '}}';
+    });
+    ['komisaris_tanggal','pendirian_tanggal','pendirian_sk_tanggal','uu40_tanggal','uu40_sk_tanggal'].forEach(k => {
+      t[camel(k) + 'Terbilang'] = '{{pt.' + k + '_terbilang}}';
+    });
+    return t;
+  }
+  function camel(k) { return k.replace(/_([a-z0-9])/g, (m, c) => c.toUpperCase()); }
+
+  function ptUntukBlok(p, pakaiToken) {
+    const t = p.pt;
+    const base = pakaiToken ? tokenPt() : {
+      nama: t.nama || '—', kedudukan: t.kedudukan || '—', jabatanWakil: t.jabatanWakil,
+      komisarisTanggal: tglAngka(t.komisarisTanggal), komisarisTanggalTerbilang: tglKata(t.komisarisTanggal),
+      komisarisNomor: t.komisarisNomor || '—',
+      pendirianTanggal: tglAngka(t.pendirianTanggal), pendirianTanggalTerbilang: tglKata(t.pendirianTanggal),
+      pendirianNomor: t.pendirianNomor || '—', pendirianNotaris: t.pendirianNotaris || '—',
+      pendirianNotarisKota: t.pendirianNotarisKota || '—', pendirianPengesah: t.pendirianPengesah,
+      pendirianSkTanggal: tglAngka(t.pendirianSkTanggal), pendirianSkTanggalTerbilang: tglKata(t.pendirianSkTanggal),
+      pendirianSkNomor: t.pendirianSkNomor || '—',
+      uu40Tanggal: tglAngka(t.uu40Tanggal), uu40TanggalTerbilang: tglKata(t.uu40Tanggal),
+      uu40Nomor: t.uu40Nomor || '—', uu40Notaris: t.uu40Notaris || '—', uu40NotarisKota: t.uu40NotarisKota || '—',
+      uu40SkTanggal: tglAngka(t.uu40SkTanggal), uu40SkTanggalTerbilang: tglKata(t.uu40SkTanggal),
+      uu40SkNomor: t.uu40SkNomor || '—'
+    };
+    base.komisarisAktif = t.komisarisAktif;
+    base.uu40Aktif = t.uu40Aktif;
+    base.perubahan = t.perubahan.map((u, i) => pakaiToken ? {
+      jenis: '{{jenis_perubahan}}', aktaTanggal: '{{akta_tanggal}}', aktaTanggalTerbilang: '{{akta_tanggal_terbilang}}',
+      aktaNomor: '{{akta_nomor}}', notaris: '{{notaris}}', notarisKota: '{{notaris_kota}}',
+      frasaBukti: '{{frasa_bukti}}', instansi: '{{instansi}}', jenisBuktiTeks: '{{bukti_jenis}}',
+      buktiTanggal: '{{bukti_tanggal}}', buktiTanggalTerbilang: '{{bukti_tanggal_terbilang}}', buktiNomor: '{{bukti_nomor}}'
+    } : {
+      jenis: u.jenis, aktaTanggal: tglAngka(u.aktaTanggal), aktaTanggalTerbilang: tglKata(u.aktaTanggal),
+      aktaNomor: u.aktaNomor || '—', notaris: u.notaris || '—', notarisKota: u.notarisKota || '—',
+      frasaBukti: frasaBukti(u.buktiJenis), instansi: u.instansi || '—', jenisBuktiTeks: jenisBukti(u.buktiJenis),
+      buktiTanggal: tglAngka(u.buktiTanggal), buktiTanggalTerbilang: tglKata(u.buktiTanggal), buktiNomor: u.buktiNomor || '—'
+    });
+    if (pakaiToken && base.perubahan.length) base.perubahan = [base.perubahan[0]];   // cukup satu contoh baris
+    return base;
+  }
+
+  function jumlahPenghadap(p) { return p.bentuk === 'pasangan' ? 2 : 1; }
+
+  /* ---------- susun keluaran ---------- */
+  function bagianPihak(pakaiToken) {
+    // kelompokkan pihak berurutan dengan posisi sama
+    const hasil = [];
+    let i = 0;
+    while (i < pihak.length) {
+      const pos = pihak[i].posisi;
+      const anggota = [];
+      while (i < pihak.length && pihak[i].posisi === pos) { anggota.push({ p: pihak[i], roman: ROMAN[i] }); i++; }
+      hasil.push({ posisi: pos, anggota: anggota });
+    }
+    return hasil.map(g => {
+      const potongan = [];
+      g.anggota.forEach(a => {
+        const p = a.p;
+        const v = pakaiToken ? tokenOrang('orang') : nilaiOrang(p.orang);
+
+        const dom = (ns, o) => {
+          const t = barisDomisili(ns, o, pakaiToken);
+          if (t) potongan.push({ jenis: 'sub', blok: 'DOMISILI_SEMENTARA', teks: t });
+        };
+
+        if (p.kuasaAktif) {
+          const k = pakaiToken ? tokenOrang('kuasa') : nilaiOrang(p.kuasa);
+          potongan.push({ jenis: 'utama', roman: a.roman, blok: 'IDENTITAS_ORANG', teks: blokIdentitas(k) });
+          dom('kuasa', p.kuasa);
+          potongan.push({ jenis: 'sub', blok: 'KEDUDUKAN_KUASA', teks: blokKedudukanKuasa(dataKuasa(p, pakaiToken)) });
+          potongan.push({ jenis: 'sub', blok: 'IDENTITAS_ORANG', teks: blokIdentitas(v) });
+          dom('orang', p.orang);
+        } else {
+          potongan.push({ jenis: 'utama', roman: a.roman, blok: 'IDENTITAS_ORANG', teks: blokIdentitas(v) });
+          dom('orang', p.orang);
+        }
+
+        if (p.bentuk === 'pasangan') {
+          const s = pakaiToken ? tokenOrang('pasangan') : nilaiOrang(p.pasangan);
+          const d = pakaiToken ? tokenPasanganData() : nilaiPasanganData(p);
+          // di dalam blok ini workbook merujuk pihaknya sebagai {{pihak.*}}
+          const vp = pakaiToken ? tokenOrang('pihak') : v;
+          const dk = p.pasanganKuasaAktif ? dataKuasaPasangan(p, pakaiToken) : null;
+          potongan.push({ jenis: 'sub', blok: 'KEDUDUKAN_PASANGAN', teks: blokKedudukanPasangan(vp, s, d, dk) });
+          if (dk) {
+            const pk = pakaiToken ? tokenOrang('kuasa_pasangan') : nilaiOrang(p.pasanganKuasa);
+            potongan.push({ jenis: 'sub', blok: 'IDENTITAS_ORANG', teks: blokIdentitas(pk) });
+            dom('kuasa_pasangan', p.pasanganKuasa);
+            potongan.push({ jenis: 'sub', blok: 'KEDUDUKAN_KUASA_PASANGAN',
+              teks: blokKuasaPasangan(dk, s.nama) });
+          } else {
+            dom('pasangan', p.pasangan);
+          }
+        }
+        if (p.bentuk === 'pt') {
+          potongan.push({ jenis: 'sub', blok: 'KEDUDUKAN_PT', teks: blokKedudukanPt(ptUntukBlok(p, pakaiToken)) });
+        }
+      });
+      const d = pakaiToken
+        ? { peran: '{{peran}}', sebutan: '{{sebutan_pihak}}' }
+        : { peran: peranOf(g.posisi, jenisAkta), sebutan: sebutanOf(g.posisi) };
+      potongan.push({ jenis: 'peran', blok: 'PERAN_PIHAK', teks: blokPeran(d) });
+      return potongan;
+    });
+  }
+
+  function renderRaw() {
+    const box = document.getElementById('raw-box');
+    let teks = bagianPihak(true).map(grup => grup.map(b =>
+      b.jenis === 'utama' ? b.roman + '. ' + b.teks : b.teks
+    ).join('\n\n')).join('\n\n\n');
+
+    LEWATI.forEach(l => {
+      teks += '\n\n@@' + l.judul + ' — dilewati dulu@@\n' + l.catatan;
+    });
+
+    teks += '\n\n' + bagianSaksi(true).map(b =>
+      b.jenis === 'nomor' ? b.no + '. ' + b.teks : (b.jenis === 'sub' ? '- ' + b.teks : b.teks)
+    ).join('\n\n');
+
+    box.innerHTML = esc(teks)
+      .replace(/@@([^@]+)@@/g, (m, t) => '<span class="ph">[ ' + t + ' ]</span>')
+      .replace(/\{\{[^}]+\}\}/g, m => '<span class="tag">' + m + '</span>')
+      + htmlTtd(true).replace(/\{\{[^}]+\}\}/g, m => '<span class="tag">' + m + '</span>');
+  }
+
+  function renderOutput() {
+    const box = document.getElementById('out-box');
+    let html = '';
+    bagianPihak(false).forEach(grup => {
+      grup.forEach(b => {
+        if (b.jenis === 'utama') {
+          html += '<div class="out-line"><span class="roman">' + b.roman + '.</span><span>' + esc(b.teks) + '</span></div>';
+        } else if (b.jenis === 'peran') {
+          html += '<p class="out-seb">' + esc(b.teks).replace(/“([^”]+)”/, '“<b>$1</b>”') + '</p>';
+        } else {
+          html += '<p class="out-sub">' + esc(b.teks).replace(/\n/g, '<br>') + '</p>';
+        }
+      });
+    });
+
+    LEWATI.forEach(l => {
+      html += '<div class="out-ph"><b>' + esc(l.judul) + ' — dilewati dulu</b>' + esc(l.catatan) + '</div>';
+    });
+
+    bagianSaksi(false).forEach(b => {
+      if (b.jenis === 'nomor') {
+        html += '<div class="out-num"><span class="no">' + b.no + '.</span><span>' + esc(b.teks) + '</span></div>';
+      } else if (b.jenis === 'sub') {
+        html += '<p class="out-sub">' + esc(b.teks) + '</p>';
+      } else {
+        html += '<p class="out-plain">' + esc(b.teks).replace(/\n/g, '<br>') + '</p>';
+      }
+    });
+
+    box.innerHTML = html + htmlTtd(false);
+  }
+
+  function renderAll() { renderRaw(); renderOutput(); }
+
+  renderList();
+  renderSaksi();
+  renderAll();
+</script>
+</body>
+</html>

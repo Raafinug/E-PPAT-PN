@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>E-PPAT — Prototipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f1ede2; --paper-raised:#e8e2d2; --ink:#241f18; --ink-soft:#57503f;
+    --rule:#c9bfa4; --stamp:#8a2f22; --stamp-soft:#8a2f2212;
+    --serif:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+    --paper:#1b1712; --paper-raised:#241f18; --ink:#ece5d4; --ink-soft:#b7ac93;
+    --rule:#4a4232; --stamp:#d97a63; --stamp-soft:#d97a6322;
+  } }
+  :root[data-theme="dark"]{
+    --paper:#1b1712; --paper-raised:#241f18; --ink:#ece5d4; --ink-soft:#b7ac93;
+    --rule:#4a4232; --stamp:#d97a63; --stamp-soft:#d97a6322;
+  }
+  *{box-sizing:border-box}
+  html{height:100%}
+  body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);
+    font-family:var(--serif);font-size:17px;line-height:1.55;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 3rem)}
+  .wrap{max-width:760px;margin:0 auto;padding-inline:1.3rem}
+  header{padding:2.6rem 0 1.4rem;border-bottom:1px solid var(--rule)}
+  .eyebrow{font-family:var(--mono);font-size:0.76rem;color:var(--stamp);margin:0 0 0.6rem}
+  h1{font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;line-height:1.2;margin:0 0 0.5rem}
+  .lede{color:var(--ink-soft);font-size:0.98rem;margin:0;max-width:58ch}
+
+  .catatan{margin:1.3rem 0 0;border:1px solid var(--rule);border-left:3px solid var(--stamp);
+    background:var(--paper-raised);padding:0.8rem 1rem;font-size:0.9rem;color:var(--ink-soft)}
+  .catatan b{color:var(--stamp)}
+
+  .daftar{list-style:none;margin:1.6rem 0 0;padding:0}
+  .daftar li{margin-bottom:0.9rem}
+  .kartu{display:block;text-decoration:none;color:inherit;border:1px solid var(--rule);
+    background:var(--paper-raised);border-radius:3px;padding:0.95rem 1.05rem}
+  .kartu:hover{border-color:var(--stamp)}
+  .kartu .kode{font-family:var(--mono);font-size:0.72rem;color:var(--stamp);display:block;margin-bottom:0.3rem}
+  .kartu .judul{font-weight:600;font-size:1.02rem;margin:0 0 0.3rem}
+  .kartu .ket{color:var(--ink-soft);font-size:0.9rem;margin:0}
+  .kartu .isinya{font-size:0.84rem;color:var(--ink-soft);margin:0.5rem 0 0;padding-left:1.05rem}
+  .kartu .isinya li{margin:0 0 0.15rem}
+
+  footer{margin-top:2.4rem;padding-top:1rem;border-top:1px solid var(--rule);
+    font-size:0.82rem;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">E-PPAT · Perdana Niaga</p>
+    <h1>Prototipe Tampilan</h1>
+    <p class="lede">Kumpulan purwarupa layar untuk bahan pembahasan rancangan. Klik salah satu untuk membukanya.</p>
+  </header>
+
+  <p class="catatan"><b>Prototipe tampilan, bukan aplikasi live.</b> Seluruh tombol bersifat simulasi dan seluruh data yang tampil adalah data contoh — nama, NIK, nomor akta, dan alamat bukan data sebenarnya.</p>
+
+  <ul class="daftar">
+
+    <li>
+      <a class="kartu" href="simulator-para-pihak.html">
+        <span class="kode">PARA PIHAK</span>
+        <p class="judul">Simulator Para Pihak — perorangan &amp; perseroan</p>
+        <p class="ket">Memperlihatkan bagaimana bagian Para Pihak tersusun sendiri dari data yang diisi: kalimat, paragraf yang muncul-hilang, penomoran, dan terbilang.</p>
+        <ul class="isinya">
+          <li>Bentuk pihak: perorangan, perorangan + persetujuan pasangan, badan hukum Perseroan Terbatas</li>
+          <li>Perwakilan/kuasa untuk pihak maupun untuk wakil perseroan, dan untuk pasangan yang tidak bisa hadir</li>
+          <li>Sapaan (Tuan/Nyonya/Nona/Nyonya Janda) turunan dari jenis kelamin + status perkawinan</li>
+          <li>Dua panel: hasil mentah saat drafting dan hasil render siap unduh</li>
+        </ul>
+      </a>
+    </li>
+
+    <li>
+      <a class="kartu" href="editor-template-dokumen.html">
+        <span class="kode">TEMPLATE DOKUMEN</span>
+        <p class="judul">Editor Template Dokumen — bagian yang tersusun otomatis</p>
+        <p class="ket">Memperlihatkan cara menyunting template ketika sebagian bagiannya terbentuk otomatis sesuai kondisi order.</p>
+        <ul class="isinya">
+          <li>Tiga jenis bagian: Catatan, Pasal, dan Bagian Otomatis</li>
+          <li>Potongan redaksi berkondisi — struktur terkunci, hanya tulisannya yang bisa disunting</li>
+          <li>Tombol pemilih variabel dan validasi variabel wajib</li>
+          <li>Lingkup simpan: berlaku untuk semua template kantor atau template ini saja</li>
+          <li>Pratinjau per kasus, dengan atau tanpa data contoh</li>
+        </ul>
+      </a>
+    </li>
+
+    <li>
+      <a class="kartu" href="simulator-field-jenis-hak.html">
+        <span class="kode">DATA OBJEK</span>
+        <p class="judul">Simulator Field — Data Objek</p>
+        <p class="ket">Memperlihatkan field apa saja yang muncul pada modal Tambah Objek untuk tiap kombinasi pilihan, mengikuti uraian objek Lampiran Ib Perka BPN Nomor 8 Tahun 2021.</p>
+        <ul class="isinya">
+          <li>Alur pilihan: Status Sertipikat → Format Sertipikat → Jenis Hak → Status Objek</li>
+          <li>Butir 14 (bidang terdaftar), 15 (sebagian bidang), 16 (bekas Hak Adat), 17 (satuan rumah susun)</li>
+          <li>Field yang selalu ditambahkan ditampilkan terpisah</li>
+        </ul>
+      </a>
+    </li>
+
+  </ul>
+
+  <footer>Disusun sebagai bahan pembahasan rancangan E-PPAT.</footer>
+
+</div>
+</body>
+</html>

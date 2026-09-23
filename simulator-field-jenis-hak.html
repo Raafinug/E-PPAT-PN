@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulator Field — E-PPAT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f1ede2;
+    --paper-raised: #e8e2d2;
+    --ink: #241f18;
+    --ink-soft: #57503f;
+    --rule: #c9bfa4;
+    --stamp: #8a2f22;
+    --stamp-soft: #8a2f2212;
+    --ok: #3d5c3a;
+    --ok-soft: #3d5c3a15;
+    --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --paper: #1b1712; --paper-raised: #241f18; --ink: #ece5d4; --ink-soft: #b7ac93;
+      --rule: #4a4232; --stamp: #d97a63; --stamp-soft: #d97a6320; --ok: #8fb388; --ok-soft: #8fb38820;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1b1712; --paper-raised: #241f18; --ink: #ece5d4; --ink-soft: #b7ac93;
+    --rule: #4a4232; --stamp: #d97a63; --stamp-soft: #d97a6320; --ok: #8fb388; --ok-soft: #8fb38820;
+  }
+  * { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    margin: 0; min-height: 100%;
+    background: var(--paper); color: var(--ink);
+    font-family: var(--serif); font-size: 17px; line-height: 1.55;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem);
+  }
+  .wrap { max-width: 700px; margin: 0 auto; padding: 0 1.4rem; }
+  header { padding: 2.4rem 0 1.6rem; border-bottom: 1px solid var(--rule); }
+  .eyebrow { font-family: var(--mono); font-size: 0.76rem; color: var(--stamp); margin: 0 0 0.7rem; }
+  h1 { font-size: clamp(1.4rem, 4vw, 1.9rem); font-weight: 600; line-height: 1.2; margin: 0 0 0.6rem; }
+  .lede { color: var(--ink-soft); font-size: 1rem; margin: 0; max-width: 56ch; }
+
+  .step { padding: 1.6rem 0; border-bottom: 1px solid var(--rule); }
+  .step.is-hidden { display: none; }
+  .step-label { display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 0.85rem; }
+  .step-num { font-family: var(--mono); font-size: 0.78rem; color: var(--stamp); }
+  .step-title { font-weight: 600; font-size: 1.02rem; }
+  .step-note { color: var(--ink-soft); font-size: 0.9rem; margin: 0.3rem 0 0; }
+
+  .choices { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .choices button {
+    font-family: var(--serif); font-size: 0.96rem;
+    background: var(--paper-raised); color: var(--ink);
+    border: 1px solid var(--rule); border-radius: 2px;
+    padding: 0.55rem 1rem; cursor: pointer;
+  }
+  .choices button:hover { border-color: var(--stamp); }
+  .choices button[aria-pressed="true"] {
+    background: var(--stamp); color: var(--paper); border-color: var(--stamp);
+  }
+  .choices button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .result { padding: 2rem 0 3rem; }
+  .result h2 {
+    font-size: 1.02rem; font-weight: 600; margin: 0 0 1rem;
+    display: flex; align-items: baseline; gap: 0.6rem;
+  }
+  .result h2 .tag {
+    font-family: var(--mono); font-size: 0.76rem; color: var(--ok);
+    border: 1px solid var(--ok); background: var(--ok-soft);
+    padding: 0.1rem 0.5rem; border-radius: 2px;
+  }
+  .field-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .field-list li {
+    display: grid; grid-template-columns: 3.6rem 1fr; gap: 0.9rem;
+    padding: 0.65rem 0; border-bottom: 1px dashed var(--rule); align-items: baseline;
+  }
+  .field-list li .ref { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-soft); }
+  .field-list.common li .ref { color: var(--stamp); }
+
+  .group-label { font-size: 0.85rem; color: var(--ink-soft); margin: 1.6rem 0 0.4rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Simulator — Data Objek E-PPAT</p>
+    <h1>Klik tiap pilihan, lihat field yang muncul</h1>
+    <p class="lede">Ikuti alur seperti di form: status sertipikat → format → jenis hak → status objek.</p>
+  </header>
+
+  <div class="step" id="step-sertipikat">
+    <div class="step-label"><span class="step-num">01</span><span class="step-title">Status Sertipikat</span></div>
+    <div class="choices" data-group="sertipikat">
+      <button data-value="terdaftar" aria-pressed="true">Sudah Terdaftar</button>
+      <button data-value="belum" aria-pressed="false">Belum Terdaftar (bekas Hak Adat)</button>
+    </div>
+  </div>
+
+  <div class="step" id="step-format">
+    <div class="step-label"><span class="step-num">02</span><span class="step-title">Format Sertipikat</span></div>
+    <div class="choices" data-group="format">
+      <button data-value="analog" aria-pressed="true">Analog</button>
+      <button data-value="elektronik" aria-pressed="false">Elektronik</button>
+    </div>
+  </div>
+
+  <div class="step" id="step-jenis">
+    <div class="step-label"><span class="step-num">03</span><span class="step-title">Jenis Hak</span></div>
+    <div class="choices" data-group="jenis">
+      <button data-value="SHM" aria-pressed="true">Hak Milik</button>
+      <button data-value="HGB" aria-pressed="false">HGB</button>
+      <button data-value="HGU" aria-pressed="false">HGU</button>
+      <button data-value="HP" aria-pressed="false">Hak Pakai</button>
+      <button data-value="SRS" aria-pressed="false">Hak Milik Atas Sarusun</button>
+    </div>
+  </div>
+
+  <div class="step" id="step-objek">
+    <div class="step-label"><span class="step-num">04</span><span class="step-title">Status Objek</span></div>
+    <div class="choices" data-group="objek">
+      <button data-value="utuh" aria-pressed="true">Utuh</button>
+      <button data-value="sebagian" aria-pressed="false">Sebagian</button>
+    </div>
+    <p class="step-note" id="objek-note"></p>
+  </div>
+
+  <div class="result">
+    <h2>Field yang muncul <span class="tag" id="scenario-tag">—</span></h2>
+    <ul class="field-list" id="field-output"></ul>
+
+    <p class="group-label">selalu ditambah (tidak tergantung pilihan di atas)</p>
+    <ul class="field-list common" id="common-output"></ul>
+  </div>
+
+</div>
+
+<script>
+  const state = { sertipikat: 'terdaftar', format: 'analog', jenis: 'SHM', objek: 'utuh' };
+
+  const FIELDS = {
+    belum: [
+      ['16a', 'Nomor Persil, Blok, Kohir'],
+      ['16b', 'Luas tanah (m²)'],
+      ['16c', 'Batas-batas tanah'],
+      ['16d', 'Tanggal & nomor Peta Bidang'],
+      ['16e', 'NIB'],
+      ['16e', 'SPPT PBB — Nomor Objek Pajak (NOP)'],
+      ['16f', 'Alat bukti kepemilikan (girik / petuk / leter C / verponding / segel)'],
+    ],
+    srs: {
+      analog: [['17a', 'Nomor Hak Milik Atas Satuan Rumah Susun']],
+      elektronik: [
+        ['App', 'NIB Elektronik (Sarusun)'],
+        ['App', 'Nomor Kode Sertipikat'],
+      ],
+    },
+    terdaftar: {
+      analog: {
+        utuh: [
+          ['14a', 'Nomor hak'],
+          ['14b', 'Tanggal & nomor Surat Ukur / Gambar Situasi'],
+          ['14c', 'Luas tanah (m²)'],
+          ['14d', 'NIB'],
+          ['14d', 'SPPT PBB NOP'],
+        ],
+        sebagian: [
+          ['15a', 'Nomor hak asal'],
+          ['15b', 'NIB tanah asal'],
+          ['15b', 'SPPT PBB NOP tanah asal'],
+          ['15c', 'Luas bagian yang dijual (m²)'],
+          ['15d', 'Batas-batas bidang tanah yang dijual'],
+          ['15e', 'Tanggal & nomor Surat Ukur/Peta Bidang baru + NIB bidang baru'],
+        ],
+      },
+      elektronik: {
+        utuh: [
+          ['App', 'NIB Elektronik (Nomor Identifikasi Bidang Elektronik)'],
+          ['App', 'Nomor Kode Sertipikat'],
+          ['14c', 'Luas tanah (m²)'],
+          ['14d', 'SPPT PBB NOP'],
+        ],
+        sebagian: [
+          ['App', 'NIB Elektronik tanah asal'],
+          ['App', 'Nomor Kode Sertipikat tanah asal'],
+          ['15b', 'SPPT PBB NOP tanah asal'],
+          ['15c', 'Luas bagian yang dijual (m²)'],
+          ['15d', 'Batas-batas bidang tanah yang dijual'],
+          ['App', 'NIB Elektronik bidang baru (jika sudah dipecah di sistem)'],
+        ],
+      },
+    },
+  };
+
+  const COMMON = [
+    ['18', 'Lokasi — Provinsi, Kabupaten/Kota, Kecamatan, Desa/Kelurahan, Jalan'],
+    ['19', 'Keterangan cakupan — apakah termasuk bangunan/tanaman'],
+  ];
+
+  const SCENARIO_TAGS = {
+    'belum': 'Pasal 16',
+    'terdaftar-utuh': 'Pasal 14',
+    'terdaftar-sebagian': 'Pasal 15',
+    'srs': 'Pasal 17',
+  };
+
+  function setGroup(group, value) {
+    state[group] = value;
+    document.querySelectorAll(`[data-group="${group}"] button`).forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.value === value));
+    });
+    render();
+  }
+
+  document.querySelectorAll('.choices').forEach(group => {
+    group.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if (!btn || btn.disabled) return;
+      setGroup(group.dataset.group, btn.dataset.value);
+    });
+  });
+
+  function renderList(el, items) {
+    el.innerHTML = items.map(([ref, label]) =>
+      `<li><span class="ref">${ref}</span><span>${label}</span></li>`
+    ).join('');
+  }
+
+  function render() {
+    const isSRS = state.jenis === 'SRS';
+    const isBelum = state.sertipikat === 'belum';
+
+    // Belum Terdaftar hanya berlaku untuk Hak Milik
+    if (isBelum && state.jenis !== 'SHM' && !isSRS) {
+      // paksa balik ke SHM secara visual jika kombinasi tidak valid
+    }
+
+    document.getElementById('step-format').classList.toggle('is-hidden', isBelum);
+    document.getElementById('step-jenis').classList.toggle('is-hidden', isBelum);
+    document.getElementById('step-objek').classList.toggle('is-hidden', isBelum || isSRS);
+
+    const objekNote = document.getElementById('objek-note');
+    if (isSRS) {
+      objekNote.textContent = 'Tidak relevan — Satuan Rumah Susun selalu satu unit utuh.';
+    } else {
+      objekNote.textContent = '';
+    }
+
+    let items, tagKey;
+    if (isBelum) {
+      items = FIELDS.belum;
+      tagKey = 'belum';
+    } else if (isSRS) {
+      items = FIELDS.srs[state.format];
+      tagKey = 'srs';
+    } else {
+      items = FIELDS.terdaftar[state.format][state.objek];
+      tagKey = `terdaftar-${state.objek}`;
+    }
+
+    document.getElementById('scenario-tag').textContent = SCENARIO_TAGS[tagKey];
+    renderList(document.getElementById('field-output'), items);
+    renderList(document.getElementById('common-output'), COMMON);
+  }
+
+  render();
+</script>
+</body>
+</html>
