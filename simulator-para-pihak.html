@@ -360,6 +360,30 @@
       domisiliAktif: false, domisiliSementara: ''
     }, o || {});
   }
+  function spawKosong(o) {
+    return Object.assign({
+      bentuk: 'draf4', tanggal: '2026-03-10', rt: '004', rw: '007',
+      rtRwTanggal: '2026-03-12', rtRwNomor: '021/RT-RW/III/2026',
+      rtTanggal: '2026-03-12', rwTanggal: '2026-03-13',
+      kelurahan: 'Cihapit', kelurahanTanggal: '2026-03-16', kelurahanNomor: '470/112/III/2026',
+      kecamatan: 'Bandung Wetan', kecamatanTanggal: '2026-03-18', kecamatanNomor: '470/233/III/2026'
+    }, o || {});
+  }
+  function pewarisKosong(o) {
+    return Object.assign({
+      nama: 'Contoh Nama Pewaris', jenisKelamin: 'Perempuan', kotaMeninggal: 'Bandung',
+      tanggalMeninggal: '2024-08-17', kematianTanggal: '2024-09-02', kematianNomor: '3273-KM-0001-2024',
+      kematianPenerbit: 'Dinas Kependudukan dan Pencatatan Sipil Kota Bandung'
+    }, o || {});
+  }
+  function warisContoh(i) {
+    return ktpKosong({ nama: 'Contoh Ahli Waris ' + i, nik: '32730101010090' + String(i).padStart(2, '0'),
+      tempatLahir: 'Bandung', tanggalLahir: '1990-01-01',
+      jenisKelamin: i % 2 ? 'Laki-laki' : 'Perempuan', statusKawin: i % 2 ? 'Kawin' : 'Belum Menikah',
+      pekerjaan: 'Wiraswasta', alamat: 'Jalan Contoh Nomor ' + i, rt: '004', rw: '007',
+      kelurahan: 'Cihapit', kecamatan: 'Bandung Wetan', kota: 'Bandung', provinsi: 'Jawa Barat' });
+  }
+
   function ptKosong(o) {
     return Object.assign({
       nama: '', kedudukan: '', jabatanWakil: 'Direktur Utama',
@@ -386,6 +410,8 @@
         kota: 'Bandung', provinsi: 'Jawa Barat' }),
       kuasaJenis: 'Surat Kuasa di bawah tangan', kuasaTanggal: '2026-09-01', kuasaNomor: '',
       kuasaNotaris: '', kuasaNotarisKota: '',
+      waris: [warisContoh(1), warisContoh(2)], spaw: spawKosong(), pewaris: pewarisKosong(),
+      objekSebutan: 'sebidang tanah dan bangunan',
       pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
       pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
       pasanganKuasa: ktpKosong({ nama: 'Contoh Kuasa Pasangan', nik: '3273014504880031', tempatLahir: 'Bandung',
@@ -413,6 +439,8 @@
         kota: 'Bandung', provinsi: 'Jawa Barat' }),
       kuasaJenis: 'Surat Kuasa di bawah tangan', kuasaTanggal: '2026-09-01', kuasaNomor: '',
       kuasaNotaris: '', kuasaNotarisKota: '',
+      waris: [warisContoh(1), warisContoh(2)], spaw: spawKosong(), pewaris: pewarisKosong(),
+      objekSebutan: 'sebidang tanah dan bangunan',
       pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
       pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
       pasanganKuasa: ktpKosong({ jenisKelamin: 'Perempuan', statusKawin: 'Kawin' }),
@@ -528,6 +556,47 @@
     return h;
   }
 
+  function pewarisSebutanOf(p) { return p.pewaris.jenisKelamin === 'Laki-laki' ? 'Almarhum' : 'Almarhumah'; }
+
+  function daftarWaris(p, label, judulSeksi) {
+    let h = '<div class="sect"><h4>' + judulSeksi + '</h4>';
+    h += '<p class="kunci">Identitasnya juga tertarik dari Data KTP user masing-masing.</p></div>';
+    p.waris.forEach((w, i) => { h += blokKtp(p.id, 'waris.' + i, label + ' ' + (i + 1) + ' (KTP)', null); });
+    h += '<div class="sect" style="border-top:0;padding-top:0">' +
+      '<button class="mini" data-tambahwaris="' + p.id + '">+ Tambah ' + esc(label.toLowerCase()) + '</button> ' +
+      (p.waris.length > 1 ? '<button class="mini" data-hapuswaris="' + p.id + '">Hapus yang terakhir</button>' : '') +
+      '</div>';
+    return h;
+  }
+
+  function blokSpaw(p) {
+    const d = p.spaw;
+    let h = '<div class="sect"><h4>Surat Pernyataan Ahli Waris</h4>';
+    h += '<div class="grid"><div class="f wide"><label>Bentuk redaksi register</label>' +
+      '<select data-pid="' + p.id + '" data-path="spaw.bentuk">' +
+      '<option value="draf4"' + (d.bentuk === 'draf4' ? ' selected' : '') + '>Lengkap — Ketua RT, Ketua RW, Lurah, Camat (pola draf 4)</option>' +
+      '<option value="draf1"' + (d.bentuk === 'draf1' ? ' selected' : '') + '>Ringkas — RT, RW, buku register Kelurahan &amp; Kecamatan (pola draf 1)</option>' +
+      '</select></div>';
+    h += inp(p.id, 'spaw.tanggal', 'Tanggal SPAW', 'date');
+    h += inp(p.id, 'spaw.rt', 'Nomor RT');
+    h += inp(p.id, 'spaw.rw', 'Nomor RW');
+    if (d.bentuk === 'draf4') {
+      h += inp(p.id, 'spaw.rtRwTanggal', 'Tanggal diketahui RT & RW', 'date');
+      h += inp(p.id, 'spaw.rtRwNomor', 'Nomor register RT/RW');
+    } else {
+      h += inp(p.id, 'spaw.rtTanggal', 'Tanggal diketahui RT', 'date');
+      h += inp(p.id, 'spaw.rwTanggal', 'Tanggal diketahui RW', 'date');
+    }
+    h += inp(p.id, 'spaw.kelurahan', 'Kelurahan');
+    h += inp(p.id, 'spaw.kelurahanTanggal', 'Tanggal register Kelurahan', 'date');
+    h += inp(p.id, 'spaw.kelurahanNomor', 'Nomor register Kelurahan');
+    h += inp(p.id, 'spaw.kecamatan', 'Kecamatan');
+    h += inp(p.id, 'spaw.kecamatanTanggal', 'Tanggal register Kecamatan', 'date');
+    h += inp(p.id, 'spaw.kecamatanNomor', 'Nomor register Kecamatan');
+    h += '</div></div>';
+    return h;
+  }
+
   /* ---------- kartu pihak ---------- */
   function renderCard(p, roman) {
     const card = document.createElement('div');
@@ -546,7 +615,9 @@
         '<option value="' + o[0] + '"' + (p.posisi === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
       '</select></div>';
     h += '<div class="f span2"><label>Bentuk Pihak</label><select data-pid="' + p.id + '" data-path="bentuk">' +
-      [['perorangan','Perorangan'],['pasangan','Perorangan + persetujuan pasangan'],['pt','Badan hukum (Perseroan Terbatas)']]
+      [['perorangan','Perorangan'],['pasangan','Perorangan + persetujuan pasangan'],
+       ['waris','Ahli waris bersama-sama'],['harta_waris','Harta bersama + ahli waris'],
+       ['pt','Badan hukum (Perseroan Terbatas)']]
         .map(o => '<option value="' + o[0] + '"' + (p.bentuk === o[0] ? ' selected' : '') + '>' + o[1] + '</option>').join('') +
       '</select></div>';
     h += '</div>';
@@ -602,6 +673,32 @@
       }
       h += '</div>';
       if (p.pasanganKuasaAktif) h += blokKtp(p.id, 'pasanganKuasa', 'Identitas penerima kuasa pasangan — yang hadir (KTP)', null);
+    }
+
+    // kedudukan: ahli waris bersama-sama (pola draf 4)
+    if (p.bentuk === 'waris') {
+      h += daftarWaris(p, 'Ahli waris', 'Para ahli waris — semuanya menghadap');
+      h += '<div class="sect"><h4>Keterangan warisan</h4><div class="grid">';
+      h += inp(p.id, 'objekSebutan', 'Sebutan objek dalam kalimat warisan', 'text', 'wide');
+      h += '</div></div>';
+      h += blokSpaw(p);
+    }
+
+    // kedudukan: harta bersama + ahli waris (pola draf 1)
+    if (p.bentuk === 'harta_waris') {
+      h += '<div class="sect"><h4>Pewaris &amp; akta kematian</h4><div class="grid">';
+      h += inp(p.id, 'pewaris.nama', 'Nama pewaris', 'text', 'span2');
+      h += sel(p.id, 'pewaris.jenisKelamin', 'Jenis Kelamin', ['Laki-laki', 'Perempuan']);
+      h += '<div class="f derived" data-der="pewarisSebutan"><label>Sebutan (turunan)</label>' +
+        '<input type="text" value="' + esc(pewarisSebutanOf(p)) + '" readonly></div>';
+      h += inp(p.id, 'pewaris.kotaMeninggal', 'Meninggal di');
+      h += inp(p.id, 'pewaris.tanggalMeninggal', 'Tanggal meninggal', 'date');
+      h += inp(p.id, 'pewaris.kematianTanggal', 'Tanggal Kutipan Akta Kematian', 'date');
+      h += inp(p.id, 'pewaris.kematianNomor', 'Nomor Kutipan Akta Kematian');
+      h += inp(p.id, 'pewaris.kematianPenerbit', 'Dikeluarkan oleh', 'text', 'wide');
+      h += '</div></div>';
+      h += daftarWaris(p, 'Ahli waris lain', 'Ahli waris lain yang turut hadir &amp; menandatangani');
+      h += blokSpaw(p);
     }
 
     // kedudukan: PT
@@ -683,6 +780,7 @@
         // hanya perubahan yang mengubah susunan kartu yang disusun ulang,
         // sisanya diperbarui di tempat supaya fokus mengetik tidak lepas
         const strukturil = /(^|\.)(bentuk|komisarisAktif|uu40Aktif|kuasaAktif|kuasaJenis|pasanganKuasaAktif|pasanganKuasaJenis|domisiliAktif)$/;
+        if (path === 'spaw.bentuk') { renderList(); renderAll(); return; }
         if (strukturil.test(path)) {
           renderList();
         } else {
@@ -695,6 +793,17 @@
     list.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', e => {
       pihak = pihak.filter(p => p.id !== +e.target.dataset.remove);
       renderList(); renderAll();
+    }));
+    list.querySelectorAll('[data-tambahwaris]').forEach(b => b.addEventListener('click', e => {
+      const p = pihak.find(x => x.id === +e.target.dataset.tambahwaris);
+      if (p.waris.length >= 8) return;
+      p.waris.push(warisContoh(p.waris.length + 1));
+      renderList(); renderAll();
+    }));
+    list.querySelectorAll('[data-hapuswaris]').forEach(b => b.addEventListener('click', e => {
+      const p = pihak.find(x => x.id === +e.target.dataset.hapuswaris);
+      if (p.waris.length <= 1) return;
+      p.waris.pop(); renderList(); renderAll();
     }));
     list.querySelectorAll('[data-addubah]').forEach(b => b.addEventListener('click', e => {
       const p = pihak.find(x => x.id === +e.target.dataset.addubah);
@@ -715,7 +824,9 @@
     const p = pihak.find(x => x.id === pid);
     card.querySelectorAll('.f.derived[data-der]').forEach(el => {
       const k = el.dataset.der;
-      el.querySelector('input').value = k === 'hubungan' ? hubunganOf(p) : sapaanOf(p[k]);
+      el.querySelector('input').value = k === 'hubungan' ? hubunganOf(p)
+        : k === 'pewarisSebutan' ? pewarisSebutanOf(p)
+        : sapaanOf(getPath(pid, k));
     });
   }
   function segarkanChip(pid) {
@@ -738,6 +849,8 @@
         kota: 'Bandung', provinsi: 'Jawa Barat' }),
       kuasaJenis: 'Surat Kuasa di bawah tangan', kuasaTanggal: '2026-09-01', kuasaNomor: '',
       kuasaNotaris: '', kuasaNotarisKota: '',
+      waris: [warisContoh(1), warisContoh(2)], spaw: spawKosong(), pewaris: pewarisKosong(),
+      objekSebutan: 'sebidang tanah dan bangunan',
       pasanganKuasaAktif: false, pasanganKuasaJenis: 'Surat Kuasa di bawah tangan',
       pasanganKuasaTanggal: '2026-09-01', pasanganKuasaNomor: '', pasanganKuasaNotaris: '', pasanganKuasaNotarisKota: '',
       pasanganKuasa: ktpKosong({ jenisKelamin: 'Perempuan', statusKawin: 'Kawin' }),
@@ -938,6 +1051,99 @@
     return s;
   }
 
+  /* ---------- waris ---------- */
+  function spawRegister(d) {
+    if (d.bentuk === 'draf4') {
+      return 'yang diketahui dan telah dicatat dalam Buku Register oleh Ketua Rukun Tetangga ' + d.rt +
+        ' oleh Ketua Rukun Warga ' + d.rw + ' tertanggal ' + d.rtRwTanggal + ' (' + d.rtRwTanggalT +
+        ') dengan Nomor: ' + d.rtRwNomor +
+        ', yang telah dicatatkan dan diregister dalam Buku Register Kelurahan ' + d.kelurahan +
+        ' oleh Lurah Kelurahan ' + d.kelurahan + ' tertanggal ' + d.kelurahanTanggal + ' (' + d.kelurahanTanggalT +
+        '), Nomor: ' + d.kelurahanNomor +
+        ', yang telah dicatatkan dan diregister dalam Buku Register Kecamatan ' + d.kecamatan +
+        ' oleh Camat Kecamatan ' + d.kecamatan + ' tertanggal ' + d.kecamatanTanggal + ' (' + d.kecamatanTanggalT +
+        ') Nomor: ' + d.kecamatanNomor +
+        ', yang aslinya diperlihatkan kepada saya, PPAT, dan fotokopinya dilekatkan pada minuta akta ini;';
+    }
+    return 'yang diketahui oleh Rukun Tetangga ' + d.rt + ' tertanggal ' + d.rtTanggal + ' (' + d.rtTanggalT +
+      ') dan Rukun Warga ' + d.rw + ' tertanggal ' + d.rwTanggal + ' (' + d.rwTanggalT +
+      ') dan telah dicatat dalam buku register Kelurahan ' + d.kelurahan + ' tertanggal ' + d.kelurahanTanggal +
+      ' (' + d.kelurahanTanggalT + ') Nomor: ' + d.kelurahanNomor +
+      ', dan telah dicatat dalam buku register Kecamatan ' + d.kecamatan + ' tertanggal ' + d.kecamatanTanggal +
+      ' (' + d.kecamatanTanggalT + ') Nomor: ' + d.kecamatanNomor +
+      ', yang aslinya diperlihatkan kepada saya, PPAT, dan fotokopinya dilekatkan pada minuta akta ini;';
+  }
+
+  function blokWarisBersama(d) {
+    return 'menurut keterangannya ' + d.jumlahSebutan +
+      ' bersama - sama untuk melakukan tindakan hukum dalam akta ini tidak memerlukan persetujuan dari siapapun, karena ' +
+      d.objekSebutan + ' yang akan disebutkan dibawah ini diperoleh dari warisan, demikian berdasarkan SURAT PERNYATAAN AHLI WARIS, tertanggal ' +
+      d.spawTanggal + ' (' + d.spawTanggalT + '), yang dibuat dibawah tangan dan bermeterai cukup, ' + spawRegister(d);
+  }
+
+  function blokBertindakDua() { return 'Menurut keterangannya dalam hal ini bertindak :'; }
+
+  function blokHartaBersamaDiri(d) {
+    return 'Untuk diri sendiri selaku pemilik dari setengah bagian tak terbagi dalam harta bersama yang diperoleh selama perkawinan dengan ' +
+      d.pewarisSebutan + ' ' + d.pewarisNama + ', yang telah meninggal dunia di ' + d.pewarisKota + ', pada tanggal ' +
+      d.pewarisTanggal + ' (' + d.pewarisTanggalT + ') demikian berdasarkan Kutipan Akta Kematian tertanggal ' +
+      d.kematianTanggal + ' (' + d.kematianTanggalT + ') Nomor: ' + d.kematianNomor + ', yang dikeluarkan oleh ' +
+      d.kematianPenerbit + ';';
+  }
+
+  function blokHartaBersamaWaris(d) {
+    return 'Selaku ahli waris dari ' + d.pewarisSebutan + ' ' + d.pewarisNama +
+      ', tersebut, bersama-sama dengan ahli waris lainnya yang turut hadir menghadap kepada Saya, PPAT, serta ikut menandatangani Akta ini sebagai tanda persetujuannya yaitu :';
+  }
+
+  function blokHartaBersamaPenutup(d) {
+    return 'dalam hal ini bertindak bersama-sama selaku ahli waris dari ' + d.pewarisSebutan + ' ' + d.pewarisNama +
+      ', tersebut, demikian berdasarkan Surat Pernyataan Ahli Waris yang dibuat di bawah tangan bermaterai cukup tertanggal ' +
+      d.spawTanggal + ' (' + d.spawTanggalT + '), ' + spawRegister(d);
+  }
+
+  function sebutanJumlahWaris(n) {
+    return ['','Penghadap','keduanya','ketiganya','keempatnya','kelimanya','keenamnya','ketujuhnya','kedelapannya'][n] || 'mereka semua';
+  }
+
+  function dataWaris(p, pakaiToken) {
+    const sp = p.spaw, pw = p.pewaris;
+    if (pakaiToken) {
+      return { bentuk: sp.bentuk,
+        rt: '{{spaw_rt}}', rw: '{{spaw_rw}}',
+        rtRwTanggal: '{{spaw_rt_rw_tanggal}}', rtRwTanggalT: '{{spaw_rt_rw_tanggal_terbilang}}', rtRwNomor: '{{spaw_rt_rw_nomor}}',
+        rtTanggal: '{{spaw_rt_tanggal}}', rtTanggalT: '{{spaw_rt_tanggal_terbilang}}',
+        rwTanggal: '{{spaw_rw_tanggal}}', rwTanggalT: '{{spaw_rw_tanggal_terbilang}}',
+        kelurahan: '{{spaw_kelurahan}}', kelurahanTanggal: '{{spaw_kelurahan_tanggal}}',
+        kelurahanTanggalT: '{{spaw_kelurahan_tanggal_terbilang}}', kelurahanNomor: '{{spaw_kelurahan_nomor}}',
+        kecamatan: '{{spaw_kecamatan}}', kecamatanTanggal: '{{spaw_kecamatan_tanggal}}',
+        kecamatanTanggalT: '{{spaw_kecamatan_tanggal_terbilang}}', kecamatanNomor: '{{spaw_kecamatan_nomor}}',
+        spawTanggal: '{{spaw_tanggal}}', spawTanggalT: '{{spaw_tanggal_terbilang}}',
+        jumlahSebutan: '{{jumlah_ahli_waris_sebutan}}', objekSebutan: '{{objek_sebutan_singkat}}',
+        pewarisSebutan: '{{pewaris_sebutan}}', pewarisNama: '{{pewaris_nama}}',
+        pewarisKota: '{{pewaris_meninggal_kota}}', pewarisTanggal: '{{pewaris_meninggal_tanggal}}',
+        pewarisTanggalT: '{{pewaris_meninggal_tanggal_terbilang}}',
+        kematianTanggal: '{{akta_kematian_tanggal}}', kematianTanggalT: '{{akta_kematian_tanggal_terbilang}}',
+        kematianNomor: '{{akta_kematian_nomor}}', kematianPenerbit: '{{akta_kematian_penerbit}}' };
+    }
+    return { bentuk: sp.bentuk,
+      rt: sp.rt || '—', rw: sp.rw || '—',
+      rtRwTanggal: tglAngka(sp.rtRwTanggal), rtRwTanggalT: tglKata(sp.rtRwTanggal), rtRwNomor: sp.rtRwNomor || '—',
+      rtTanggal: tglAngka(sp.rtTanggal), rtTanggalT: tglKata(sp.rtTanggal),
+      rwTanggal: tglAngka(sp.rwTanggal), rwTanggalT: tglKata(sp.rwTanggal),
+      kelurahan: sp.kelurahan || '—', kelurahanTanggal: tglAngka(sp.kelurahanTanggal),
+      kelurahanTanggalT: tglKata(sp.kelurahanTanggal), kelurahanNomor: sp.kelurahanNomor || '—',
+      kecamatan: sp.kecamatan || '—', kecamatanTanggal: tglAngka(sp.kecamatanTanggal),
+      kecamatanTanggalT: tglKata(sp.kecamatanTanggal), kecamatanNomor: sp.kecamatanNomor || '—',
+      spawTanggal: tglAngka(sp.tanggal), spawTanggalT: tglKata(sp.tanggal),
+      jumlahSebutan: sebutanJumlahWaris(p.waris.length), objekSebutan: p.objekSebutan || '—',
+      pewarisSebutan: pewarisSebutanOf(p), pewarisNama: pw.nama || '—',
+      pewarisKota: pw.kotaMeninggal || '—', pewarisTanggal: tglAngka(pw.tanggalMeninggal),
+      pewarisTanggalT: tglKata(pw.tanggalMeninggal),
+      kematianTanggal: tglAngka(pw.kematianTanggal), kematianTanggalT: tglKata(pw.kematianTanggal),
+      kematianNomor: pw.kematianNomor || '—', kematianPenerbit: pw.kematianPenerbit || '—' };
+  }
+
   function blokPeran(d) {
     return 'Selaku ' + d.peran + ', selanjutnya disebut “' + d.sebutan + '”.';
   }
@@ -1011,6 +1217,13 @@
       h += '<div class="ttd-cell"><div class="hd">' +
         esc(pakaiToken ? '{{sebutan_' + ns + '}}' : sebutanOf(g.posisi)) + '</div><div class="sp"></div>';
       g.anggota.forEach((p, idx) => {
+        if (p.bentuk === 'waris') {
+          const daftar = pakaiToken
+            ? ['({{ahli_waris[1].nama}})', '({{ahli_waris[2].nama}})', '… dst.']
+            : p.waris.map(w => '(' + (w.nama || '\u2014') + ')');
+          daftar.forEach(n => { h += '<div class="nm">' + esc(n) + '</div>'; });
+          return;
+        }
         const nama = pakaiToken
           ? (p.kuasaAktif ? '({{kuasa.nama}})' : (banyak ? '({{' + ns + '.orang[' + (idx + 1) + '].nama}})' : '({{' + ns + '.nama}})'))
           : '(' + ((p.kuasaAktif ? p.kuasa.nama : p.orang.nama) || '\u2014') + ')';
@@ -1028,19 +1241,30 @@
     h += '</div>';
 
     // persetujuan pasangan
-    const pemberi = pihak.filter(p => p.bentuk === 'pasangan');
-    if (pemberi.length) {
-      h += '<div class="ttd-row" style="grid-template-columns:repeat(' + Math.max(pemberi.length, 2) + ',1fr)">';
-      pemberi.forEach(p => {
-        const label = pakaiToken ? '{{label_persetujuan}}' : 'Persetujuan ' + hubunganOf(p);
+    const sel = [];
+    pihak.forEach(p => {
+      if (p.bentuk === 'pasangan') {
         const wakil = p.pasanganKuasaAktif;
-        const nama = pakaiToken
-          ? (wakil ? '({{kuasa_pasangan.nama}})' : '({{pasangan.nama}})')
-          : '(' + ((wakil ? p.pasanganKuasa.nama : p.pasangan.nama) || '\u2014') + ')';
-        h += '<div class="ttd-cell"><div class="hd">' + esc(label) + '</div><div class="sp"></div>' +
-             '<div class="nm">' + esc(nama) + '</div>' +
-             (wakil ? '<div class="qq">' + esc(pakaiToken ? 'selaku kuasa dari {{pasangan.nama}}' : 'selaku kuasa dari ' + (p.pasangan.nama || '\u2014')) + '</div>' : '') +
-             '</div>';
+        sel.push({
+          label: pakaiToken ? '{{label_persetujuan}}' : 'Persetujuan ' + hubunganOf(p),
+          nama: pakaiToken ? (wakil ? '({{kuasa_pasangan.nama}})' : '({{pasangan.nama}})')
+                           : '(' + ((wakil ? p.pasanganKuasa.nama : p.pasangan.nama) || '\u2014') + ')',
+          qq: wakil ? (pakaiToken ? 'selaku kuasa dari {{pasangan.nama}}' : 'selaku kuasa dari ' + (p.pasangan.nama || '\u2014')) : ''
+        });
+      }
+      if (p.bentuk === 'harta_waris') {
+        (pakaiToken ? [null, null] : p.waris).forEach((w, i) => {
+          sel.push({ label: pakaiToken ? '{{label_persetujuan}}' : 'Persetujuan',
+            nama: pakaiToken ? '({{ahli_waris[' + (i + 1) + '].nama}})' : '(' + (w.nama || '\u2014') + ')', qq: '' });
+        });
+      }
+    });
+    if (sel.length) {
+      h += '<div class="ttd-row" style="grid-template-columns:repeat(' + Math.max(sel.length, 2) + ',1fr)">';
+      sel.forEach(c => {
+        h += '<div class="ttd-cell"><div class="hd">' + esc(c.label) + '</div><div class="sp"></div>' +
+             '<div class="nm">' + esc(c.nama) + '</div>' +
+             (c.qq ? '<div class="qq">' + esc(c.qq) + '</div>' : '') + '</div>';
       });
       h += '</div>';
     }
@@ -1175,6 +1399,39 @@
           if (t) potongan.push({ jenis: 'sub', blok: 'DOMISILI_SEMENTARA', teks: t });
         };
 
+        if (p.bentuk === 'waris') {
+          // pola draf 4 — semua ahli waris menghadap, bernomor di bawah angka romawi
+          const w = dataWaris(p, pakaiToken);
+          const daftar = pakaiToken ? [p.waris[0]] : p.waris;
+          daftar.forEach((o, i) => {
+            const v2 = pakaiToken ? tokenOrang('ahli_waris') : nilaiOrang(o);
+            potongan.push({ jenis: i === 0 ? 'utama' : 'anak', roman: a.roman, no: i + 1,
+              blok: 'IDENTITAS_ORANG', teks: blokIdentitas(v2) });
+            dom('ahli_waris', o);
+          });
+          if (pakaiToken) potongan.push({ jenis: 'sub', blok: 'CATATAN', teks: '… dan seterusnya untuk tiap ahli waris.' });
+          potongan.push({ jenis: 'sub', blok: 'KEDUDUKAN_AHLI_WARIS', teks: blokWarisBersama(w) });
+          return;
+        }
+
+        if (p.bentuk === 'harta_waris') {
+          // pola draf 1 — satu penghadap dua kapasitas, ahli waris lain turut hadir
+          const w = dataWaris(p, pakaiToken);
+          potongan.push({ jenis: 'utama', roman: a.roman, blok: 'IDENTITAS_ORANG', teks: blokIdentitas(v) });
+          dom('orang', p.orang);
+          potongan.push({ jenis: 'sub', blok: 'BERTINDAK', teks: blokBertindakDua() });
+          potongan.push({ jenis: 'sub', blok: 'HARTA_BERSAMA', teks: blokHartaBersamaDiri(w) });
+          potongan.push({ jenis: 'sub', blok: 'AHLI_WARIS_LAIN', teks: blokHartaBersamaWaris(w) });
+          (pakaiToken ? [p.waris[0]] : p.waris).forEach(o => {
+            const v2 = pakaiToken ? tokenOrang('ahli_waris') : nilaiOrang(o);
+            potongan.push({ jenis: 'sub', blok: 'IDENTITAS_ORANG', teks: blokIdentitas(v2) });
+            dom('ahli_waris', o);
+          });
+          if (pakaiToken) potongan.push({ jenis: 'sub', blok: 'CATATAN', teks: '… dan seterusnya untuk tiap ahli waris lain.' });
+          potongan.push({ jenis: 'sub', blok: 'SPAW', teks: blokHartaBersamaPenutup(w) });
+          return;
+        }
+
         if (p.kuasaAktif) {
           const k = pakaiToken ? tokenOrang('kuasa') : nilaiOrang(p.kuasa);
           potongan.push({ jenis: 'utama', roman: a.roman, blok: 'IDENTITAS_ORANG', teks: blokIdentitas(k) });
@@ -1219,7 +1476,9 @@
   function renderRaw() {
     const box = document.getElementById('raw-box');
     let teks = bagianPihak(true).map(grup => grup.map(b =>
-      b.jenis === 'utama' ? b.roman + '. ' + b.teks : b.teks
+      b.jenis === 'utama' ? b.roman + '. ' + (b.no ? b.no + '. ' : '') + b.teks
+      : b.jenis === 'anak' ? '    ' + b.no + '. ' + b.teks
+      : b.teks
     ).join('\n\n')).join('\n\n\n');
 
     LEWATI.forEach(l => {
@@ -1242,7 +1501,10 @@
     bagianPihak(false).forEach(grup => {
       grup.forEach(b => {
         if (b.jenis === 'utama') {
-          html += '<div class="out-line"><span class="roman">' + b.roman + '.</span><span>' + esc(b.teks) + '</span></div>';
+          html += '<div class="out-line"><span class="roman">' + b.roman + '.</span><span>' +
+            (b.no ? '<b>' + b.no + '.</b> ' : '') + esc(b.teks) + '</span></div>';
+        } else if (b.jenis === 'anak') {
+          html += '<div class="out-line"><span class="roman"></span><span><b>' + b.no + '.</b> ' + esc(b.teks) + '</span></div>';
         } else if (b.jenis === 'peran') {
           html += '<p class="out-seb">' + esc(b.teks).replace(/“([^”]+)”/, '“<b>$1</b>”') + '</p>';
         } else {
