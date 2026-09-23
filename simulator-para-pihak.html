@@ -58,6 +58,10 @@
   .sumber li { margin-bottom: 0.25rem; }
   .sumber li b { color: var(--stamp); }
 
+  .kaki-halaman { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start;
+    border-top: 1px solid var(--rule); margin-top: 0.4rem; padding-top: 0.4rem; font-size: 0.82rem; }
+  .kaki-halaman > span:last-child { text-align: right; white-space: nowrap; }
+  .kaki-ket { display: block; margin-top: 0.5rem; font-size: 0.78rem; color: var(--ink-soft); font-style: italic; }
   .kunci { font-size: 0.78rem; color: var(--ink-soft); margin: 0.4rem 0 0; padding-left: 0.6rem; border-left: 2px solid var(--rule); }
 
   .toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.8rem; padding: 1rem 0 0.4rem; }
@@ -1251,9 +1255,21 @@
       ', dengan dihadiri oleh saksi - saksi yang, Saya, PPAT kenal dan akan disebut pada bagian akhir akta ini :';
   }
   function blokPengenalan() { return 'Para Penghadap dikenal oleh Saya, PPAT, dari identitasnya.'; }
+  /* Kaki halaman (footer) — bukan naskah akta, melainkan pengaturan tiga kolom
+     di tab Pengaturan Dokumen. Hanya muncul di PDF minuta/salinan, tidak di pratinjau. */
+  function footerKolom(d) {
+    return { kiri: d.fNama + '\n' + d.fWilayah, tengah: '', kanan: 'Halaman ' + d.halaman + ' dari ' + d.total };
+  }
   function blokFooter(d) {
-    return 'Akta ' + d.aktaJenis + '     Halaman ' + d.halaman + ' dari ' + d.jumlahHalaman + ' halaman\n' +
-      d.nama + ', ' + d.gelarSingkat + '\nDaerah Kerja ' + d.daerah;
+    const f = footerKolom(d);
+    return 'Kiri   : ' + f.kiri.replace('\n', ' / ') + '\nTengah : (kosong)\nKanan  : ' + f.kanan;
+  }
+  function htmlFooter(d) {
+    const f = footerKolom(d);
+    return '<div class="kaki-halaman">' +
+      '<span>' + esc(f.kiri).replace(/\n/g, '<br>') + '</span>' +
+      '<span></span>' +
+      '<span>' + esc(f.kanan) + '</span></div>';
   }
 
   function dataKantor(pakaiToken) {
@@ -1265,7 +1281,7 @@
         aktaJenis: '{{akta_jenis}}', aktaJenisKapital: '{{akta_jenis_kapital}}',
         aktaNomor: '{{akta_nomor}}', aktaTahun: '{{akta_tahun}}', lembar: '{{lembar}}',
         hari: '{{akta_hari}}', aktaTanggal: '{{akta_tanggal}}', aktaTanggalT: '{{akta_tanggal_terbilang}}',
-        halaman: '{{halaman}}', jumlahHalaman: '{{jumlah_halaman}}' };
+        fNama: '{{ppat_nama}}', fWilayah: '{{ppat_wilayah}}', halaman: '{page}', total: '{total}' };
     }
     const th = (pecahTgl(akta.tanggal) || {}).th || '—';
     return { nama: kantor.nama || '—', gelarSingkat: kantor.gelarSingkat || '—',
@@ -1276,7 +1292,7 @@
       aktaJenis: jenisAkta, aktaJenisKapital: jenisAkta.toUpperCase(),
       aktaNomor: akta.nomor || '—', aktaTahun: th, lembar: akta.lembar,
       hari: hariDari(akta.tanggal), aktaTanggal: tglAngka(akta.tanggal), aktaTanggalT: tglKata(akta.tanggal),
-      halaman: '1', jumlahHalaman: '6' };
+      fNama: kantor.nama || '—', fWilayah: kantor.daerah || '—', halaman: '1', total: '6' };
   }
 
   function bagianKepala(pakaiToken) {
@@ -1990,12 +2006,15 @@
       b.jenis === 'nomor' ? b.no + '. ' + b.teks : (b.jenis === 'sub' ? '- ' + b.teks : b.teks)
     ).join('\n\n');
 
-    teks += '\n\n@@Kaki halaman@@\n' + blokFooter(dataKantor(true));
+    const kaki = '@@Kaki halaman@@\n' + blokFooter(dataKantor(true));
 
     box.innerHTML = esc(teks)
       .replace(/@@([^@]+)@@/g, (m, t) => '<span class="ph">[ ' + t + ' ]</span>')
       .replace(/\{\{[^}]+\}\}/g, m => '<span class="tag">' + m + '</span>')
-      + htmlTtd(true).replace(/\{\{[^}]+\}\}/g, m => '<span class="tag">' + m + '</span>');
+      + htmlTtd(true).replace(/\{\{[^}]+\}\}/g, m => '<span class="tag">' + m + '</span>')
+      + '\n\n' + esc(kaki)
+        .replace(/@@([^@]+)@@/g, (m, t) => '<span class="ph">[ ' + t + ' ]</span>')
+        .replace(/\{[^}]+\}\}?/g, m => '<span class="tag">' + m + '</span>');
   }
 
   function renderOutput() {
@@ -2043,7 +2062,9 @@
 
     html += htmlTtd(false);
     html += '<p class="blok-objek" style="margin-top:1rem"><span class="lbl">Kaki halaman</span>' +
-      esc(blokFooter(dataKantor(false))).replace(/\n/g, '<br>') + '</p>';
+      htmlFooter(dataKantor(false)) +
+      '<span class="kaki-ket">Diatur di tab <b>Pengaturan Dokumen</b> (Kiri / Tengah / Kanan), bukan diketik sebagai naskah. ' +
+      'Hanya muncul di PDF minuta &amp; salinan, tidak di pratinjau.</span></p>';
     box.innerHTML = html;
   }
 
