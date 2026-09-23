@@ -246,17 +246,9 @@ const BAWAAN = {
   penutup_akhir:
     '- Sebagai saksi-saksi, dan setelah dibacakan serta dijelaskan, maka sebagai bukti kebenaran pernyataan yang dikemukakan oleh PIHAK PERTAMA dan PIHAK KEDUA tersebut di atas, akta ini ditandatangani oleh PIHAK PERTAMA, PIHAK KEDUA, para saksi dan saya, PPAT, sebanyak 2 (dua) rangkap asli, yaitu 1 (satu) rangkap lembar pertama disimpan di kantor saya, PPAT dan 1 (satu) rangkap lembar kedua disampaikan kepada {{kantor_pertanahan}}.',
 
-  /* Kop & pembuka */
-  kop_akta:
-    'PEJABAT PEMBUAT AKTA TANAH\n(PPAT)\n{{ppat_nama}}, {{ppat_gelar_singkat}}\nDAERAH KERJA {{ppat_daerah_kerja_kapital}}\nSK Menteri Agraria dan Tata Ruang/Kepala Badan Pertanahan Nasional Republik Indonesia\nNomor : {{ppat_sk_nomor}}, Tanggal : {{ppat_sk_tanggal}}\n{{ppat_alamat_kantor}},\nTelp. {{ppat_telepon}}, E-mail : {{ppat_email}}',
-  judul_akta:
-    'AKTA {{akta_jenis_kapital}}\nNomor : {{akta_nomor}}/{{akta_tahun}}',
-  lembar_akta:
-    'Lembar {{lembar}}',
-  komparisi_ppat:
-    'Pada hari ini, {{akta_hari}}, tanggal {{akta_tanggal}} ({{akta_tanggal_terbilang}}).\nHadir di hadapan saya, {{ppat_nama}}, {{ppat_gelar_panjang}}, yang berdasarkan Surat Keputusan Kepala Badan Pertanahan Nasional Republik Indonesia tanggal {{ppat_sk_tanggal}}, Nomor : {{ppat_sk_nomor}}, diangkat/ditunjuk sebagai Pejabat Pembuat Akta Tanah, yang selanjutnya disebut PPAT, yang dimaksud dalam Pasal 7 Peraturan Pemerintah Nomor 24 Tahun 1997 tentang Pendaftaran Tanah, dengan daerah kerja {{ppat_daerah_kerja}}, dan berkantor di {{ppat_alamat_kantor}}, dengan dihadiri oleh saksi - saksi yang, Saya, PPAT kenal dan akan disebut pada bagian akhir akta ini :',
-  kaki_halaman:
-    'Akta {{akta_jenis}}     Halaman {{halaman}} dari {{jumlah_halaman}} halaman\n{{ppat_nama}}, {{ppat_gelar_singkat}}\nDaerah Kerja {{ppat_daerah_kerja}}',
+  /* Pembukaan akta — naskah bebas (Catatan), mengikuti aplikasi */
+  pembukaan_akta:
+    'PEJABAT PEMBUAT AKTA TANAH\n(PPAT)\n{{ppat_nama}}\nDAERAH KERJA {{ppat_wilayah}},\nSK Menteri Agraria dan Tata Ruang /Kepala Bagian Pertanahan\nNasional Republik Indonesia\nNomor : {{ppat_sk}}, Tanggal :16 Juni 2023\n{{ppat_alamat}},\nTelp. {{ppat_telepon}}, E-mail : {{ppat_email}}\n\nAKTA JUAL BELI\nNomor : {{deed_number}}.-\nLembar Kedua\n\nPada hari ini, hari {{var_hari}} Tanggal {{var_tanggal}} ({{var_tanggal:terbilang}}) pukul {{var_pukul}} ({{var_pukul:terbilang}})\n-Hadir di hadapan saya, {{ppat_nama}}, Sarjana Hukum, Magister Kenotariatan, yang berdasarkan Surat Keputusan Kepala Badan Pertanahan Nasional Republik Indonesia tanggal 16 Juni 2023, Nomor : {{ppat_sk}}, diangkat/ditunjuk sebagai Pejabat Pembuat Akta Tanah, yang selanjutnya disebut PPAT, yang dimaksud dalam Pasal 7 Peraturan Pemerintah Nomor 24 Tahun 1997 tentang Pendaftaran Tanah, dengan daerah kerja {{ppat_wilayah}}, dan berkantor di {{ppat_alamat}}, dengan dihadiri oleh saksi - saksi yang, Saya, PPAT kenal dan akan disebut pada bagian akhir akta ini :',
 
   /* Tanda tangan */
   ttd_para_pihak: '{{sebutan_pihak_pertama}}     /     {{sebutan_pihak_kedua}}\n({{pihak_pertama.nama}})     /     ({{pihak_kedua.nama}})',
@@ -268,13 +260,6 @@ const BAWAAN = {
 
 /* ---------- daftar potongan per Bagian Otomatis ---------- */
 const POTONGAN = {
-  kop: [
-    {kode:'kop_akta', judul:'Kop akta', syarat:'selalu, tiap halaman', wajib:['ppat_nama','ppat_daerah_kerja_kapital','ppat_sk_nomor']},
-    {kode:'judul_akta', judul:'Judul & nomor akta', syarat:'selalu', wajib:['akta_jenis_kapital','akta_nomor']},
-    {kode:'lembar_akta', judul:'Label lembar', syarat:'selalu', wajib:['lembar']},
-    {kode:'komparisi_ppat', judul:'Komparisi PPAT', syarat:'selalu', wajib:['ppat_nama','ppat_gelar_panjang','akta_tanggal']},
-    {kode:'kaki_halaman', judul:'Kaki halaman', syarat:'selalu, tiap halaman', wajib:['akta_jenis','ppat_nama']}
-  ],
   para_pihak: [
     {kode:'identitas_orang', judul:'Identitas orang', syarat:'selalu', wajib:['orang.nama','orang.nik']},
     {kode:'domisili', judul:'Domisili sementara', syarat:'bila diisi', wajib:['orang.domisili_sementara']},
@@ -333,16 +318,12 @@ const POTONGAN = {
   ]
 };
 
-/* ---------- catatan tambahan per Bagian Otomatis ---------- */
+/* ---------- catatan tambahan per section ---------- */
 const CATATAN_SEC = {
-  kop: '<b>{{akta_nomor}}</b> dan <b>{{akta_tanggal}}</b> tidak terisi saat order dibuat — keduanya baru terisi pada <b>proses finalisasi oleh PPAT</b>, sehingga pada draf masih kosong. <b>{{lembar}}</b> tidak dipilih pengguna: satu akta dicetak dua lembar dan kata &ldquo;Pertama/Kedua&rdquo; ditentukan sistem saat berkas dihasilkan. <b>{{akta_hari}}</b>, <b>{{akta_tahun}}</b>, dan <b>{{akta_tanggal_terbilang}}</b> dihitung sendiri dari tanggal akta.'
+  pembukaan: 'Bagian ini <b>Catatan</b> — naskah bebas, tanpa kondisi, karena kop dan komparisi selalu sama susunannya. Yang perlu diperhatikan: <b>{{deed_number}}</b> dan <b>{{var_tanggal}}</b> tidak terisi saat order dibuat — keduanya baru terisi pada <b>proses finalisasi oleh PPAT</b>. Kata &ldquo;Lembar Kedua&rdquo; di sini masih diketik manual, padahal satu akta dicetak dua lembar, jadi sebaiknya menjadi variabel <b>{{lembar}}</b> yang diisi sistem saat berkas dihasilkan. Tanggal SK juga masih diketik manual karena Profil Kantor belum punya field Tanggal SK.'
 };
-
 /* ---------- kasus untuk pratinjau ---------- */
 const KASUS = {
-  kop: [
-    {id:'kepala', nama:'Kepala akta', urut:[['kop_akta'],['judul_akta'],['lembar_akta'],['komparisi_ppat'],['kaki_halaman']]}
-  ],
   para_pihak: [
     {id:'perorangan', nama:'Perorangan', urut:[['identitas_orang'],['peran']]},
     {id:'pasangan', nama:'+ pasangan', urut:[['identitas_orang'],['pasangan_hadir'],['peran']]},
@@ -435,22 +416,19 @@ const CONTOH = {
   'sebutan_pihak_pertama':'PIHAK PERTAMA','sebutan_pihak_kedua':'PIHAK KEDUA',
   'pihak_pertama.nama':'Contoh Nama Satu','pihak_kedua.nama':'Contoh Nama Tiga',
   'label_persetujuan':'Persetujuan Istri','saksi1_nama':'Contoh Saksi Satu','saksi2_nama':'Contoh Saksi Dua',
-  'ppat_nama':'Contoh Nama PPAT',
-  'ppat_gelar_singkat':'S.H., M.Kn.','ppat_gelar_panjang':'Sarjana Hukum, Magister Kenotariatan',
-  'ppat_daerah_kerja':'Kota Administrasi Jakarta Selatan',
-  'ppat_daerah_kerja_kapital':'KOTA ADMINISTRASI JAKARTA SELATAN',
-  'ppat_sk_nomor':'123/KEP-17.3/IX/2024','ppat_sk_tanggal':'02-09-2024',
-  'ppat_alamat_kantor':'Jalan Contoh Nomor 8, Kebayoran Baru, Jakarta Selatan',
+  'ppat_nama':'Contoh Nama PPAT, S.H., M.Kn.',
+  'ppat_wilayah':'KOTA ADMINISTRASI JAKARTA SELATAN','ppat_sk':'123/KEP-17.3/IX/2024',
+  'ppat_alamat':'Jalan Contoh Nomor 8, Kebayoran Baru, Jakarta Selatan',
   'ppat_telepon':'021-00919','ppat_email':'kantor@contoh-ppat.id',
-  'akta_jenis_kapital':'JUAL BELI','akta_nomor':'01','akta_tahun':'2026','lembar':'Pertama',
-  'akta_hari':'Rabu','akta_tanggal':'23-09-2026',
-  'akta_tanggal_terbilang':'dua puluh tiga September dua ribu dua puluh enam',
-  'halaman':'1','jumlah_halaman':'6'
+  'deed_number':'01','lembar':'Kedua',
+  'var_hari':'Rabu','var_tanggal':'23-09-2026',
+  'var_tanggal:terbilang':'dua puluh tiga September dua ribu dua puluh enam',
+  'var_pukul':'10.30 WIB','var_pukul:terbilang':'sepuluh lewat tiga puluh menit'
 };
 
 /* ---------- katalog variabel yang sudah disiapkan ---------- */
 const VAR_EKSTRA = ['orang.gelar','orang.npwp','orang.jenis_kelamin','orang.status_perkawinan',
-  'pasangan.npwp','pt.npwp'];
+  'pasangan.npwp','pt.npwp','lembar'];
 
 function grupVar(v) {
   if (/^(pt\.perubahan_|jenis_perubahan$)/.test(v)) return 'Riwayat perubahan perseroan';
@@ -481,8 +459,7 @@ const KATALOG = (function () {
 
 /* ---------- keadaan ---------- */
 let sections = [
-  {id:'kop', jenis:'otomatis', kode:'kop', judul:'Kop & Pembuka'},
-  {id:'pembukaan', jenis:'catatan', judul:'PEMBUKAAN AKTA', teks:'SURAT PERJANJIAN …\n(naskah bebas, diketik biasa)'},
+  {id:'pembukaan', jenis:'catatan', judul:'PEMBUKAAN AKTA', teks: BAWAAN.pembukaan_akta},
   {id:'para_pihak', jenis:'otomatis', kode:'para_pihak', judul:'Para Pihak'},
   {id:'objek', jenis:'otomatis', kode:'objek', judul:'Objek Jual Beli'},
   {id:'p1', jenis:'pasal', judul:'Pasal 1', teks:'Mulai hari ini Objek Jual Beli yang diuraikan dalam akta ini telah menjadi milik PIHAK KEDUA …'},
@@ -492,12 +469,12 @@ let sections = [
   {id:'ttd', jenis:'otomatis', kode:'ttd', judul:'Tanda Tangan'}
 ];
 
-const OTO_TERSEDIA = {kop:'Kop & Pembuka', para_pihak:'Para Pihak', objek:'Objek Jual Beli', saksi:'Saksi & Penutup', ttd:'Tanda Tangan'};
+const OTO_TERSEDIA = {para_pihak:'Para Pihak', objek:'Objek Jual Beli', saksi:'Saksi & Penutup', ttd:'Tanda Tangan'};
 
 let redaksi = {};               // kode -> {teks, asal:'bawaan'|'kantor'|'khusus'}
 Object.keys(BAWAAN).forEach(k => redaksi[k] = {teks: BAWAAN[k], asal: 'bawaan'});
 
-let aktif = 'kop';              // section terpilih
+let aktif = 'pembukaan';        // section terpilih
 let potAktif = null;            // potongan yang sedang diedit
 let kasusAktif = {};            // kode section -> id kasus
 let pakaiContoh = false;
@@ -557,10 +534,31 @@ function gambarIsi() {
   if (!s) { box.innerHTML = ''; return; }
 
   if (s.jenis !== 'otomatis') {
+    const dipakaiSec = [...new Set(((s.teks || '').match(/\{\{[^}]+\}\}/g) || []).map(v => v.slice(2, -2)))];
     box.innerHTML = '<p class="judul">' + esc(s.judul) + '</p>' +
       '<p class="ket">Naskah bebas — diketik seperti dokumen biasa, tanpa kondisi.</p>' +
-      '<textarea rows="14" id="teks-bebas">' + esc(s.teks || '') + '</textarea>';
-    $('#teks-bebas').addEventListener('input', e => { s.teks = e.target.value; });
+      (CATATAN_SEC[s.id] ? '<p class="ket catatan-sec">' + CATATAN_SEC[s.id] + '</p>' : '') +
+      '<div class="editor">' +
+        '<div class="tbar">' +
+          '<button data-tvar="bebas" aria-expanded="false">{ } Variabel</button>' +
+          '<span class="hint">sisipkan di posisi kursor — atau sorot variabel lama dulu untuk menggantinya</span>' +
+        '</div>' +
+        '<div class="vpick" data-vpick="bebas" hidden>' +
+          '<input type="text" data-cari="bebas" placeholder="Cari variabel…">' +
+          '<div class="vlist">' + daftarVar('bebas', dipakaiSec, 'Dipakai di bagian ini') + '</div>' +
+        '</div>' +
+        '<textarea rows="16" id="teks-bebas">' + esc(s.teks || '') + '</textarea>' +
+      '</div>';
+    $('#teks-bebas').addEventListener('input', e => { s.teks = e.target.value; gambarPratinjau(); });
+    box.querySelectorAll('[data-sisip]').forEach(b => b.addEventListener('click', () => {
+      const ta = $('#teks-bebas'), v = '{{' + b.dataset.sisip + '}}';
+      const i = ta.selectionStart, j = ta.selectionEnd;
+      ta.value = ta.value.slice(0, i) + v + ta.value.slice(j);
+      s.teks = ta.value;
+      ta.focus(); ta.selectionStart = ta.selectionEnd = i + v.length;
+      gambarPratinjau();
+    }));
+    pasangPemilihVar(box);
     return;
   }
 
@@ -629,10 +627,10 @@ function kartuPot(kodeSec, p, terpakai) {
   return h + '</div>';
 }
 
-function daftarVar(kode, katalogPotongan) {
+function daftarVar(kode, katalogPotongan, judulPertama) {
   let h = '';
   if (katalogPotongan.length) {
-    h += '<div class="vgrup">Dipakai di potongan ini</div><div class="chips">' +
+    h += '<div class="vgrup">' + esc(judulPertama || 'Dipakai di potongan ini') + '</div><div class="chips">' +
       katalogPotongan.map(v => tombolVar(v, kode)).join('') + '</div>';
   }
   Object.keys(KATALOG).forEach(g => {
@@ -663,6 +661,15 @@ function pasangEditor(kodeSec) {
     periksaWajib(kodeSec, b.dataset.ke);
     gambarPratinjau();
   }));
+  pasangPemilihVar(box);
+  box.querySelectorAll('[data-simpan]').forEach(b => b.addEventListener('click', () => tanyaLingkup(b.dataset.simpan)));
+  box.querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => {
+    redaksi[b.dataset.reset] = {teks: BAWAAN[b.dataset.reset], asal: 'bawaan'};
+    gambarSemua();
+  }));
+}
+
+function pasangPemilihVar(box) {
   box.querySelectorAll('[data-tvar]').forEach(b => b.addEventListener('click', () => {
     const panel = box.querySelector('[data-vpick="' + b.dataset.tvar + '"]');
     const buka = panel.hidden;
@@ -679,11 +686,6 @@ function pasangEditor(kodeSec) {
       const ada = chips && [...chips.querySelectorAll('[data-v]')].some(b => !b.hidden);
       g.hidden = !ada; if (chips) chips.hidden = !ada;
     });
-  }));
-  box.querySelectorAll('[data-simpan]').forEach(b => b.addEventListener('click', () => tanyaLingkup(b.dataset.simpan)));
-  box.querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => {
-    redaksi[b.dataset.reset] = {teks: BAWAAN[b.dataset.reset], asal: 'bawaan'};
-    gambarSemua();
   }));
 }
 
