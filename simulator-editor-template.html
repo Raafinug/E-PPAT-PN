@@ -118,6 +118,8 @@
   .pratinjau .blok{margin:0 0 0.75rem;text-align:justify;overflow-wrap:anywhere}
   .pratinjau .blok .lbl{display:block;font-family:var(--mono);font-size:0.62rem;text-transform:uppercase;
     letter-spacing:0.05em;color:var(--ok);margin-bottom:0.15rem}
+  .isi .catatan-sec{border-left:2px solid var(--stamp);padding-left:0.6rem;margin-top:-0.3rem}
+  .isi .catatan-sec b{color:var(--stamp);font-family:var(--mono);font-size:0.92em;font-weight:500}
   .pratinjau .var{color:var(--stamp);font-family:var(--mono);font-size:0.94em}
   .pratinjau .kosong{color:var(--ink-soft);font-style:italic}
 
@@ -198,7 +200,7 @@ const BAWAAN = {
   pt_uu40:
     ', anggaran dasar mana telah disesuaikan dengan Undang-Undang Nomor 40 tahun 2007 (dua ribu tujuh) tentang Perseroan Terbatas, sebagaimana tercantum dalam Akta tertanggal {{pt.uu40_tanggal}} ({{pt.uu40_tanggal_terbilang}}) Nomor {{pt.uu40_nomor}}, yang dibuat di hadapan {{pt.uu40_notaris}}, Notaris di {{pt.uu40_notaris_kota}}',
   pt_perubahan:
-    '. Anggaran Dasar dan data perseroan mana telah beberapa kali mengalami perubahan terakhir, yang mana:\n- {{jenis_perubahan}} terakhir termuat dalam Akta tertanggal {{akta_tanggal}} ({{akta_tanggal_terbilang}}) Nomor {{akta_nomor}}, yang dibuat di hadapan {{notaris}}, Notaris di {{notaris_kota}};',
+    '. Anggaran Dasar dan data perseroan mana telah beberapa kali mengalami perubahan terakhir, yang mana:\n- {{jenis_perubahan}} terakhir termuat dalam Akta tertanggal {{pt.perubahan_tanggal}} ({{pt.perubahan_tanggal_terbilang}}) Nomor {{pt.perubahan_nomor}}, yang dibuat di hadapan {{pt.perubahan_notaris}}, Notaris di {{pt.perubahan_notaris_kota}};',
   peran:
     'Selaku {{peran}}, selanjutnya disebut “{{sebutan_pihak}}”.',
 
@@ -244,6 +246,18 @@ const BAWAAN = {
   penutup_akhir:
     '- Sebagai saksi-saksi, dan setelah dibacakan serta dijelaskan, maka sebagai bukti kebenaran pernyataan yang dikemukakan oleh PIHAK PERTAMA dan PIHAK KEDUA tersebut di atas, akta ini ditandatangani oleh PIHAK PERTAMA, PIHAK KEDUA, para saksi dan saya, PPAT, sebanyak 2 (dua) rangkap asli, yaitu 1 (satu) rangkap lembar pertama disimpan di kantor saya, PPAT dan 1 (satu) rangkap lembar kedua disampaikan kepada {{kantor_pertanahan}}.',
 
+  /* Kop & pembuka */
+  kop_akta:
+    'PEJABAT PEMBUAT AKTA TANAH\n(PPAT)\n{{ppat_nama}}, {{ppat_gelar_singkat}}\nDAERAH KERJA {{ppat_daerah_kerja_kapital}}\nSK Menteri Agraria dan Tata Ruang/Kepala Badan Pertanahan Nasional Republik Indonesia\nNomor : {{ppat_sk_nomor}}, Tanggal : {{ppat_sk_tanggal}}\n{{ppat_alamat_kantor}},\nTelp. {{ppat_telepon}}, E-mail : {{ppat_email}}',
+  judul_akta:
+    'AKTA {{akta_jenis_kapital}}\nNomor : {{akta_nomor}}/{{akta_tahun}}',
+  lembar_akta:
+    'Lembar {{lembar}}',
+  komparisi_ppat:
+    'Pada hari ini, {{akta_hari}}, tanggal {{akta_tanggal}} ({{akta_tanggal_terbilang}}).\nHadir di hadapan saya, {{ppat_nama}}, {{ppat_gelar_panjang}}, yang berdasarkan Surat Keputusan Kepala Badan Pertanahan Nasional Republik Indonesia tanggal {{ppat_sk_tanggal}}, Nomor : {{ppat_sk_nomor}}, diangkat/ditunjuk sebagai Pejabat Pembuat Akta Tanah, yang selanjutnya disebut PPAT, yang dimaksud dalam Pasal 7 Peraturan Pemerintah Nomor 24 Tahun 1997 tentang Pendaftaran Tanah, dengan daerah kerja {{ppat_daerah_kerja}}, dan berkantor di {{ppat_alamat_kantor}}, dengan dihadiri oleh saksi - saksi yang, Saya, PPAT kenal dan akan disebut pada bagian akhir akta ini :',
+  kaki_halaman:
+    'Akta {{akta_jenis}}     Halaman {{halaman}} dari {{jumlah_halaman}} halaman\n{{ppat_nama}}, {{ppat_gelar_singkat}}\nDaerah Kerja {{ppat_daerah_kerja}}',
+
   /* Tanda tangan */
   ttd_para_pihak: '{{sebutan_pihak_pertama}}     /     {{sebutan_pihak_kedua}}\n({{pihak_pertama.nama}})     /     ({{pihak_kedua.nama}})',
   ttd_qq_pt: 'qq. {{pt.nama}}\nberkedudukan di {{pt.kedudukan}}',
@@ -254,6 +268,13 @@ const BAWAAN = {
 
 /* ---------- daftar potongan per Bagian Otomatis ---------- */
 const POTONGAN = {
+  kop: [
+    {kode:'kop_akta', judul:'Kop akta', syarat:'selalu, tiap halaman', wajib:['ppat_nama','ppat_daerah_kerja_kapital','ppat_sk_nomor']},
+    {kode:'judul_akta', judul:'Judul & nomor akta', syarat:'selalu', wajib:['akta_jenis_kapital','akta_nomor']},
+    {kode:'lembar_akta', judul:'Label lembar', syarat:'selalu', wajib:['lembar']},
+    {kode:'komparisi_ppat', judul:'Komparisi PPAT', syarat:'selalu', wajib:['ppat_nama','ppat_gelar_panjang','akta_tanggal']},
+    {kode:'kaki_halaman', judul:'Kaki halaman', syarat:'selalu, tiap halaman', wajib:['akta_jenis','ppat_nama']}
+  ],
   para_pihak: [
     {kode:'identitas_orang', judul:'Identitas orang', syarat:'selalu', wajib:['orang.nama','orang.nik']},
     {kode:'domisili', judul:'Domisili sementara', syarat:'bila diisi', wajib:['orang.domisili_sementara']},
@@ -312,8 +333,16 @@ const POTONGAN = {
   ]
 };
 
+/* ---------- catatan tambahan per Bagian Otomatis ---------- */
+const CATATAN_SEC = {
+  kop: '<b>{{akta_nomor}}</b> dan <b>{{akta_tanggal}}</b> tidak terisi saat order dibuat — keduanya baru terisi pada <b>proses finalisasi oleh PPAT</b>, sehingga pada draf masih kosong. <b>{{lembar}}</b> tidak dipilih pengguna: satu akta dicetak dua lembar dan kata &ldquo;Pertama/Kedua&rdquo; ditentukan sistem saat berkas dihasilkan. <b>{{akta_hari}}</b>, <b>{{akta_tahun}}</b>, dan <b>{{akta_tanggal_terbilang}}</b> dihitung sendiri dari tanggal akta.'
+};
+
 /* ---------- kasus untuk pratinjau ---------- */
 const KASUS = {
+  kop: [
+    {id:'kepala', nama:'Kepala akta', urut:[['kop_akta'],['judul_akta'],['lembar_akta'],['komparisi_ppat'],['kaki_halaman']]}
+  ],
   para_pihak: [
     {id:'perorangan', nama:'Perorangan', urut:[['identitas_orang'],['peran']]},
     {id:'pasangan', nama:'+ pasangan', urut:[['identitas_orang'],['pasangan_hadir'],['peran']]},
@@ -368,9 +397,9 @@ const CONTOH = {
   'pt.pendirian_sk_tanggal_terbilang':'dua Mei dua ribu lima','pt.pendirian_sk_nomor':'C-11223 HT.01.01.TH.2005',
   'pt.uu40_tanggal':'15-07-2008','pt.uu40_tanggal_terbilang':'lima belas Juli dua ribu delapan','pt.uu40_nomor':'27',
   'pt.uu40_notaris':'Contoh Notaris Dua, S.H., M.Kn.','pt.uu40_notaris_kota':'Jakarta',
-  'jenis_perubahan':'susunan Direksi dan Komisaris','akta_tanggal':'19-02-2024',
-  'akta_tanggal_terbilang':'sembilan belas Februari dua ribu dua puluh empat','akta_nomor':'08',
-  'notaris':'Contoh Notaris Tiga, S.H., M.Kn.','notaris_kota':'Jakarta',
+  'jenis_perubahan':'susunan Direksi dan Komisaris','pt.perubahan_tanggal':'19-02-2024',
+  'pt.perubahan_tanggal_terbilang':'sembilan belas Februari dua ribu dua puluh empat','pt.perubahan_nomor':'08',
+  'pt.perubahan_notaris':'Contoh Notaris Tiga, S.H., M.Kn.','pt.perubahan_notaris_kota':'Jakarta',
   'peran':'Penjual','sebutan_pihak':'PIHAK PERTAMA',
   'jenis_hak':'Hak Milik','persil_nomor':'21','persil_blok':'D.III','objek_luas':'120',
   'objek_luas_terbilang':'seratus dua puluh','batas_utara':'tanah milik A','batas_timur':'tanah milik B',
@@ -406,15 +435,25 @@ const CONTOH = {
   'sebutan_pihak_pertama':'PIHAK PERTAMA','sebutan_pihak_kedua':'PIHAK KEDUA',
   'pihak_pertama.nama':'Contoh Nama Satu','pihak_kedua.nama':'Contoh Nama Tiga',
   'label_persetujuan':'Persetujuan Istri','saksi1_nama':'Contoh Saksi Satu','saksi2_nama':'Contoh Saksi Dua',
-  'ppat_nama':'Contoh Nama PPAT, S.H., M.Kn.'
+  'ppat_nama':'Contoh Nama PPAT',
+  'ppat_gelar_singkat':'S.H., M.Kn.','ppat_gelar_panjang':'Sarjana Hukum, Magister Kenotariatan',
+  'ppat_daerah_kerja':'Kota Administrasi Jakarta Selatan',
+  'ppat_daerah_kerja_kapital':'KOTA ADMINISTRASI JAKARTA SELATAN',
+  'ppat_sk_nomor':'123/KEP-17.3/IX/2024','ppat_sk_tanggal':'02-09-2024',
+  'ppat_alamat_kantor':'Jalan Contoh Nomor 8, Kebayoran Baru, Jakarta Selatan',
+  'ppat_telepon':'021-00919','ppat_email':'kantor@contoh-ppat.id',
+  'akta_jenis_kapital':'JUAL BELI','akta_nomor':'01','akta_tahun':'2026','lembar':'Pertama',
+  'akta_hari':'Rabu','akta_tanggal':'23-09-2026',
+  'akta_tanggal_terbilang':'dua puluh tiga September dua ribu dua puluh enam',
+  'halaman':'1','jumlah_halaman':'6'
 };
 
 /* ---------- katalog variabel yang sudah disiapkan ---------- */
 const VAR_EKSTRA = ['orang.gelar','orang.npwp','orang.jenis_kelamin','orang.status_perkawinan',
-  'pasangan.npwp','pt.npwp','akta_nomor_akta','akta_tanggal_akta','ppat_daerah_kerja'];
+  'pasangan.npwp','pt.npwp'];
 
 function grupVar(v) {
-  if (/^(akta_tanggal|akta_nomor|notaris|notaris_kota|jenis_perubahan)$/.test(v)) return 'Riwayat perubahan perseroan';
+  if (/^(pt\.perubahan_|jenis_perubahan$)/.test(v)) return 'Riwayat perubahan perseroan';
   if (v.indexOf('orang.') === 0) return 'Orang / penghadap';
   if (v.indexOf('pihak.') === 0 || v.indexOf('pihak_') === 0) return 'Rujukan pihak';
   if (v.indexOf('pasangan') === 0 || v.indexOf('nikah_') === 0) return 'Pasangan';
@@ -442,6 +481,7 @@ const KATALOG = (function () {
 
 /* ---------- keadaan ---------- */
 let sections = [
+  {id:'kop', jenis:'otomatis', kode:'kop', judul:'Kop & Pembuka'},
   {id:'pembukaan', jenis:'catatan', judul:'PEMBUKAAN AKTA', teks:'SURAT PERJANJIAN …\n(naskah bebas, diketik biasa)'},
   {id:'para_pihak', jenis:'otomatis', kode:'para_pihak', judul:'Para Pihak'},
   {id:'objek', jenis:'otomatis', kode:'objek', judul:'Objek Jual Beli'},
@@ -452,12 +492,12 @@ let sections = [
   {id:'ttd', jenis:'otomatis', kode:'ttd', judul:'Tanda Tangan'}
 ];
 
-const OTO_TERSEDIA = {para_pihak:'Para Pihak', objek:'Objek Jual Beli', saksi:'Saksi & Penutup', ttd:'Tanda Tangan'};
+const OTO_TERSEDIA = {kop:'Kop & Pembuka', para_pihak:'Para Pihak', objek:'Objek Jual Beli', saksi:'Saksi & Penutup', ttd:'Tanda Tangan'};
 
 let redaksi = {};               // kode -> {teks, asal:'bawaan'|'kantor'|'khusus'}
 Object.keys(BAWAAN).forEach(k => redaksi[k] = {teks: BAWAAN[k], asal: 'bawaan'});
 
-let aktif = 'para_pihak';       // section terpilih
+let aktif = 'kop';              // section terpilih
 let potAktif = null;            // potongan yang sedang diedit
 let kasusAktif = {};            // kode section -> id kasus
 let pakaiContoh = false;
@@ -526,7 +566,8 @@ function gambarIsi() {
 
   const terpakai = terpakaiDiKasus(s.kode);
   let h = '<p class="judul">' + esc(s.judul) + '</p>' +
-    '<p class="ket">Bagian Otomatis — struktur, syarat tampil, dan urutannya terkunci. Klik potongan untuk menyunting tulisannya.</p>';
+    '<p class="ket">Bagian Otomatis — struktur, syarat tampil, dan urutannya terkunci. Klik potongan untuk menyunting tulisannya.</p>' +
+    (CATATAN_SEC[s.kode] ? '<p class="ket catatan-sec">' + CATATAN_SEC[s.kode] + '</p>' : '');
 
   (POTONGAN[s.kode] || []).forEach(x => {
     if (x.grup) {

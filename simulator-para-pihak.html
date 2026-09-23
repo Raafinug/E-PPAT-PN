@@ -96,7 +96,7 @@
     border: 1px solid var(--rule); border-radius: 2px; background: var(--paper); color: var(--ink);
     width: 100%; min-width: 0;
   }
-  .f.derived input { background: var(--paper-sunk); color: var(--ink-soft); }
+  .f.derived input, .f.derived select { background: var(--paper-sunk); color: var(--ink-soft); }
 
   /* field yang terisi otomatis dari Data KTP user */
   .grid.auto > .f input, .grid.auto > .f select { background: var(--auto-bg); border-color: var(--auto-line); }
@@ -125,6 +125,22 @@
   .add-row button:disabled { opacity: 0.4; cursor: not-allowed; }
   .add-row .cap { color: var(--ink-soft); font-size: 0.8rem; }
 
+  .tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem;
+    margin: 1.4rem 0 0.9rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.5rem; }
+  .tabs button { font-family: var(--mono); font-size: 0.78rem; cursor: pointer;
+    background: var(--paper-raised); color: var(--ink-soft);
+    border: 1px solid var(--rule); border-radius: 2px; padding: 0.45rem 0.8rem; }
+  .tabs button:hover { color: var(--ink); border-color: var(--stamp); }
+  .tabs button[aria-selected="true"] { background: var(--stamp); color: var(--paper); border-color: var(--stamp); }
+  .tabs .tab-sisa { margin-left: auto; font-size: 0.78rem; color: var(--ink-soft); }
+  .tabpane[hidden] { display: none; }
+
+  .pakai { font-size: 0.85rem; }
+  .pakai div { padding: 0.35rem 0; border-bottom: 1px dashed var(--rule); overflow-wrap: anywhere; }
+  .pakai div:last-child { border-bottom: 0; }
+  .pakai b { font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--stamp); display: block; margin-bottom: 0.1rem; }
+
   .band { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--stamp); margin: 1.6rem 0 0.5rem; display: flex; align-items: center; gap: 0.7rem; }
   .band::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
@@ -142,6 +158,9 @@
   .out-num { display: grid; grid-template-columns: 1.6rem 1fr; gap: 0.5rem; padding: 0.3rem 0; text-align: justify; }
   .out-num .no { font-family: var(--mono); color: var(--stamp); font-size: 0.85rem; }
   .out-plain { margin: 0.35rem 0; text-align: justify; }
+  .blok-objek { margin: 0 0 0.7rem; text-align: justify; overflow-wrap: anywhere; }
+  .blok-objek .lbl { display: block; font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--ok); margin-bottom: 0.15rem; }
 
   .ttd { margin-top: 1.3rem; padding-top: 0.9rem; border-top: 1px dashed var(--rule); }
   .ttd-cap { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.7rem; }
@@ -227,58 +246,98 @@
     </div>
   </div>
 
-  <div class="band">Para Pihak</div>
-  <div class="party-list" id="party-list"></div>
-
-  <div class="add-row">
-    <button id="add-btn">+ Tambah Pihak</button>
-    <span class="cap">maks. 6</span>
+  <div class="tabs" id="tabs">
+    <button data-tab="kop" aria-selected="false">Kop &amp; Pembuka</button>
+    <button data-tab="pihak" aria-selected="true">Para Pihak</button>
+    <button data-tab="objek" aria-selected="false">Objek</button>
+    <button data-tab="saksi" aria-selected="false">Saksi &amp; Penutup</button>
+    <button data-tab="ttd" aria-selected="false">Tanda Tangan</button>
+    <span class="tab-sisa">Pasal-pasal belum disusun</span>
   </div>
 
-  <div class="band">Objek</div>
-  <div class="lewati">
-    <h3>Dilewati dulu</h3>
-    <p>Uraian objek, letak objek, cakupan “meliputi pula”, dan sebutan objek. Belum disusun.</p>
-  </div>
+  <div class="tabpane" data-pane="kop" hidden>
+    <div class="card">
+      <div class="sect" style="border-top:0;padding-top:0">
+        <h4>Profil Kantor PPAT</h4>
+        <div class="grid auto">
+          <div class="f span2"><label>Nama PPAT (ppat_nama)</label>
+            <input type="text" id="ppat-nama" value="Contoh Nama PPAT"></div>
+          <div class="f"><label>Gelar singkat (ppat_gelar_singkat)</label>
+            <input type="text" id="ppat-gelar-singkat" value="S.H., M.Kn."></div>
+          <div class="f span2"><label>Gelar tidak disingkat (ppat_gelar_panjang)</label>
+            <input type="text" id="ppat-gelar-panjang" value="Sarjana Hukum, Magister Kenotariatan"></div>
+          <div class="f span2"><label>Wilayah kerja (ppat_daerah_kerja)</label>
+            <input type="text" id="ppat-daerah" value="Kota Jakarta Selatan"></div>
+          <div class="f span2"><label>Nomor SK pengangkatan (ppat_sk_nomor)</label>
+            <input type="text" id="ppat-sk-nomor" value="123/KP/NO"></div>
+          <div class="f"><label>Tanggal SK pengangkatan (ppat_sk_tanggal)</label>
+            <input type="date" id="ppat-sk-tanggal" value="2020-07-15"></div>
+          <div class="f wide"><label>Alamat kantor (ppat_alamat_kantor)</label>
+            <input type="text" id="ppat-alamat" value="Jalan Contoh Nomor 8, Kebayoran Baru, Jakarta Selatan"></div>
+          <div class="f"><label>Telepon (ppat_telepon)</label>
+            <input type="text" id="ppat-telepon" value="021-00919"></div>
+          <div class="f span2"><label>Email (ppat_email)</label>
+            <input type="text" id="ppat-email" value="kantor@contoh-ppat.id"></div>
+        </div>
+        <p class="kunci">Terisi otomatis dari menu <b>Profil Kantor</b> — tidak diketik ulang setiap membuat order. Dipakai di kop akta, komparisi PPAT, dan kaki halaman.</p>
+      </div>
 
-  <div class="band">Pasal-pasal</div>
-  <div class="lewati">
-    <h3>Dilewati dulu</h3>
-    <p>Pasal 1 sampai pasal terakhir, termasuk paragraf pajak dan penanggung biaya akta. Belum disusun.</p>
-  </div>
-
-  <div class="band">Saksi &amp; penutup</div>
-  <div class="party-list" id="saksi-list"></div>
-
-  <div class="add-row">
-    <button id="add-saksi">+ Tambah Saksi</button>
-    <span class="cap">min. 2 · maks. 4</span>
-  </div>
-
-  <div class="card" style="margin-top:0.6rem">
-    <div class="grid">
-      <div class="f wide"><label>Lembar kedua disampaikan kepada (kantor_pertanahan)</label>
-        <input type="text" id="kantor-pertanahan" value="Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan"></div>
+      <div class="sect">
+        <h4>Data akta</h4>
+        <div class="grid">
+          <div class="f"><label>Nomor akta (akta_nomor)</label>
+            <input type="text" id="akta-nomor" value="01"></div>
+          <div class="f"><label>Tanggal akta (akta_tanggal)</label>
+            <input type="date" id="akta-tanggal" value="2026-09-23"></div>
+          <div class="f derived"><label>Lembar (lembar)</label>
+            <select id="akta-lembar"><option>Pertama</option><option>Kedua</option></select></div>
+        </div>
+        <p class="kunci"><b>Nomor akta</b> dan <b>tanggal akta</b> bukan diisi saat order dibuat, melainkan saat <b>proses finalisasi oleh PPAT</b>. Selama masih draf, keduanya belum terisi.</p>
+        <p class="kunci"><b>Lembar</b> nantinya terbentuk sendiri — satu akta dicetak dua lembar, jadi kata &ldquo;Pertama/Kedua&rdquo; ditentukan sistem saat berkas dihasilkan, bukan dipilih pengguna. Pilihan di sini hanya untuk memperlihatkan bedanya.</p>
+        <p class="kunci">Hari, tahun, dan terbilang tanggal dihitung sendiri dari tanggal akta.</p>
+      </div>
     </div>
   </div>
 
-  <div class="band">Tanda tangan</div>
-  <div class="card">
-    <div class="grid">
-      <div class="f span2"><label>Nama PPAT (ppat_nama)</label>
-        <input type="text" id="ppat-nama" value="Contoh Nama PPAT, S.H., M.Kn."></div>
+  <div class="tabpane" data-pane="pihak">
+    <div class="party-list" id="party-list"></div>
+    <div class="add-row">
+      <button id="add-btn">+ Tambah Pihak</button>
+      <span class="cap">maks. 6</span>
     </div>
-    <p class="kunci">Kolom tanda tangan terbentuk sendiri: para pihak mengikuti posisi &amp; bentuk pihak, kolom persetujuan muncul bila ada pasangan, kolom saksi mengikuti jumlah saksi, NIP hanya tampil bila diisi.</p>
+    <div class="rules">
+      <h3>Aturan pembentukan sapaan (orang.sapaan)</h3>
+      <table>
+        <tr><td class="k">Laki-laki — status apa pun</td><td class="v">Tuan</td></tr>
+        <tr><td class="k">Perempuan — Belum Menikah</td><td class="v">Nona</td></tr>
+        <tr><td class="k">Perempuan — Kawin</td><td class="v">Nyonya</td></tr>
+        <tr><td class="k">Perempuan — Cerai Hidup / Cerai Mati</td><td class="v">Nyonya Janda</td></tr>
+      </table>
+    </div>
   </div>
 
-  <div class="rules">
-    <h3>Aturan pembentukan sapaan (orang.sapaan)</h3>
-    <table>
-      <tr><td class="k">Laki-laki — status apa pun</td><td class="v">Tuan</td></tr>
-      <tr><td class="k">Perempuan — Belum Menikah</td><td class="v">Nona</td></tr>
-      <tr><td class="k">Perempuan — Kawin</td><td class="v">Nyonya</td></tr>
-      <tr><td class="k">Perempuan — Cerai Hidup / Cerai Mati</td><td class="v">Nyonya Janda</td></tr>
-    </table>
+  <div class="tabpane" data-pane="objek" hidden>
+    <div id="objek-kartu"></div>
+  </div>
+
+  <div class="tabpane" data-pane="saksi" hidden>
+    <div class="party-list" id="saksi-list"></div>
+    <div class="add-row">
+      <button id="add-saksi">+ Tambah Saksi</button>
+      <span class="cap">min. 2 · maks. 4</span>
+    </div>
+    <div class="card" style="margin-top:0.6rem">
+      <div class="grid">
+        <div class="f wide"><label>Lembar kedua disampaikan kepada (kantor_pertanahan)</label>
+          <input type="text" id="kantor-pertanahan" value="Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpane" data-pane="ttd" hidden>
+    <div class="card">
+      <p class="kunci">Kolom tanda tangan terbentuk sendiri: para pihak mengikuti posisi &amp; bentuk pihak, kolom persetujuan muncul bila ada pasangan, kolom saksi mengikuti jumlah saksi, NIP hanya tampil bila diisi.</p>
+    </div>
   </div>
 
   <div class="panes">
@@ -485,14 +544,24 @@
   ];
   let nextSaksiId = 103;
   let kantorPertanahan = 'Kepala Kantor Pertanahan Kota Administrasi Jakarta Selatan';
-  let ppatNama = 'Contoh Nama PPAT, S.H., M.Kn.';
+  let kantor = {
+    nama: 'Contoh Nama PPAT', gelarSingkat: 'S.H., M.Kn.',
+    gelarPanjang: 'Sarjana Hukum, Magister Kenotariatan',
+    daerah: 'Kota Jakarta Selatan', skNomor: '123/KP/NO', skTanggal: '2020-07-15',
+    alamat: 'Jalan Contoh Nomor 8, Kebayoran Baru, Jakarta Selatan',
+    telepon: '021-00919', email: 'kantor@contoh-ppat.id'
+  };
+  let akta = { nomor: '01', tanggal: '2026-09-23', lembar: 'Pertama' };
 
   const list = document.getElementById('party-list');
   const saksiList = document.getElementById('saksi-list');
   const addBtn = document.getElementById('add-btn');
   const addSaksiBtn = document.getElementById('add-saksi');
   const kantorInput = document.getElementById('kantor-pertanahan');
-  const ppatInput = document.getElementById('ppat-nama');
+  const IKAT_KANTOR = { 'ppat-nama':'nama', 'ppat-gelar-singkat':'gelarSingkat', 'ppat-gelar-panjang':'gelarPanjang',
+    'ppat-daerah':'daerah', 'ppat-sk-nomor':'skNomor', 'ppat-sk-tanggal':'skTanggal',
+    'ppat-alamat':'alamat', 'ppat-telepon':'telepon', 'ppat-email':'email' };
+  const IKAT_AKTA = { 'akta-nomor':'nomor', 'akta-tanggal':'tanggal', 'akta-lembar':'lembar' };
   const aktaSel = document.getElementById('akta-jenis');
 
   /* ---------- util form ---------- */
@@ -930,7 +999,15 @@
   });
 
   kantorInput.addEventListener('input', e => { kantorPertanahan = e.target.value; renderAll(); });
-  ppatInput.addEventListener('input', e => { ppatNama = e.target.value; renderAll(); });
+  Object.keys(IKAT_KANTOR).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', e => { kantor[IKAT_KANTOR[id]] = e.target.value; renderAll(); });
+  });
+  Object.keys(IKAT_AKTA).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input',
+      e => { akta[IKAT_AKTA[id]] = e.target.value; renderAll(); });
+  });
 
   aktaSel.addEventListener('change', e => { jenisAkta = e.target.value; renderList(); renderAll(); });
 
@@ -1148,6 +1225,70 @@
     return 'Selaku ' + d.peran + ', selanjutnya disebut “' + d.sebutan + '”.';
   }
 
+  /* ---------- kop, judul, komparisi, kaki halaman ---------- */
+  const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  function hariDari(v) {
+    const d = pecahTgl(v);
+    return d ? HARI[new Date(d.th, d.bl - 1, d.tg).getDay()] : '—';
+  }
+
+  function blokKop(d) {
+    return 'PEJABAT PEMBUAT AKTA TANAH\n(PPAT)\n' + d.nama + ', ' + d.gelarSingkat +
+      '\nDAERAH KERJA ' + d.daerahKapital +
+      '\nSK Menteri Agraria dan Tata Ruang/Kepala Badan Pertanahan Nasional Republik Indonesia' +
+      '\nNomor : ' + d.skNomor + ', Tanggal : ' + d.skTanggal +
+      '\n' + d.alamat + ',\nTelp. ' + d.telepon + ', E-mail : ' + d.email;
+  }
+  function blokJudul(d) { return 'AKTA ' + d.aktaJenisKapital + '\nNomor : ' + d.aktaNomor + '/' + d.aktaTahun; }
+  function blokLembar(d) { return 'Lembar ' + d.lembar; }
+  function blokKomparisi(d) {
+    return 'Pada hari ini, ' + d.hari + ', tanggal ' + d.aktaTanggal + ' (' + d.aktaTanggalT + ').\n' +
+      'Hadir di hadapan saya, ' + d.nama + ', ' + d.gelarPanjang +
+      ', yang berdasarkan Surat Keputusan Kepala Badan Pertanahan Nasional Republik Indonesia tanggal ' +
+      d.skTanggal + ', Nomor : ' + d.skNomor +
+      ', diangkat/ditunjuk sebagai Pejabat Pembuat Akta Tanah, yang selanjutnya disebut PPAT, yang dimaksud dalam Pasal 7 Peraturan Pemerintah Nomor 24 Tahun 1997 tentang Pendaftaran Tanah, dengan daerah kerja ' +
+      d.daerah + ', dan berkantor di ' + d.alamat +
+      ', dengan dihadiri oleh saksi - saksi yang, Saya, PPAT kenal dan akan disebut pada bagian akhir akta ini :';
+  }
+  function blokPengenalan() { return 'Para Penghadap dikenal oleh Saya, PPAT, dari identitasnya.'; }
+  function blokFooter(d) {
+    return 'Akta ' + d.aktaJenis + '     Halaman ' + d.halaman + ' dari ' + d.jumlahHalaman + ' halaman\n' +
+      d.nama + ', ' + d.gelarSingkat + '\nDaerah Kerja ' + d.daerah;
+  }
+
+  function dataKantor(pakaiToken) {
+    if (pakaiToken) {
+      return { nama: '{{ppat_nama}}', gelarSingkat: '{{ppat_gelar_singkat}}', gelarPanjang: '{{ppat_gelar_panjang}}',
+        daerah: '{{ppat_daerah_kerja}}', daerahKapital: '{{ppat_daerah_kerja_kapital}}',
+        skNomor: '{{ppat_sk_nomor}}', skTanggal: '{{ppat_sk_tanggal}}', alamat: '{{ppat_alamat_kantor}}',
+        telepon: '{{ppat_telepon}}', email: '{{ppat_email}}',
+        aktaJenis: '{{akta_jenis}}', aktaJenisKapital: '{{akta_jenis_kapital}}',
+        aktaNomor: '{{akta_nomor}}', aktaTahun: '{{akta_tahun}}', lembar: '{{lembar}}',
+        hari: '{{akta_hari}}', aktaTanggal: '{{akta_tanggal}}', aktaTanggalT: '{{akta_tanggal_terbilang}}',
+        halaman: '{{halaman}}', jumlahHalaman: '{{jumlah_halaman}}' };
+    }
+    const th = (pecahTgl(akta.tanggal) || {}).th || '—';
+    return { nama: kantor.nama || '—', gelarSingkat: kantor.gelarSingkat || '—',
+      gelarPanjang: kantor.gelarPanjang || '—', daerah: kantor.daerah || '—',
+      daerahKapital: (kantor.daerah || '—').toUpperCase(),
+      skNomor: kantor.skNomor || '—', skTanggal: tglAngka(kantor.skTanggal),
+      alamat: kantor.alamat || '—', telepon: kantor.telepon || '—', email: kantor.email || '—',
+      aktaJenis: jenisAkta, aktaJenisKapital: jenisAkta.toUpperCase(),
+      aktaNomor: akta.nomor || '—', aktaTahun: th, lembar: akta.lembar,
+      hari: hariDari(akta.tanggal), aktaTanggal: tglAngka(akta.tanggal), aktaTanggalT: tglKata(akta.tanggal),
+      halaman: '1', jumlahHalaman: '6' };
+  }
+
+  function bagianKepala(pakaiToken) {
+    const d = dataKantor(pakaiToken);
+    return [
+      { label: 'Kop akta', teks: blokKop(d) },
+      { label: 'Judul & nomor akta', teks: blokJudul(d) },
+      { label: 'Label lembar', teks: blokLembar(d) },
+      { label: 'Komparisi PPAT', teks: blokKomparisi(d) }
+    ];
+  }
+
   /* ---------- penutup & saksi ---------- */
   function blokPenutupPembuka() {
     return '- Akhirnya hadir juga di hadapan saya, dengan dihadiri oleh saksi-saksi yang sama dan disebutkan pada bagian akhir akta ini :\n' +
@@ -1282,13 +1423,368 @@
     // PPAT
     h += '<div class="ttd-row" style="grid-template-columns:1fr"><div class="ttd-cell">' +
       '<div class="hd">PEJABAT PEMBUAT AKTA TANAH</div><div class="sp"></div>' +
-      '<div class="nm">' + esc(pakaiToken ? '({{ppat_nama}})' : '(' + (ppatNama || '\u2014') + ')') + '</div></div></div>';
+      '<div class="nm">' + esc(pakaiToken ? '({{ppat_nama}})' : '(' + (kantor.nama || '\u2014') + ')') + '</div></div></div>';
 
     return h + '</div>';
   }
 
+  /* =====================================================================
+     OBJEK — mengikuti blanko Lampiran Ib Perka BPN No. 8 Tahun 2021
+     butir 14 (bidang terdaftar), 15 (sebagian bidang), 16 (bekas Hak Adat),
+     17 (satuan rumah susun), 18 (letak), 19 (meliputi pula)
+     ===================================================================== */
+  let objek = {
+    statusSertipikat: 'terdaftar', format: 'analog',
+    jenisHak: 'Hak Milik', statusObjek: 'utuh',
+    redaksiSrs: 'blanko', redaksiMeliputi: 'benda',
+    bagianAktif: false, bagian: 'Satu per tiga',
+    luas: '120', atasNama: 'Contoh Nama Satu', nib: '09.01.02.03.00123', nop: '32.73.010.001-0012.0',
+    nomorHak: '1024', suTanggal: '2015-11-11', suNomor: '77/2015',
+    nomorHakAsal: '980', nibAsal: '09.01.02.03.00100', nopAsal: '32.73.010.001-0010.0',
+    nibBaru: '09.01.02.03.00124',
+    persilNomor: '21', persilBlok: 'D.III', kohirNomor: 'C.1234',
+    petaTanggal: '2026-02-10', petaNomor: 'PB-0087/2026',
+    batasUtara: 'tanah milik Contoh A', batasTimur: 'tanah milik Contoh B',
+    batasSelatan: 'jalan', batasBarat: 'tanah milik Contoh C',
+    alatBukti: [{ jenis: 'Girik', nomor: 'C.1234', tanggal: '1980-04-02',
+      pejabatNama: 'Contoh Pejabat Satu', pejabatJabatan: 'Lurah Cihapit' }],
+    kodeSertipikat: 'AB12-CD34', bentuk: 'tanah dan bangunan',
+    sertipikatNomor: '1024', sertipikatKelurahan: 'Cihapit',
+    gambarDenahTanggal: '2015-11-11', gambarDenahNomor: '77/2015', npp: '0,85',
+    namaSetempatAktif: false, namaSetempat: 'Perumahan Contoh Asri Blok A Nomor 1',
+    meliputiBebas: 'bangunan rumah tinggal permanen berikut tanaman di atasnya',
+    provinsi: 'Jawa Barat', labelKota: 'Kota', kota: 'Bandung', kecamatan: 'Bandung Wetan',
+    labelKelurahan: 'Kelurahan', kelurahan: 'Cihapit', jalan: 'Jalan Contoh Nomor 1'
+  };
+
+  const objekKartu = document.getElementById('objek-kartu');
+  const BUTIR = { b14: 'butir 14 — bidang terdaftar', b15: 'butir 15 — sebagian bidang',
+    b16: 'butir 16 — bekas Hak Milik Adat', b17: 'butir 17 — satuan rumah susun',
+    elektronik: 'sertipikat elektronik (draf 4)' };
+
+  function objSarusun() { return objek.jenisHak === 'Hak Milik Atas Satuan Rumah Susun'; }
+  function objBelum() { return objek.statusSertipikat === 'belum'; }
+
+  function jenisUraian() {
+    if (objBelum()) return 'b16';
+    if (objSarusun()) return 'b17';
+    if (objek.format === 'elektronik') return 'elektronik';
+    return objek.statusObjek === 'sebagian' ? 'b15' : 'b14';
+  }
+
+  function oget(path) { return path.split('.').reduce((a, k) => a[/^\d+$/.test(k) ? +k : k], objek); }
+  function oinp(path, label, type, cls) {
+    return '<div class="f' + (cls ? ' ' + cls : '') + '"><label>' + label + '</label>' +
+      '<input type="' + (type || 'text') + '" data-obj="' + path + '" value="' + esc(oget(path)) + '"></div>';
+  }
+  function osel(path, label, opts, cls) {
+    const v = String(oget(path));
+    return '<div class="f' + (cls ? ' ' + cls : '') + '"><label>' + label + '</label>' +
+      '<select data-obj="' + path + '">' +
+      opts.map(o => '<option value="' + esc(o[0]) + '"' + (v === String(o[0]) ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') +
+      '</select></div>';
+  }
+  function ochk(path, label) {
+    return '<label class="opt"><input type="checkbox" data-obj="' + path + '"' + (oget(path) ? ' checked' : '') + '> ' + label + '</label>';
+  }
+  function obatas() {
+    return oinp('batasUtara', 'Batas Utara') + oinp('batasTimur', 'Batas Timur') +
+           oinp('batasSelatan', 'Batas Selatan') + oinp('batasBarat', 'Batas Barat');
+  }
+
+  function gambarObjek() {
+    const j = jenisUraian();
+    let h = '<div class="card"><div class="card-head">' +
+      '<span class="chip">OBJEK <small>· ' + esc(BUTIR[j]) + '</small></span></div><div class="grid">';
+    h += osel('statusSertipikat', 'Status Sertipikat',
+      [['terdaftar', 'Sudah Terdaftar'], ['belum', 'Belum Terdaftar (bekas Hak Milik Adat)']], 'span2');
+    if (objBelum()) {
+      h += osel('jenisHak', 'Jenis Hak', [['Hak Milik', 'Hak Milik']], 'span2');
+    } else {
+      h += osel('jenisHak', 'Jenis Hak', [['Hak Milik', 'Hak Milik'], ['Hak Guna Usaha', 'Hak Guna Usaha'],
+        ['Hak Guna Bangunan', 'Hak Guna Bangunan'], ['Hak Pakai', 'Hak Pakai'],
+        ['Hak Milik Atas Satuan Rumah Susun', 'Hak Milik Atas Satuan Rumah Susun']], 'span2');
+      if (!objSarusun()) {
+        h += osel('format', 'Format Sertipikat', [['analog', 'Analog'], ['elektronik', 'Elektronik']]);
+        h += osel('statusObjek', 'Status Objek', [['utuh', 'Utuh'], ['sebagian', 'Sebagian']]);
+      }
+    }
+    h += '</div>';
+
+    // bagian hak bersama — petunjuk butir 14
+    if (j === 'b14' || j === 'b15') {
+      h += '<div class="sect"><h4>Bagian hak bersama</h4>';
+      h += ochk('bagianAktif', 'Yang dijual hanya bagian dari hak bersama — sisipkan “x per y” di depan nama hak');
+      if (objek.bagianAktif) h += '<div class="grid">' + oinp('bagian', 'Ditulis sebagai', 'text', 'span2') + '</div>';
+      h += '<p class="kunci">Contoh pada petunjuk: bagian 500 m² dari harta bersama 1.500 m² ditulis “Satu per tiga” Hak Milik.</p></div>';
+    }
+
+    h += '<div class="sect"><h4>Uraian objek — ' + esc(BUTIR[j]) + '</h4><div class="grid">';
+    if (j === 'b14') {
+      h += oinp('nomorHak', 'Nomor hak');
+      h += oinp('suTanggal', 'Tanggal Surat Ukur / Gambar Situasi', 'date');
+      h += oinp('suNomor', 'Nomor Surat Ukur / Gambar Situasi');
+      h += oinp('luas', 'Luas (m²)');
+      h += oinp('nib', 'NIB');
+      h += oinp('nop', 'SPPT PBB — Nomor Objek Pajak', 'text', 'span2');
+      h += '</div></div>';
+    } else if (j === 'b15') {
+      h += oinp('nomorHakAsal', 'Nomor hak asal');
+      h += oinp('nibAsal', 'NIB tanah asal');
+      h += oinp('nopAsal', 'SPPT PBB NOP tanah asal', 'text', 'span2');
+      h += oinp('luas', 'Luas bagian yang dijual (m²)');
+      h += obatas();
+      h += oinp('suTanggal', 'Tanggal Surat Ukur / Peta Bidang', 'date');
+      h += oinp('suNomor', 'Nomor Surat Ukur / Peta Bidang');
+      h += oinp('nibBaru', 'NIB bidang yang dijual');
+      h += '</div></div>';
+    } else if (j === 'b16') {
+      h += oinp('persilNomor', 'Persil Nomor');
+      h += oinp('persilBlok', 'Blok');
+      h += oinp('kohirNomor', 'Kohir Nomor');
+      h += oinp('luas', 'Luas (m²)');
+      h += obatas();
+      h += oinp('petaTanggal', 'Tanggal Peta Bidang', 'date');
+      h += oinp('petaNomor', 'Nomor Peta Bidang');
+      h += oinp('nib', 'NIB');
+      h += oinp('nop', 'SPPT PBB — Nomor Objek Pajak', 'text', 'span2');
+      h += '</div>';
+      h += '<div class="sect" style="border-top:0"><h4>Alat bukti hak — butir 16f</h4>';
+      objek.alatBukti.forEach((ab, i) => {
+        h += '<div class="ubah-row"><div class="ubah-head"><span>alat bukti ' + (i + 1) + '</span>' +
+          (objek.alatBukti.length > 1 ? '<button class="mini" data-delbukti="' + i + '">Hapus</button>' : '') +
+          '</div><div class="grid">';
+        h += oinp('alatBukti.' + i + '.jenis', 'Jenis');
+        h += oinp('alatBukti.' + i + '.nomor', 'Nomor');
+        h += oinp('alatBukti.' + i + '.tanggal', 'Tanggal', 'date');
+        h += oinp('alatBukti.' + i + '.pejabatNama', 'Dibuat di hadapan', 'text', 'span2');
+        h += oinp('alatBukti.' + i + '.pejabatJabatan', 'Selaku');
+        h += '</div></div>';
+      });
+      h += '<button class="mini" data-addbukti="1">+ Tambah alat bukti</button></div>';
+    } else if (j === 'b17') {
+      h += '<div class="f wide"><label>Bentuk redaksi</label><select data-obj="redaksiSrs">' +
+        '<option value="blanko"' + (objek.redaksiSrs === 'blanko' ? ' selected' : '') + '>Ringkas — blanko butir 17</option>' +
+        '<option value="draf"' + (objek.redaksiSrs === 'draf' ? ' selected' : '') + '>Lengkap — pola draf 2 &amp; 3</option>' +
+        '</select></div>';
+      h += oinp('sertipikatNomor', 'Nomor SHMSRS');
+      if (objek.redaksiSrs === 'draf') {
+        h += oinp('sertipikatKelurahan', 'Kelurahan pada nomor sertipikat');
+        h += oinp('gambarDenahTanggal', 'Tanggal Gambar Denah', 'date');
+        h += oinp('gambarDenahNomor', 'Nomor Gambar Denah');
+        h += oinp('luas', 'Luas (m²)');
+        h += oinp('atasNama', 'Terdaftar atas nama', 'text', 'span2');
+        h += oinp('nib', 'NIB');
+        h += oinp('nop', 'SPPT PBB — Nomor Objek Pajak', 'text', 'span2');
+      }
+      h += '</div></div>';
+    } else {
+      h += oinp('nib', 'NIB Elektronik');
+      h += oinp('kodeSertipikat', 'Nomor Kode Sertipikat');
+      h += osel('bentuk', 'Bentuk Objek', [['tanah', 'tanah'], ['tanah dan bangunan', 'tanah dan bangunan']]);
+      h += oinp('luas', 'Luas (m²)');
+      h += oinp('atasNama', 'Terdaftar atas nama', 'text', 'span2');
+      h += oinp('nop', 'SPPT PBB — Nomor Objek Pajak', 'text', 'span2');
+      h += '</div></div>';
+    }
+
+    h += '<div class="sect"><h4>Letak objek — butir 18</h4><div class="grid">';
+    h += oinp('provinsi', 'Provinsi');
+    h += osel('labelKota', 'Label', [['Kota', 'Kota'], ['Kabupaten', 'Kabupaten']]);
+    h += oinp('kota', 'Kota/Kabupaten');
+    h += oinp('kecamatan', 'Kecamatan');
+    h += osel('labelKelurahan', 'Label', [['Kelurahan', 'Kelurahan'], ['Desa', 'Desa']]);
+    h += oinp('kelurahan', 'Kelurahan/Desa');
+    h += oinp('jalan', 'Jalan', 'text', 'span2');
+    h += '</div></div>';
+
+    h += '<div class="sect"><h4>Meliputi pula — butir 19</h4><div class="grid">';
+    h += '<div class="f wide"><label>Bentuk redaksi</label><select data-obj="redaksiMeliputi">' +
+      '<option value="bebas"' + (objek.redaksiMeliputi === 'bebas' ? ' selected' : '') + '>Diisi sendiri (blanko butir 19)</option>' +
+      '<option value="benda"' + (objek.redaksiMeliputi === 'benda' ? ' selected' : '') + '>Benda tidak bergerak (pola draf 4)</option>' +
+      '<option value="bersama"' + (objek.redaksiMeliputi === 'bersama' ? ' selected' : '') + '>Bagian bersama satuan rumah susun (pola draf 2 &amp; 3)</option>' +
+      '</select></div>';
+    if (objek.redaksiMeliputi === 'bebas') h += oinp('meliputiBebas', 'Isi keterangan', 'text', 'wide');
+    if (objek.redaksiMeliputi === 'bersama') h += oinp('npp', 'Nilai Perbandingan Proporsional (%)');
+    h += '</div>';
+    h += ochk('namaSetempatAktif', 'Sebutkan nama setempat objek');
+    if (objek.namaSetempatAktif) h += '<div class="grid">' + oinp('namaSetempat', 'Setempat dikenal sebagai', 'text', 'span2') + '</div>';
+    h += '</div>';
+
+    h += '</div>';
+    objekKartu.innerHTML = h;
+
+    objekKartu.querySelectorAll('[data-obj]').forEach(el => {
+      const ev = el.type === 'checkbox' ? 'change' : 'input';
+      el.addEventListener(ev, e => {
+        const ks = e.target.dataset.obj.split('.');
+        let o = objek;
+        ks.slice(0, -1).forEach(k => { o = o[/^\d+$/.test(k) ? +k : k]; });
+        o[ks[ks.length - 1]] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        if (/^(statusSertipikat|format|jenisHak|statusObjek|redaksiSrs|redaksiMeliputi|bagianAktif|namaSetempatAktif)$/.test(e.target.dataset.obj)) gambarObjek();
+        renderAll();
+      });
+    });
+    objekKartu.querySelectorAll('[data-addbukti]').forEach(b => b.addEventListener('click', () => {
+      objek.alatBukti.push({ jenis: 'Letter C', nomor: '', tanggal: '1980-01-01', pejabatNama: '', pejabatJabatan: '' });
+      gambarObjek(); renderAll();
+    }));
+    objekKartu.querySelectorAll('[data-delbukti]').forEach(b => b.addEventListener('click', e => {
+      objek.alatBukti.splice(+e.target.dataset.delbukti, 1); gambarObjek(); renderAll();
+    }));
+  }
+
+  /* ---------- kalimat baku objek ---------- */
+  function barisBatas(d) {
+    return '\n- Utara : ' + d.batasUtara + ';\n- Timur : ' + d.batasTimur +
+           ';\n- Selatan : ' + d.batasSelatan + ';\n- Barat : ' + d.batasBarat + ';';
+  }
+
+  function blokB14(d) {
+    return '- ' + d.namaHak + ': Nomor ' + d.nomorHak +
+      ' atas sebidang tanah sebagaimana diuraikan dalam Surat Ukur/Gambar Situasi tanggal ' + d.suTanggal +
+      ' Nomor ' + d.suNomor + ' seluas ' + d.luas + ' m2 (' + d.luasT + ' meter persegi)' +
+      ' dengan Nomor Identifikasi Bidang Tanah (NIB) : ' + d.nib +
+      ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPTPBB) Nomor Objek Pajak (NOP) : ' + d.nop;
+  }
+  function blokB15(d) {
+    return '- ' + d.namaHak + ': atas sebagian tanah ' + d.namaHakAsal + ' Nomor ' + d.nomorHakAsal +
+      ' dengan Nomor Identifikasi Bidang Tanah (NIB) ' + d.nibAsal +
+      ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPTPBB) Nomor Objek Pajak (NOP) : ' + d.nopAsal +
+      '\nyaitu seluas ' + d.luas + ' m2 (' + d.luasT + ' meter persegi), dengan batas-batas :' + barisBatas(d) +
+      '\nsebagaimana diuraikan dalam Surat Ukur/Peta Bidang pada tanggal ' + d.suTanggal + ' Nomor ' + d.suNomor +
+      ' yang dilampirkan pada akta ini, dengan Nomor Identifikasi Bidang Tanah (NIB) : ' + d.nibBaru;
+  }
+  function blokB16(d) {
+    let t = '- Hak Milik atas sebidang tanah :\nPersil Nomor ' + d.persilNomor + ' Blok ' + d.persilBlok +
+      ' Kohir Nomor ' + d.kohirNomor + ' seluas ' + d.luas + ' m2 (' + d.luasT + ' meter persegi), dengan batas-batas :' +
+      barisBatas(d) +
+      '\nsebagaimana diuraikan dalam Peta Bidang tanggal ' + d.petaTanggal + ' Nomor ' + d.petaNomor +
+      ' yang dilampirkan pada akta ini, dengan Nomor Identifikasi Bidang Tanah (NIB) : ' + d.nib +
+      ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPTPBB) Nomor Objek Pajak (NOP) : ' + d.nop +
+      '\nberdasarkan alat-alat bukti berupa :';
+    d.alatBukti.forEach(ab => {
+      t += '\n- ' + ab.jenis + ' nomor ' + ab.nomor + ', tanggal ' + ab.tanggal + ' (' + ab.tanggalT +
+        '), yang dibuat dihadapan ' + ab.pejabatNama + ', selaku ' + ab.pejabatJabatan + ';';
+    });
+    return t;
+  }
+  function blokB17(d) { return '- Hak Milik Atas Satuan Rumah Susun :\nNomor ' + d.sertipikatNomor; }
+  function blokSrsDraf(d) {
+    return '- Sertipikat Hak Milik Atas Satuan Rumah Susun (SHMSRS) Nomor ' + d.sertipikatNomor + '/' + d.sertipikatKelurahan +
+      ', atas unit hunian atas satuan rumah susun dalam Gambar Denah tertanggal ' + d.gambarDenahTanggal +
+      ' (' + d.gambarDenahTanggalT + '), Nomor : ' + d.gambarDenahNomor + ', seluas ' + d.luas + ' (' + d.luasT +
+      ') m2 (meter persegi), terdaftar atas nama ' + d.atasNama +
+      ', dengan Nomor Identifikasi Bidang Tanah (NIB) ' + d.nib +
+      ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPT PBB) Nomor Objek Pajak (NOP) : ' + d.nop;
+  }
+  function blokElektronik(d) {
+    return '- ' + d.namaHak + ' Sertipikat Elektronik dengan Nomor Identifikasi Bidang Tanah (NIB) : ' + d.nib +
+      ', Nomor Kode Sertipikat : ' + d.kodeSertipikat + ', atas sebidang ' + d.bentuk + ' seluas ' + d.luas +
+      ' (' + d.luasT + ') M2 (meter persegi), terdaftar atas nama ' + d.atasNama +
+      ' dan Surat Pemberitahuan Pajak Terhutang Pajak Bumi dan Bangunan (SPPT PBB) Nomor Objek Pajak (NOP) : ' + d.nop;
+  }
+  function blokLetak18(d) {
+    return '- terletak di :\n- Provinsi : ' + d.provinsi + ';\n- ' + d.labelKota + ' : ' + d.kota +
+      ';\n- Kecamatan : ' + d.kecamatan + ';\n- ' + d.labelKelurahan + ' : ' + d.kelurahan +
+      ';\n- Jalan : ' + d.jalan + '.';
+  }
+  function blokMeliputi(d, mode) {
+    const setempat = d.namaSetempat ? ', setempat dikenal sebagai “' + d.namaSetempat + '”' : '';
+    if (mode === 'bersama') {
+      return 'Jual beli ini meliputi pula :\n- Hak atas bagian bersama, benda bersama, tanah bersama, fasilitas bersama beserta dengan segala turut-turutannya dengan nilai perbandingan proporsional ' +
+        d.npp + ' (' + d.nppT + ')%' + setempat + ';';
+    }
+    if (mode === 'benda') {
+      return 'Jual beli ini meliputi pula :\n- Segala sesuatu yang berada, berdiri, tertanam atau terpasang di atas tanah tersebut dan/atau di dalam tanah tersebut yang karena sifat, guna dan peruntukannya atau menurut penetapan Undang-undang dapat dianggap sebagai barang tidak bergerak, serta segala sesuatu yang berkaitan dengan tanah tidak ada yang dikecualikan' +
+        setempat + ';';
+    }
+    return 'Jual beli ini meliputi pula : ' + d.meliputiBebas + setempat + ';';
+  }
+  function blokMeliputiHibah() {
+    return 'Hibah ini meliputi pula segala sesuatu yang tertanam diatasnya yang menurut peraturan perundang-undangan dapat digolongkan sebagai barang tidak bergerak;';
+  }
+  function blokSebutanObjek(d) {
+    return 'Selanjutnya semua yang diuraikan di atas dalam akta ini disebut “Objek ' + d.aktaJenis + '”.';
+  }
+
+  function terbilangDesimal(v) {
+    const t = String(v == null ? '' : v).replace('.', ',').split(',');
+    if (!t[0]) return '—';
+    let out = terbilang(+t[0] || 0);
+    if (t[1]) out += ' koma ' + t[1].split('').map(c => terbilang(+c)).join(' ');
+    return out;
+  }
+
+  function dataObjek(pakaiToken) {
+    const o = objek;
+    const bagian = o.bagianAktif ? (pakaiToken ? '“{{bagian_hak_bersama}}” ' : '“' + (o.bagian || '—') + '” ') : '';
+    if (pakaiToken) {
+      return { namaHak: bagian + '{{jenis_hak}}', namaHakAsal: '{{jenis_hak_asal}}',
+        nomorHak: '{{objek_nomor_hak}}', nomorHakAsal: '{{objek_nomor_hak_asal}}',
+        suTanggal: '{{surat_ukur_tanggal}}', suNomor: '{{surat_ukur_nomor}}',
+        luas: '{{objek_luas}}', luasT: '{{objek_luas_terbilang}}',
+        nib: '{{objek_nib}}', nibAsal: '{{objek_nib_asal}}', nibBaru: '{{objek_nib_baru}}',
+        nop: '{{objek_nop}}', nopAsal: '{{objek_nop_asal}}', atasNama: '{{objek_atas_nama}}',
+        persilNomor: '{{persil_nomor}}', persilBlok: '{{persil_blok}}', kohirNomor: '{{kohir_nomor}}',
+        petaTanggal: '{{peta_bidang_tanggal}}', petaNomor: '{{peta_bidang_nomor}}',
+        batasUtara: '{{batas_utara}}', batasTimur: '{{batas_timur}}',
+        batasSelatan: '{{batas_selatan}}', batasBarat: '{{batas_barat}}',
+        kodeSertipikat: '{{objek_kode_sertipikat}}', bentuk: '{{objek_bentuk}}',
+        sertipikatNomor: '{{sertipikat_nomor}}', sertipikatKelurahan: '{{sertipikat_kelurahan}}',
+        gambarDenahTanggal: '{{gambar_denah_tanggal}}', gambarDenahTanggalT: '{{gambar_denah_tanggal_terbilang}}',
+        gambarDenahNomor: '{{gambar_denah_nomor}}', npp: '{{objek_npp}}', nppT: '{{objek_npp_terbilang}}',
+        meliputiBebas: '{{objek_meliputi}}',
+        namaSetempat: o.namaSetempatAktif ? '{{objek_nama_setempat}}' : '',
+        provinsi: '{{objek_provinsi}}', labelKota: '{{objek_label_kota}}', kota: '{{objek_kota}}',
+        kecamatan: '{{objek_kecamatan}}', labelKelurahan: '{{objek_label_kelurahan}}', kelurahan: '{{objek_kelurahan}}',
+        jalan: '{{objek_jalan}}', aktaJenis: '{{akta_jenis}}',
+        alatBukti: [{ jenis: '{{jenis}}', nomor: '{{nomor}}', tanggal: '{{tanggal}}',
+          tanggalT: '{{tanggal_terbilang}}', pejabatNama: '{{pejabat_nama}}', pejabatJabatan: '{{pejabat_jabatan}}' }] };
+    }
+    return { namaHak: bagian + o.jenisHak, namaHakAsal: o.jenisHak,
+      nomorHak: o.nomorHak || '—', nomorHakAsal: o.nomorHakAsal || '—',
+      suTanggal: tglAngka(o.suTanggal), suNomor: o.suNomor || '—',
+      luas: o.luas || '—', luasT: terbilang(+o.luas || 0),
+      nib: o.nib || '—', nibAsal: o.nibAsal || '—', nibBaru: o.nibBaru || '—',
+      nop: o.nop || '—', nopAsal: o.nopAsal || '—', atasNama: o.atasNama || '—',
+      persilNomor: o.persilNomor || '—', persilBlok: o.persilBlok || '—', kohirNomor: o.kohirNomor || '—',
+      petaTanggal: tglAngka(o.petaTanggal), petaNomor: o.petaNomor || '—',
+      batasUtara: o.batasUtara || '—', batasTimur: o.batasTimur || '—',
+      batasSelatan: o.batasSelatan || '—', batasBarat: o.batasBarat || '—',
+      kodeSertipikat: o.kodeSertipikat || '—', bentuk: o.bentuk,
+      sertipikatNomor: o.sertipikatNomor || '—', sertipikatKelurahan: o.sertipikatKelurahan || '—',
+      gambarDenahTanggal: tglAngka(o.gambarDenahTanggal), gambarDenahTanggalT: tglKata(o.gambarDenahTanggal),
+      gambarDenahNomor: o.gambarDenahNomor || '—', npp: o.npp || '—', nppT: terbilangDesimal(o.npp),
+      meliputiBebas: o.meliputiBebas || '—',
+      namaSetempat: o.namaSetempatAktif ? (o.namaSetempat || '—') : '',
+      provinsi: o.provinsi || '—', labelKota: o.labelKota, kota: o.kota || '—',
+      kecamatan: o.kecamatan || '—', labelKelurahan: o.labelKelurahan, kelurahan: o.kelurahan || '—',
+      jalan: o.jalan || '—', aktaJenis: jenisAkta,
+      alatBukti: o.alatBukti.map(ab => ({ jenis: ab.jenis || '—', nomor: ab.nomor || '—',
+        tanggal: tglAngka(ab.tanggal), tanggalT: tglKata(ab.tanggal),
+        pejabatNama: ab.pejabatNama || '—', pejabatJabatan: ab.pejabatJabatan || '—' })) };
+  }
+
+  function bagianObjek(pakaiToken) {
+    const d = dataObjek(pakaiToken);
+    const j = jenisUraian();
+    const isi = [];
+    if (j === 'b14') isi.push({ label: 'Butir 14 — bidang terdaftar', teks: blokB14(d) });
+    else if (j === 'b15') isi.push({ label: 'Butir 15 — sebagian bidang', teks: blokB15(d) });
+    else if (j === 'b16') isi.push({ label: 'Butir 16 — bekas Hak Milik Adat', teks: blokB16(d) });
+    else if (j === 'b17') isi.push({ label: objek.redaksiSrs === 'draf' ? 'Satuan rumah susun — pola draf' : 'Butir 17 — satuan rumah susun',
+      teks: objek.redaksiSrs === 'draf' ? blokSrsDraf(d) : blokB17(d) });
+    else isi.push({ label: 'Sertipikat elektronik — pola draf 4', teks: blokElektronik(d) });
+
+    isi.push({ label: 'Butir 18 — letak objek', teks: blokLetak18(d) });
+    isi.push({ label: 'Butir 19 — meliputi pula',
+      teks: jenisAkta === 'Hibah' ? blokMeliputiHibah() : blokMeliputi(d, objek.redaksiMeliputi) });
+    isi.push({ label: 'Sebutan objek', teks: blokSebutanObjek(d) });
+    return isi;
+  }
+
   const LEWATI = [
-    { judul: 'Objek', catatan: 'Uraian objek, letak objek, cakupan “meliputi pula”, dan sebutan objek — belum disusun.' },
     { judul: 'Pasal-pasal', catatan: 'Pasal 1 sampai pasal terakhir, termasuk paragraf pajak dan penanggung biaya akta — belum disusun.' }
   ];
 
@@ -1475,11 +1971,16 @@
 
   function renderRaw() {
     const box = document.getElementById('raw-box');
-    let teks = bagianPihak(true).map(grup => grup.map(b =>
+    let teks = bagianKepala(true).map(b => b.teks).join('\n\n') + '\n\n';
+    teks += bagianPihak(true).map(grup => grup.map(b =>
       b.jenis === 'utama' ? b.roman + '. ' + (b.no ? b.no + '. ' : '') + b.teks
       : b.jenis === 'anak' ? '    ' + b.no + '. ' + b.teks
       : b.teks
     ).join('\n\n')).join('\n\n\n');
+
+    teks += '\n\n' + blokPengenalan();
+    teks += '\n\n@@Objek@@';
+    bagianObjek(true).forEach(b => { teks += '\n\n' + b.teks; });
 
     LEWATI.forEach(l => {
       teks += '\n\n@@' + l.judul + ' — dilewati dulu@@\n' + l.catatan;
@@ -1488,6 +1989,8 @@
     teks += '\n\n' + bagianSaksi(true).map(b =>
       b.jenis === 'nomor' ? b.no + '. ' + b.teks : (b.jenis === 'sub' ? '- ' + b.teks : b.teks)
     ).join('\n\n');
+
+    teks += '\n\n@@Kaki halaman@@\n' + blokFooter(dataKantor(true));
 
     box.innerHTML = esc(teks)
       .replace(/@@([^@]+)@@/g, (m, t) => '<span class="ph">[ ' + t + ' ]</span>')
@@ -1498,6 +2001,10 @@
   function renderOutput() {
     const box = document.getElementById('out-box');
     let html = '';
+    bagianKepala(false).forEach(b => {
+      html += '<p class="blok-objek"><span class="lbl">' + esc(b.label) + '</span>' +
+        esc(b.teks).replace(/\n/g, '<br>') + '</p>';
+    });
     bagianPihak(false).forEach(grup => {
       grup.forEach(b => {
         if (b.jenis === 'utama') {
@@ -1511,6 +2018,13 @@
           html += '<p class="out-sub">' + esc(b.teks).replace(/\n/g, '<br>') + '</p>';
         }
       });
+    });
+
+    html += '<p class="out-plain">' + esc(blokPengenalan()) + '</p>';
+    html += '<div class="out-ph"><b>Objek</b></div>';
+    bagianObjek(false).forEach(b => {
+      html += '<p class="blok-objek"><span class="lbl">' + esc(b.label) + '</span>' +
+        esc(b.teks).replace(/\n/g, '<br>') + '</p>';
     });
 
     LEWATI.forEach(l => {
@@ -1527,12 +2041,21 @@
       }
     });
 
-    box.innerHTML = html + htmlTtd(false);
+    html += htmlTtd(false);
+    html += '<p class="blok-objek" style="margin-top:1rem"><span class="lbl">Kaki halaman</span>' +
+      esc(blokFooter(dataKantor(false))).replace(/\n/g, '<br>') + '</p>';
+    box.innerHTML = html;
   }
 
   function renderAll() { renderRaw(); renderOutput(); }
 
+  document.querySelectorAll('#tabs [data-tab]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#tabs [data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+    document.querySelectorAll('.tabpane').forEach(pn => { pn.hidden = pn.dataset.pane !== b.dataset.tab; });
+  }));
+
   renderList();
+  gambarObjek();
   renderSaksi();
   renderAll();
 </script>
