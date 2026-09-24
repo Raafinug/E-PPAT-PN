@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tab Lampiran — Prototipe Minuta Akta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0d10; --panel:#17151b; --panel-2:#201d25;
+    --border:#302c37; --border-soft:#272430;
+    --text:#ededed; --text-dim:#9b949e; --text-faint:#6b6570;
+    --accent:#d81f35; --accent-hi:#f0384f;
+    --accent-soft:rgba(216,31,53,0.16); --accent-soft-2:rgba(216,31,53,0.06);
+    --danger:#e05561; --danger-soft:rgba(224,85,97,0.14);
+    --ok:#4f9d69; --ok-soft:rgba(79,157,105,0.16);
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
+
+  .app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh;}
+
+  .sidebar{background:var(--panel);border-right:1px solid var(--border);padding:22px 16px;
+    position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+  .brand{display:flex;align-items:center;gap:11px;padding:0 4px 20px;margin-bottom:16px;border-bottom:1px solid var(--border-soft);}
+  .seal{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;position:relative;flex:none;}
+  .seal::before{content:'';position:absolute;inset:4px;border:1px solid var(--accent);border-radius:50%;opacity:.5;}
+  .seal span{font-family:'Fraunces',serif;font-size:13px;color:var(--accent);position:relative;z-index:1;}
+  .brand-text .t1{font-family:'Fraunces',serif;font-size:15.5px;font-weight:600;line-height:1.15;}
+  .brand-text .t2{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:1.2px;margin-top:2px;}
+  .grup{font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--text-faint);padding:14px 12px 6px;font-weight:500;}
+  .nav{display:flex;flex-direction:column;gap:2px;}
+  .nav a{display:block;padding:8px 12px;border-radius:var(--radius);color:var(--text-dim);font-size:13.5px;
+    text-decoration:none;border:1px solid transparent;}
+  .nav a:hover{color:var(--text);background:var(--panel-2);}
+  .nav a.active{color:var(--text);background:var(--accent-soft);border-color:rgba(216,31,53,.35);}
+  .sidebar-foot{margin-top:auto;padding-top:16px;font-size:11px;color:var(--text-faint);line-height:1.55;}
+
+  .main{min-width:0;display:flex;flex-direction:column;}
+  .topbar{padding:18px 30px;border-bottom:1px solid var(--border);}
+  .remah{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.6px;
+    text-transform:uppercase;color:var(--text-faint);margin-bottom:7px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;}
+  .sub{font-size:12.5px;color:var(--text-faint);margin-top:4px;}
+
+  .baris-akta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px;}
+  .baris-akta .nm{font-family:'Fraunces',serif;font-size:16px;font-weight:600;}
+  .baris-akta .kode{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-faint);}
+  .baris-akta .kanan{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+
+  .btn{font-family:inherit;font-size:12.5px;font-weight:500;padding:8px 13px;border-radius:var(--radius);
+    border:1px solid var(--border);background:var(--panel-2);color:var(--text);cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;transition:border-color .12s,background .12s;}
+  .btn:hover:not(:disabled){border-color:var(--text-faint);}
+  .btn-accent{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-accent:hover:not(:disabled){background:var(--accent-hi);border-color:var(--accent-hi);}
+  .btn-bahaya{color:var(--danger);border-color:rgba(224,85,97,.4);background:var(--danger-soft);}
+  .btn-bahaya:hover{background:rgba(224,85,97,.24);}
+  .btn-kecil{font-size:11.5px;padding:5px 9px;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .lencana{display:inline-block;font-size:11px;padding:2px 9px;border-radius:11px;
+    border:1px solid var(--border);background:var(--panel-2);color:var(--text-dim);}
+  .lencana.jenis{background:var(--accent-soft);border-color:rgba(216,31,53,.35);color:var(--accent-hi);}
+  .lencana.tmpl{background:var(--ok-soft);border-color:rgba(79,157,105,.4);color:#8fd0a4;}
+
+  .konteks{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 30px 0;
+    padding:11px 15px;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);}
+  .cap-k{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+    letter-spacing:1px;color:var(--text-faint);}
+  .ket-k{font-size:12.3px;color:var(--text-faint);}
+  .segmen{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .segmen button{font-family:inherit;font-size:12.5px;padding:7px 14px;border:0;
+    background:var(--panel-2);color:var(--text-dim);cursor:pointer;}
+  .segmen button[aria-pressed="true"]{background:var(--accent);color:#fff;}
+  .satuan{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--border);
+    border-left:2px solid var(--ok);background:rgba(79,157,105,.07);border-radius:var(--radius);
+    padding:10px 13px;margin-bottom:12px;font-size:12.3px;color:var(--text-dim);line-height:1.6;}
+  .satuan b{color:#8fd0a4;}
+  .info{margin:16px 30px 0;padding:11px 15px;border:1px solid var(--border);border-left:2px solid var(--accent);
+    background:var(--accent-soft-2);border-radius:var(--radius);font-size:13px;color:var(--text-dim);}
+
+  .kerja{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;padding:18px 30px 60px;align-items:start;}
+
+  .kolom{border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);overflow:hidden;}
+  .tabs{display:flex;border-bottom:1px solid var(--border);background:var(--panel-2);}
+  .tabs button{flex:1;font-family:inherit;font-size:12.5px;font-weight:500;padding:11px 10px;border:0;
+    background:transparent;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;}
+  .tabs button:hover{color:var(--text);}
+  .tabs button[aria-selected="true"]{color:var(--text);background:var(--panel);border-bottom-color:var(--accent);}
+  .tabs .n{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);}
+  .tabs button[aria-selected="true"] .n{color:var(--accent-hi);}
+  .isi-kolom{padding:13px;}
+  .pane[hidden]{display:none;}
+
+  .ket{font-size:12.3px;color:var(--text-faint);line-height:1.6;margin:0 0 12px;}
+  .kosong{border:1px dashed var(--border);border-radius:var(--radius);padding:28px 16px;text-align:center;
+    color:var(--text-faint);font-size:12.5px;}
+
+  /* daftar bagian */
+  .bagian-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--border);
+    border-radius:var(--radius);background:var(--bg);margin-bottom:6px;cursor:pointer;}
+  .bagian-item:hover{border-color:var(--text-faint);}
+  .bagian-item .no{font-family:'IBM Plex Mono',monospace;font-size:11px;width:20px;height:20px;flex:none;
+    border-radius:50%;background:var(--panel-2);border:1px solid var(--border-soft);
+    display:inline-flex;align-items:center;justify-content:center;color:var(--text-faint);}
+  .bagian-item .nm{font-size:13px;}
+
+  /* daftar lampiran */
+  .lamp{position:relative;display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--border);
+    border-radius:var(--radius);background:var(--bg);margin-bottom:7px;}
+  .lamp.klik{cursor:pointer;}
+  .lamp:hover{border-color:var(--text-faint);}
+  .lamp.aktif{border-color:var(--accent);background:var(--accent-soft-2);}
+  .lamp .ikon{flex:none;width:26px;height:26px;border-radius:var(--radius);background:var(--panel-2);
+    border:1px solid var(--border-soft);display:flex;align-items:center;justify-content:center;
+    font-size:12px;color:var(--text-faint);}
+  .lamp .teks{min-width:0;flex:1;}
+  .lamp .nm{font-size:13px;color:var(--text);overflow-wrap:anywhere;}
+  .lamp .mt{font-size:11.5px;color:var(--text-faint);margin-top:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .lamp .aksi{display:flex;gap:5px;opacity:0;transition:opacity .12s;flex:none;}
+  .lamp:hover .aksi,.lamp:focus-within .aksi{opacity:1;}
+
+  /* editor lampiran template */
+  .kepala-editor{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .kepala-editor h3{font-family:'Fraunces',serif;font-size:14.5px;font-weight:600;margin:0;}
+  .nama-lamp{font-family:'Fraunces',serif;font-size:14.5px;font-weight:600;padding:5px 9px;
+    border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);min-width:220px;}
+  .nama-lamp:focus{outline:none;border-color:var(--accent);}
+  .kepala-editor .kanan{margin-left:auto;display:flex;gap:7px;}
+  .alat{display:flex;align-items:center;gap:8px;padding:10px 15px;border-bottom:1px solid var(--border-soft);flex-wrap:wrap;}
+  .alat .hint{font-size:11.5px;color:var(--text-faint);}
+  .vpick{padding:10px 15px;border-bottom:1px solid var(--border-soft);background:var(--panel-2);}
+  .vpick[hidden]{display:none;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chips button{font-family:'IBM Plex Mono',monospace;font-size:11.4px;padding:3px 8px;border-radius:2px;
+    border:1px solid var(--border);background:var(--bg);color:var(--accent-hi);cursor:pointer;}
+  .chips button:hover{border-color:var(--accent);}
+  textarea{width:100%;min-height:330px;font-family:'IBM Plex Mono',monospace;font-size:12.6px;line-height:1.75;
+    padding:15px;border:0;background:var(--bg);color:var(--text);resize:vertical;outline:none;}
+  .pratinjau{padding:15px;background:var(--bg);border-top:1px solid var(--border-soft);}
+  .pratinjau .cap{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+    letter-spacing:1px;color:var(--text-faint);display:block;margin-bottom:8px;}
+  .pratinjau pre{margin:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.75;
+    white-space:pre-wrap;word-break:break-word;color:var(--text);}
+  .v{font-family:'IBM Plex Mono',monospace;color:var(--accent-hi);}
+  .terisi{color:#8fd0a4;}
+
+  .hampa{padding:70px 20px;text-align:center;color:var(--text-faint);font-size:13px;}
+  .hampa .bulat{width:46px;height:46px;border-radius:50%;border:1px dashed var(--border);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:18px;}
+
+  /* modal */
+  .tirai{position:fixed;inset:0;background:rgba(0,0,0,.62);display:flex;align-items:flex-start;justify-content:center;
+    padding:60px 16px;z-index:60;overflow-y:auto;}
+  .tirai[hidden]{display:none;}
+  .modal{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:480px;}
+  .modal > header{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;
+    align-items:flex-start;justify-content:space-between;gap:12px;}
+  .modal h2{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0;}
+  .modal .tutup{background:none;border:0;color:var(--text-faint);font-size:19px;cursor:pointer;line-height:1;}
+  .modal .isi{padding:18px 20px;}
+  .modal > footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+  .f{margin-bottom:15px;}
+  .f label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+    letter-spacing:1px;color:var(--text-faint);margin-bottom:6px;}
+  .f label .wajib{color:var(--accent);}
+  .f input[type=text],.f input[type=date]{width:100%;font-family:inherit;font-size:13px;padding:9px 11px;
+    border-radius:var(--radius);border:1px solid var(--border);background:var(--bg);color:var(--text);}
+  .f input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.65);cursor:pointer;}
+  .f input::placeholder{color:var(--text-faint);}
+  .berkas{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .berkas .nama{flex:1;min-width:150px;font-size:12.5px;color:var(--text-faint);padding:9px 11px;
+    border:1px dashed var(--border);border-radius:var(--radius);background:var(--bg);overflow-wrap:anywhere;}
+  .berkas .nama.ada{color:var(--text);border-style:solid;}
+  .peringatan{font-size:12.5px;color:var(--text-dim);line-height:1.6;margin:0;}
+  .peringatan b{color:var(--text);}
+
+  @media (max-width:1000px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{position:static;height:auto;}
+    .kerja{grid-template-columns:minmax(0,1fr);padding-left:18px;padding-right:18px;}
+    .topbar,.info{padding-left:18px;padding-right:18px;margin-left:0;margin-right:0;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="seal"><span>P</span></div>
+      <div class="brand-text"><div class="t1">Tab Lampiran</div><div class="t2">Prototipe · Minuta Akta</div></div>
+    </div>
+    <div class="grup">E-PPAT Module</div>
+    <nav class="nav">
+      <a href="#">Dashboard</a>
+      <a href="#">Template Dokumen</a>
+      <a href="#">Profil Kantor</a>
+      <a href="#">Verifikasi</a>
+      <a href="#" class="active">Minuta</a>
+      <a href="#">E-Akta Wizard</a>
+      <a href="#">Akta Repository</a>
+      <a href="#">Akta Salinan</a>
+    </nav>
+    <div class="sidebar-foot">
+      Prototipe tampilan, bukan aplikasi live. Seluruh tombol bersifat simulasi dan
+      seluruh data yang tampil adalah data contoh.
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="remah">E-PPAT Module › Minuta</div>
+      <h1>Minuta Akta</h1>
+      <div class="sub">Drafting &amp; naskah minuta akta</div>
+
+      <div class="baris-akta">
+        <button class="btn">‹ Kembali</button>
+        <span class="nm">Minuta Akta</span>
+        <span class="kode">ORD-260923-001</span>
+        <span class="lencana jenis">AJB</span>
+        <span class="lencana">Akta Jual Beli</span>
+        <span class="kanan">
+          <button class="btn">Preview Akta</button>
+          <button class="btn">Cek Ejaan</button>
+          <button class="btn">Beritahu PPAT</button>
+          <button class="btn btn-accent" id="btn-finalisasi">Finalisasi Akta</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="konteks">
+      <span class="cap-k">Konteks layar</span>
+      <div class="segmen">
+        <button data-mode="template" aria-pressed="true">Membuat Template</button>
+        <button data-mode="minuta" aria-pressed="false">Drafting Minuta</button>
+      </div>
+      <span class="ket-k" id="ket-konteks"></span>
+    </div>
+
+    <p class="info" id="info-atas"></p>
+
+    <div class="kerja">
+
+      <!-- ============ KIRI ============ -->
+      <div class="kolom">
+        <div class="tabs" id="tab-kiri">
+          <button data-tab="bagian" aria-selected="true">Pasal &amp; Catatan <span class="n" id="n-bagian">14</span></button>
+          <button data-tab="lampiran" aria-selected="false">Lampiran <span class="n" id="n-lampiran">0</span></button>
+        </div>
+
+        <div class="isi-kolom">
+          <div class="pane" data-pane="bagian">
+            <div id="daftar-bagian"></div>
+          </div>
+
+          <div class="pane" data-pane="lampiran" hidden>
+            <p class="satuan"><span>▤</span><span><b>Satu baris di daftar ini adalah satu lampiran utuh</b> —
+              satu berkas atau satu naskah lampiran yang berdiri sendiri, bukan potongan atau bagian dari lampiran lain.
+              Urutannya di daftar menentukan urutan lampiran pada akta.</span></p>
+            <p class="ket" id="ket-lampiran"></p>
+            <div id="daftar-lampiran"></div>
+            <button class="btn btn-accent" id="tambah-lampiran" style="width:100%;justify-content:center;margin-top:4px">+ Lampiran</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ KANAN ============ -->
+      <div class="kolom" id="kanan">
+        <div class="tabs">
+          <button aria-selected="true">Pasal</button>
+          <button aria-selected="false">Pengaturan Dokumen</button>
+        </div>
+        <div id="isi-kanan">
+          <div class="hampa">
+            <div class="bulat">▤</div>
+            Klik pasal di panel kiri untuk mulai mengedit,<br>
+            atau buka tab Lampiran untuk menyunting lampiran bawaan template.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- modal tambah lampiran -->
+<div class="tirai" id="t-tambah" hidden>
+  <div class="modal" role="dialog" aria-modal="true">
+    <header>
+      <div>
+        <h2>Tambah Lampiran</h2>
+        <div class="sub">Berkas pendukung yang tetap berdiri sendiri — tidak digabung ke naskah.</div>
+      </div>
+      <button class="tutup" data-tutup>&#215;</button>
+    </header>
+    <div class="isi">
+      <div class="f">
+        <label>Label</label>
+        <input type="text" id="l-label" placeholder="mis. Kartu Keluarga pihak pertama">
+      </div>
+      <div class="f">
+        <label>Berkas <span class="wajib">*</span></label>
+        <div class="berkas">
+          <span class="nama" id="l-berkas">Belum ada berkas dipilih</span>
+          <button class="btn" data-pilih="pdf">Unggah PDF</button>
+          <button class="btn" data-pilih="gambar">Gambar</button>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <button class="btn" data-tutup>Batal</button>
+      <button class="btn btn-accent" id="l-tambah" disabled>Tambah</button>
+    </footer>
+  </div>
+</div>
+
+<!-- modal finalisasi akta -->
+<div class="tirai" id="t-final" hidden>
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:460px">
+    <header>
+      <h2>Finalisasi Akta</h2>
+      <button class="tutup" data-tutup-final>&#215;</button>
+    </header>
+    <div class="isi">
+      <p class="peringatan" style="margin-bottom:18px">Setelah difinalisasi, akta berstatus <b>Selesai</b>
+        dan pasal tidak dapat diubah lagi. Akta masuk ke menu <b>Salinan</b>.</p>
+      <div class="f">
+        <label>Nomor Akta <span class="wajib">*</span></label>
+        <input type="text" id="f-nomor" placeholder="mis. 123/2026">
+      </div>
+      <div class="f" style="margin-bottom:0">
+        <label>Tanggal Akta <span class="wajib">*</span></label>
+        <input type="date" id="f-tanggal">
+      </div>
+    </div>
+    <footer>
+      <button class="btn" data-tutup-final>Batal</button>
+      <button class="btn btn-accent" id="f-ya" disabled>Finalisasi</button>
+    </footer>
+  </div>
+</div>
+
+<!-- modal konfirmasi hapus -->
+<div class="tirai" id="t-hapus" hidden>
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:430px">
+    <header>
+      <h2>Hapus lampiran?</h2>
+      <button class="tutup" data-tutup-hapus>&#215;</button>
+    </header>
+    <div class="isi">
+      <p class="peringatan" id="h-teks"></p>
+    </div>
+    <footer>
+      <button class="btn" data-tutup-hapus>Batal</button>
+      <button class="btn btn-bahaya" id="h-ya">Hapus</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   Prototipe tab Lampiran pada layar Minuta Akta.
+   Dua jenis lampiran:
+   - unggahan : berkas PDF/gambar, tidak bisa disunting
+   - template : naskah bawaan template, isinya bisa disunting
+   ===================================================================== */
+
+const NILAI = {
+  'akta_nomor':'08/2026', 'akta_tanggal':'23-09-2026',
+  'akta_tanggal_terbilang':'dua puluh tiga September dua ribu dua puluh enam',
+  'ppat_nama':'Contoh Nama PPAT', 'ppat_gelar_singkat':'S.H., M.Kn.',
+  'ppat_daerah_kerja':'Kota Administrasi Jakarta Selatan',
+  'pihak_pertama.nama':'Ahmad Fauzi', 'pihak_pertama.nik':'3273********3301',
+  'pihak_kedua.nama':'Maya Putri', 'pihak_kedua.nik':'3273********3302',
+  'jenis_hak':'Hak Milik', 'objek_nomor_hak':'1024', 'objek_nib':'09.01.02.03.00123',
+  'objek_luas':'120', 'objek_luas_terbilang':'seratus dua puluh',
+  'objek_kelurahan':'Cihapit', 'objek_kecamatan':'Bandung Wetan',
+  'objek_kota':'Kota Bandung', 'objek_provinsi':'Jawa Barat',
+  'surat_ukur_jenis':'Surat Ukur', 'surat_ukur_tanggal':'11-11-2015', 'surat_ukur_nomor':'77/2015'
+};
+
+let lampiran = [
+  { id:1, jenis:'template', label:'Daftar Objek yang Dialihkan',
+    asal:'Disiapkan saat membuat template', ubah:false,
+    teks:'DAFTAR OBJEK YANG DIALIHKAN\nLampiran Akta Jual Beli Nomor {{akta_nomor}}, tanggal {{akta_tanggal}} ({{akta_tanggal_terbilang}}).\n\n1. {{jenis_hak}} Nomor {{objek_nomor_hak}}, Nomor Identifikasi Bidang Tanah (NIB) {{objek_nib}}, seluas {{objek_luas}} m2 ({{objek_luas_terbilang}} meter persegi), sebagaimana diuraikan dalam {{surat_ukur_jenis}} tanggal {{surat_ukur_tanggal}} Nomor {{surat_ukur_nomor}}.\n\n2. Terletak di {{objek_kelurahan}}, Kecamatan {{objek_kecamatan}}, {{objek_kota}}, Provinsi {{objek_provinsi}}.\n\nDialihkan dari {{pihak_pertama.nama}} kepada {{pihak_kedua.nama}}.\n\n{{ppat_nama}}, {{ppat_gelar_singkat}}\nDaerah Kerja {{ppat_daerah_kerja}}' },
+
+  { id:2, jenis:'template', label:'Pernyataan Kesesuaian Data Objek',
+    asal:'Disiapkan saat membuat template', ubah:false,
+    teks:'SURAT PERNYATAAN\n\nYang bertanda tangan di bawah ini {{pihak_pertama.nama}}, pemegang Kartu Tanda Penduduk Nomor {{pihak_pertama.nik}}, menyatakan bahwa data objek yang diuraikan dalam Akta Jual Beli Nomor {{akta_nomor}} adalah benar dan sesuai dengan dokumen aslinya.\n\nDemikian pernyataan ini dibuat untuk dipergunakan sebagaimana mestinya.\n\n{{objek_kota}}, {{akta_tanggal}}\n\n\n({{pihak_pertama.nama}})' },
+
+  { id:3, jenis:'unggahan', label:'KK KAKAH BARNA.pdf', berkas:'KK KAKAH BARNA.pdf',
+    asal:'Diunggah 23 Sep 2026 · PDF · 412 KB' }
+];
+
+const BAGIAN = ['PEMBUKAAN AKTA','Para Pihak','Objek Jual Beli','Pasal 1','Pasal 2','Pasal 3','Pasal 4',
+  'Pasal 5','Pasal 6','Pasal 7','Pasal 8','Para Saksi','Penutup','Tanda Tangan'];
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* nilai sebenarnya, bukan placeholder */
+function isiNilai(t){
+  return String(t).replace(/\{\{([^}]+)\}\}/g, (m,v) => {
+    const n = NILAI[v.trim()];
+    return n == null ? m : n;
+  });
+}
+function sorotVariabel(t){
+  return esc(t).replace(/\{\{[^}]+\}\}/g, m => '<span class="v">'+m+'</span>');
+}
+function sorotNilai(t){
+  return esc(t).replace(/\{\{([^}]+)\}\}/g, (m,v) => {
+    const n = NILAI[v.trim()];
+    return n == null ? '<span class="v">'+m+'</span>' : '<span class="terisi">'+esc(n)+'</span>';
+  });
+}
+
+/* ---------- daftar bagian ---------- */
+$('#daftar-bagian').innerHTML = BAGIAN.map((b,i) =>
+  '<div class="bagian-item"><span class="no">' + (i>2 && i<11 ? (i-2) : '•') + '</span><span class="nm">' + esc(b) + '</span></div>').join('');
+
+/* ---------- daftar lampiran ---------- */
+let terpilih = null;
+let mode = 'template';        // 'template' = layar Template Dokumen, 'minuta' = layar Minuta Akta
+let nomorBaru = 0;
+
+const TEKS_MODE = {
+  template: {
+    tabKiri: 'Bagian',
+    ketKonteks: 'Lampiran yang dibuat di sini ikut terbawa ke setiap akta yang memakai template ini.',
+    info: 'Anda sedang menyusun template. Tombol + Lampiran membuat satu lampiran bawaan baru yang langsung bisa ditulis.',
+    ketLampiran: 'Lampiran bawaan template. Isinya ditulis sekarang memakai variabel, lalu terisi data sebenarnya ketika akta didraf. Tidak ada unggah berkas di layar ini.',
+    tombol: '+ Lampiran bawaan'
+  },
+  minuta: {
+    tabKiri: 'Pasal & Catatan',
+    ketKonteks: 'Lampiran bawaan dari template sudah ada di daftar; yang ditambahkan di sini hanya berlaku untuk akta ini.',
+    info: 'Anda dapat mengedit pasal, menyunting lampiran bawaan template, dan memfinalisasi akta.',
+    ketLampiran: 'Berkas di sini tetap terpisah dan tidak digabung ke naskah. Untuk lampiran yang menyatu, pakai tombol di tab Pasal & Catatan.',
+    tombol: '+ Lampiran'
+  }
+};
+
+function pasangMode(){
+  const t = TEKS_MODE[mode];
+  $('#ket-konteks').textContent = t.ketKonteks;
+  $('#info-atas').textContent = t.info;
+  $('#ket-lampiran').textContent = t.ketLampiran;
+  $('#tambah-lampiran').textContent = t.tombol;
+  $('#tab-kiri button[data-tab="bagian"]').childNodes[0].nodeValue = t.tabKiri + ' ';
+  $$('.segmen [data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+  terpilih = null;
+  $('#isi-kanan').innerHTML = '<div class="hampa"><div class="bulat">▤</div>' +
+    (mode === 'template'
+      ? 'Klik lampiran bawaan untuk menulis isinya,<br>atau tekan + Lampiran bawaan untuk membuat yang baru.'
+      : 'Klik pasal di panel kiri untuk mulai mengedit,<br>atau buka tab Lampiran untuk menyunting lampiran bawaan template.') +
+    '</div>';
+  gambarLampiran();
+}
+
+$$('.segmen [data-mode]').forEach(b => b.addEventListener('click', () => { mode = b.dataset.mode; pasangMode(); }));
+
+function tampil(){
+  return mode === 'template' ? lampiran.filter(l => l.jenis === 'template') : lampiran;
+}
+
+function gambarLampiran(){
+  const daftar = tampil();
+  $('#n-lampiran').textContent = daftar.length;
+  const box = $('#daftar-lampiran');
+  box.innerHTML = daftar.length ? daftar.map(l => {
+    const tmpl = l.jenis === 'template';
+    return '<div class="lamp' + (tmpl ? ' klik' : '') + (terpilih === l.id ? ' aktif' : '') + '" data-id="' + l.id + '">' +
+      '<span class="ikon">' + (tmpl ? '✎' : '📎') + '</span>' +
+      '<span class="teks">' +
+        '<span class="nm">' + esc(l.label) + (l.ubah ? ' <span class="lencana">disunting</span>' : '') + '</span>' +
+        '<span class="mt">' + (tmpl ? '<span class="lencana tmpl">' +
+            (mode === 'template' ? 'Lampiran bawaan' : 'Bawaan template') + '</span>' : '') +
+          esc(mode === 'template' && tmpl ? (l.asalTemplate || l.asal) : l.asal) + '</span>' +
+      '</span>' +
+      '<span class="aksi">' +
+        '<button class="btn btn-kecil" data-unduh="' + l.id + '" title="Unduh lampiran">Unduh</button>' +
+        '<button class="btn btn-kecil btn-bahaya" data-hapus="' + l.id + '" title="Hapus lampiran">Hapus</button>' +
+      '</span></div>';
+  }).join('') : '<div class="kosong">Belum ada lampiran.</div>';
+
+  box.querySelectorAll('.lamp.klik').forEach(el => el.addEventListener('click', e => {
+    if (e.target.closest('.aksi')) return;
+    bukaEditor(+el.dataset.id);
+  }));
+  box.querySelectorAll('[data-unduh]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); unduh(+b.dataset.unduh);
+  }));
+  box.querySelectorAll('[data-hapus]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); tanyaHapus(+b.dataset.hapus);
+  }));
+}
+
+/* ---------- editor lampiran template ---------- */
+function bukaEditor(id){
+  const l = lampiran.find(x => x.id === id);
+  if (!l || l.jenis !== 'template') return;
+  terpilih = id;
+  gambarLampiran();
+
+  $('#isi-kanan').innerHTML =
+    '<div class="kepala-editor">' +
+      (mode === 'template'
+        ? '<input type="text" id="e-nama" class="nama-lamp" value="' + esc(l.label) + '" placeholder="Nama lampiran">'
+        : '<h3>' + esc(l.label) + '</h3>') +
+      '<span class="lencana tmpl">' + (mode === 'template' ? 'Lampiran bawaan' : 'Bawaan template') + '</span>' +
+      '<span class="kanan">' +
+        '<button class="btn btn-kecil" id="e-unduh">Unduh</button>' +
+        '<button class="btn btn-kecil btn-accent" id="e-simpan">Simpan</button>' +
+      '</span>' +
+    '</div>' +
+    '<div class="alat">' +
+      '<button class="btn btn-kecil" id="e-var">{ } Variabel</button>' +
+      '<span class="hint">sisipkan di posisi kursor — isi lampiran ini bisa disunting karena berasal dari template</span>' +
+    '</div>' +
+    '<div class="vpick" id="e-vpick" hidden><div class="chips">' +
+      Object.keys(NILAI).map(v => '<button data-sisip="' + esc(v) + '">{{' + esc(v) + '}}</button>').join('') +
+    '</div></div>' +
+    '<textarea id="e-teks" placeholder="Tulis isi lampiran di sini. Pakai tombol Variabel untuk menyisipkan data yang akan terisi saat drafting.">' + esc(l.teks) + '</textarea>' +
+    '<div class="pratinjau"><span class="cap">Pratinjau dengan nilai sebenarnya — inilah yang ikut terunduh</span>' +
+      '<pre id="e-pra"></pre></div>';
+
+  const ta = $('#e-teks');
+  const segar = () => {
+    $('#e-pra').innerHTML = ta.value.trim()
+      ? sorotNilai(ta.value)
+      : '<span style="color:var(--text-faint)">Belum ada isi.</span>';
+  };
+  segar();
+  const nama = $('#e-nama');
+  if (nama) nama.addEventListener('input', () => {
+    l.label = nama.value.trim() || 'Tanpa nama';
+    l.ubah = true; gambarLampiran();
+  });
+
+  ta.addEventListener('input', () => { l.teks = ta.value; l.ubah = true; segar(); });
+  $('#e-var').addEventListener('click', () => {
+    const p = $('#e-vpick'); p.hidden = !p.hidden;
+  });
+  $$('#e-vpick [data-sisip]').forEach(b => b.addEventListener('click', () => {
+    const v = '{{' + b.dataset.sisip + '}}';
+    const i = ta.selectionStart, j = ta.selectionEnd;
+    ta.value = ta.value.slice(0,i) + v + ta.value.slice(j);
+    l.teks = ta.value; l.ubah = true;
+    ta.focus(); ta.selectionStart = ta.selectionEnd = i + v.length;
+    segar();
+  }));
+  $('#e-simpan').addEventListener('click', () => {
+    l.ubah = false; gambarLampiran();
+    $('#e-simpan').textContent = 'Tersimpan';
+    setTimeout(() => { const b = $('#e-simpan'); if (b) b.textContent = 'Simpan'; }, 1400);
+  });
+  $('#e-unduh').addEventListener('click', () => unduh(id));
+}
+
+/* ---------- unduh: selalu nilai sebenarnya ---------- */
+function unduh(id){
+  const l = lampiran.find(x => x.id === id);
+  if (!l) return;
+
+  if (l.jenis === 'unggahan'){
+    alert('Simulasi: berkas “' + l.berkas + '” diunduh apa adanya.');
+    return;
+  }
+
+  const isi = isiNilai(l.teks);
+  const sisa = isi.match(/\{\{[^}]+\}\}/g);
+  if (sisa){
+    alert('Masih ada variabel tanpa nilai: ' + [...new Set(sisa)].join(', ') +
+          '\nLengkapi datanya dulu agar unduhan tidak berisi placeholder.');
+    return;
+  }
+  const berkas = new Blob([isi], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(berkas);
+  a.download = l.label.replace(/[\\/:*?"<>|]/g,'-') + ' — ' + NILAI['akta_nomor'].replace('/','-') + '.txt';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+}
+
+/* ---------- hapus dengan konfirmasi ---------- */
+let calonHapus = null;
+function tanyaHapus(id){
+  const l = lampiran.find(x => x.id === id);
+  calonHapus = id;
+  $('#h-teks').innerHTML = l.jenis === 'template'
+    ? 'Lampiran <b>' + esc(l.label) + '</b> berasal dari template. Menghapusnya hanya berlaku pada akta ini; template tidak ikut berubah. Tindakan ini tidak dapat dibatalkan.'
+    : 'Berkas <b>' + esc(l.berkas) + '</b> akan dilepas dari akta ini. Tindakan ini tidak dapat dibatalkan.';
+  $('#t-hapus').hidden = false;
+}
+$('#h-ya').addEventListener('click', () => {
+  lampiran = lampiran.filter(x => x.id !== calonHapus);
+  if (terpilih === calonHapus){
+    terpilih = null;
+    $('#isi-kanan').innerHTML = '<div class="hampa"><div class="bulat">▤</div>Lampiran sudah dihapus.<br>Pilih lampiran lain untuk menyuntingnya.</div>';
+  }
+  calonHapus = null;
+  $('#t-hapus').hidden = true;
+  gambarLampiran();
+});
+$$('[data-tutup-hapus]').forEach(b => b.addEventListener('click', () => { $('#t-hapus').hidden = true; calonHapus = null; }));
+
+/* ---------- tambah lampiran ---------- */
+let berkasBaru = null;
+$('#tambah-lampiran').addEventListener('click', () => {
+  if (mode === 'template'){ buatLampiranBawaan(); return; }
+  berkasBaru = null;
+  $('#l-label').value = '';
+  $('#l-berkas').textContent = 'Belum ada berkas dipilih';
+  $('#l-berkas').classList.remove('ada');
+  $('#l-tambah').disabled = true;
+  $('#t-tambah').hidden = false;
+});
+$$('[data-pilih]').forEach(b => b.addEventListener('click', () => {
+  berkasBaru = b.dataset.pilih === 'pdf' ? 'Dokumen Pendukung.pdf' : 'Foto Objek.jpg';
+  $('#l-berkas').textContent = berkasBaru;
+  $('#l-berkas').classList.add('ada');
+  $('#l-tambah').disabled = false;
+}));
+$('#l-tambah').addEventListener('click', () => {
+  const label = $('#l-label').value.trim() || berkasBaru;
+  lampiran.push({ id: Date.now(), jenis:'unggahan', label: label, berkas: berkasBaru,
+    asal:'Diunggah hari ini · ' + (berkasBaru.endsWith('.pdf') ? 'PDF' : 'Gambar') + ' · 318 KB' });
+  $('#t-tambah').hidden = true;
+  gambarLampiran();
+});
+$$('[data-tutup]').forEach(b => b.addEventListener('click', () => $('#t-tambah').hidden = true));
+$$('.tirai').forEach(t => t.addEventListener('mousedown', e => { if (e.target === t) t.hidden = true; }));
+
+/* ---------- membuat lampiran bawaan (layar Template Dokumen) ---------- */
+function buatLampiranBawaan(){
+  nomorBaru += 1;
+  const l = {
+    id: Date.now(), jenis:'template',
+    label: 'Lampiran ' + (lampiran.filter(x => x.jenis === 'template').length + 1),
+    asal:'Disiapkan saat membuat template',
+    asalTemplate:'Baru dibuat · belum ada isi',
+    ubah:false,
+    teks:''
+  };
+  lampiran.push(l);
+  gambarLampiran();
+  bukaEditor(l.id);
+  setTimeout(() => { const n = $('#e-nama'); if (n) { n.focus(); n.select(); } }, 60);
+}
+
+/* ---------- finalisasi akta ---------- */
+function periksaFinal(){
+  $('#f-ya').disabled = !($('#f-nomor').value.trim() && $('#f-tanggal').value);
+}
+$('#btn-finalisasi').addEventListener('click', () => {
+  $('#f-nomor').value = ''; $('#f-tanggal').value = '';
+  periksaFinal();
+  $('#t-final').hidden = false;
+  setTimeout(() => $('#f-nomor').focus(), 40);
+});
+['#f-nomor','#f-tanggal'].forEach(sel => $(sel).addEventListener('input', periksaFinal));
+$$('[data-tutup-final]').forEach(b => b.addEventListener('click', () => $('#t-final').hidden = true));
+$('#f-ya').addEventListener('click', () => {
+  const t = $('#f-tanggal').value.split('-');
+  $('#t-final').hidden = true;
+  alert('Simulasi: akta difinalisasi.\n\nNomor Akta  : ' + $('#f-nomor').value.trim() +
+        '\nTanggal Akta: ' + (t.length === 3 ? t[2] + '-' + t[1] + '-' + t[0] : '') +
+        '\n\nStatus menjadi Selesai, pasal terkunci, dan akta masuk ke menu Salinan.');
+});
+
+/* ---------- tab kiri ---------- */
+$$('#tab-kiri button').forEach(b => b.addEventListener('click', () => {
+  $$('#tab-kiri button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+  $$('.pane').forEach(p => { p.hidden = p.dataset.pane !== b.dataset.tab; });
+}));
+
+pasangMode();
+</script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akta Repository — Prototipe Bab 11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0d10; --panel:#17151b; --panel-2:#201d25;
+    --border:#302c37; --border-soft:#272430;
+    --text:#ededed; --text-dim:#9b949e; --text-faint:#6b6570;
+    --accent:#d81f35; --accent-hi:#f0384f;
+    --accent-soft:rgba(216,31,53,0.16); --accent-soft-2:rgba(216,31,53,0.06);
+    --danger:#e05561; --danger-soft:rgba(224,85,97,0.14);
+    --ok:#4f9d69; --ok-soft:rgba(79,157,105,0.16);
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
+
+  .app{display:grid;grid-template-columns:250px 1fr;min-height:100vh;}
+
+  /* sidebar */
+  .sidebar{background:var(--panel);border-right:1px solid var(--border);
+    padding:22px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+  .brand{display:flex;align-items:center;gap:11px;padding:0 4px 20px;margin-bottom:16px;border-bottom:1px solid var(--border-soft);}
+  .seal{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;position:relative;flex:none;}
+  .seal::before{content:'';position:absolute;inset:4px;border:1px solid var(--accent);border-radius:50%;opacity:.5;}
+  .seal span{font-family:'Fraunces',serif;font-size:13px;color:var(--accent);position:relative;z-index:1;}
+  .brand-text .t1{font-family:'Fraunces',serif;font-size:15.5px;font-weight:600;line-height:1.15;}
+  .brand-text .t2{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:1.2px;margin-top:2px;}
+  .grup{font-size:10.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--text-faint);
+    padding:14px 12px 6px;font-weight:500;}
+  .nav{display:flex;flex-direction:column;gap:2px;}
+  .nav a{display:block;padding:8px 12px;border-radius:var(--radius);color:var(--text-dim);
+    font-size:13.5px;text-decoration:none;border:1px solid transparent;}
+  .nav a:hover{color:var(--text);background:var(--panel-2);}
+  .nav a.active{color:var(--text);background:var(--accent-soft);border-color:rgba(216,31,53,.35);}
+  .sidebar-foot{margin-top:auto;padding-top:16px;font-size:11px;color:var(--text-faint);line-height:1.55;}
+
+  /* main */
+  .main{min-width:0;display:flex;flex-direction:column;}
+  .topbar{padding:18px 32px;border-bottom:1px solid var(--border);}
+  .remah{font-size:12px;color:var(--text-faint);margin-bottom:6px;}
+  .remah a{color:var(--text-faint);text-decoration:none;}
+  .remah a:hover{color:var(--accent-hi);}
+  .judul-baris{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  h1{overflow-wrap:anywhere;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;}
+  .sub{font-size:12.5px;color:var(--text-faint);margin-top:4px;}
+  .aksi{display:flex;gap:8px;}
+
+  .btn{font-family:inherit;font-size:12.5px;font-weight:500;padding:8px 14px;border-radius:var(--radius);
+    border:1px solid var(--border);background:var(--panel-2);color:var(--text);cursor:pointer;
+    transition:border-color .12s,background .12s;display:inline-flex;align-items:center;gap:6px;}
+  .btn:hover:not(:disabled){border-color:var(--text-faint);}
+  .btn-accent{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .btn-accent:hover:not(:disabled){background:var(--accent-hi);border-color:var(--accent-hi);}
+  .btn-kecil{font-size:11.5px;padding:5px 10px;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  .view{padding:24px 32px 70px;max-width:1180px;}
+
+  /* alat saring */
+  .saring{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+  .saring input,.saring select{font-family:inherit;font-size:13px;padding:9px 12px;border-radius:var(--radius);
+    border:1px solid var(--border);background:var(--panel);color:var(--text);}
+  .saring input{flex:1;min-width:240px;}
+  .saring input::placeholder{color:var(--text-faint);}
+
+  /* tabel */
+  .kotak{border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px;}
+  th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.9px;color:var(--text-faint);font-weight:500;padding:10px 14px;
+    border-bottom:1px solid var(--border);background:var(--panel-2);}
+  td{padding:11px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-dim);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:0;}
+  tbody tr:hover td{background:var(--panel-2);}
+  td.utama{color:var(--text);font-weight:500;}
+  td.kanan{text-align:right;white-space:nowrap;}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:12.2px;}
+
+  /* lencana */
+  .lencana{display:inline-block;font-size:11.5px;padding:3px 10px;border-radius:11px;
+    border:1px solid var(--border);background:var(--panel-2);color:var(--text-dim);white-space:nowrap;}
+  .lencana.berlaku{background:var(--ok-soft);border-color:rgba(79,157,105,.4);color:#8fd0a4;}
+  .lencana.revisi{background:var(--danger-soft);border-color:rgba(224,85,97,.4);color:var(--danger);}
+  .lencana.proses{background:var(--accent-soft);border-color:rgba(216,31,53,.35);color:var(--accent-hi);}
+  .lencana.versi{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+
+  /* kartu & panel */
+  .baris-panel{display:grid;grid-template-columns:320px minmax(0,1fr);gap:16px;align-items:start;}
+  .panel{border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);padding:16px;min-width:0;}
+  .panel > h3{font-family:'Fraunces',serif;font-size:14.5px;font-weight:600;margin:0 0 12px;
+    display:flex;align-items:center;gap:8px;}
+  .panel .kotak{background:var(--bg);}
+  .tanda{font-family:'IBM Plex Mono',monospace;font-size:10.5px;background:var(--accent);color:#fff;
+    width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:none;}
+
+  .versi-item{border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:9px;background:var(--bg);}
+  .versi-item.aktif{border-color:var(--accent);background:var(--accent-soft-2);}
+  .versi-item .vk{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+  .versi-item .vk b{font-size:13.5px;}
+  .versi-item p{margin:0;font-size:12.8px;color:var(--text-dim);line-height:1.5;}
+  .versi-item .tgl{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--text-faint);margin-top:6px;}
+
+  .catatan{border:1px solid var(--border);border-left:2px solid var(--accent);background:var(--accent-soft-2);
+    padding:12px 15px;border-radius:var(--radius);font-size:13px;color:var(--text-dim);line-height:1.6;margin-top:18px;}
+  .catatan b{color:var(--text);}
+
+  h2.bagian{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin:26px 0 12px;
+    padding-bottom:9px;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:10px;}
+  h2.bagian .no{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--accent);}
+
+  /* modal */
+  .tirai{position:fixed;inset:0;background:rgba(0,0,0,.62);display:flex;align-items:flex-start;
+    justify-content:center;padding:48px 16px;z-index:50;overflow-y:auto;}
+  .tirai[hidden]{display:none;}
+  .modal{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    width:100%;max-width:680px;}
+  .modal > header{padding:18px 22px;border-bottom:1px solid var(--border);
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .modal h2{font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin:0;}
+  .modal header .sub{margin-top:4px;}
+  .modal .tutup{background:none;border:0;color:var(--text-faint);font-size:19px;cursor:pointer;line-height:1;padding:0 2px;}
+  .modal .isi{padding:20px 22px;}
+  .modal > footer{padding:15px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;align-items:center;}
+  .langkah{font-size:13px;font-weight:600;color:var(--text);margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+  .pilihan{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:20px;}
+  label.cek{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);cursor:pointer;}
+  label.cek input{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+  label.cek.mati{opacity:.45;cursor:not-allowed;}
+  .ket{font-size:12.5px;color:var(--text-faint);margin:0 0 12px;line-height:1.6;}
+  .penerima{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);padding:6px 0;}
+  .peran{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-faint);padding:10px 14px 4px;}
+  .orang{display:grid;grid-template-columns:1fr 175px 130px auto;gap:10px;align-items:center;padding:8px 14px;}
+  .orang .kontak{font-family:'IBM Plex Mono',monospace;font-size:11.8px;color:var(--text-faint);}
+  .orang .kanal{text-align:right;}
+  .kanal-kosong{border-style:dashed;color:var(--text-faint);}
+  .sisa{font-size:12px;color:var(--text-faint);margin-right:auto;}
+
+  .layar[hidden]{display:none;}
+  @media (max-width:980px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{position:static;height:auto;}
+    .baris-panel{grid-template-columns:minmax(0,1fr);}
+    .view,.topbar{padding-left:18px;padding-right:18px;}
+    .orang{grid-template-columns:1fr;gap:3px;}
+    .saring input{min-width:0;}
+    .orang .kanal{text-align:left;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="seal"><span>P</span></div>
+      <div class="brand-text">
+        <div class="t1">Akta Repository</div>
+        <div class="t2">Prototipe · Bab 11</div>
+      </div>
+    </div>
+    <div class="grup">E-PPAT Module</div>
+    <nav class="nav">
+      <a href="#">Dashboard</a>
+      <a href="#">Template Dokumen</a>
+      <a href="#">Profil Kantor</a>
+      <a href="#">Verifikasi</a>
+      <a href="#">Minuta</a>
+      <a href="#">E-Akta Wizard</a>
+      <a href="#" class="active">Akta Repository</a>
+      <a href="#">Akta Salinan</a>
+      <a href="#">Aktivasi E-Materai</a>
+    </nav>
+    <div class="grup">Layanan AJB</div>
+    <nav class="nav"><a href="#">Order AJB</a></nav>
+    <div class="sidebar-foot">
+      Prototipe tampilan, bukan aplikasi live. Seluruh tombol bersifat simulasi dan
+      seluruh data yang tampil adalah data contoh.
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ============ LAYAR DAFTAR ============ -->
+    <section class="layar" data-layar="daftar">
+      <div class="topbar">
+        <div class="remah">E-PPAT Module › Akta Repository</div>
+        <div class="judul-baris">
+          <div>
+            <h1>Akta Repository</h1>
+            <div class="sub">Entri terbentuk saat akta difinalisasi</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view">
+        <div class="saring">
+          <input type="text" id="cari" placeholder="Cari nomor akta / kode order / nama pihak">
+          <select id="saring-status">
+            <option value="">Semua status</option>
+            <option>Menunggu tanda tangan</option>
+            <option>Proses tanda tangan</option>
+            <option>Sedang direvisi</option>
+            <option>Berlaku</option>
+          </select>
+        </div>
+
+        <div class="kotak">
+          <table>
+            <thead><tr>
+              <th>Nomor akta</th><th>Kode order</th><th>Para pihak</th>
+              <th>Versi terbaru</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="baris-akta"></tbody>
+          </table>
+        </div>
+
+        <h2 class="bagian"><span class="no">11.1</span>Status entri</h2>
+        <div class="kotak">
+          <table>
+            <thead><tr><th style="width:230px">Status</th><th>Kapan</th></tr></thead>
+            <tbody>
+              <tr><td class="utama"><span class="lencana">Menunggu tanda tangan</span></td>
+                  <td>Akta baru difinalisasi dan belum ada proses di E-Akta Wizard</td></tr>
+              <tr><td class="utama"><span class="lencana proses">Proses tanda tangan</span></td>
+                  <td>Minimal satu stempel atau tanda tangan sudah masuk, tetapi belum lengkap</td></tr>
+              <tr><td class="utama"><span class="lencana revisi">Sedang direvisi</span></td>
+                  <td>Drafting dibuka kembali sebelum ada tanda tangan</td></tr>
+              <tr><td class="utama"><span class="lencana berlaku">Berlaku</span></td>
+                  <td>Stempel, tanda tangan, dan meterai lengkap</td></tr>
+              <tr><td class="utama"><span class="lencana">Diganti versi <i>n</i></span></td>
+                  <td>Label pada versi lama setelah dokumen perbaikan diunggah; ditambah keterangan
+                      “tanda tangan belum lengkap” bila versi itu belum lengkap saat diganti</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="catatan">
+          <b>Entri terbentuk saat akta difinalisasi</b>, bukan setelah semua tanda tangan selesai,
+          supaya draf selalu bisa diunduh untuk perbaikan.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ LAYAR DETAIL ============ -->
+    <section class="layar" data-layar="detail" hidden>
+      <div class="topbar">
+        <div class="remah">E-PPAT Module › <a href="#" id="balik">Akta Repository</a> › <span id="d-kode"></span></div>
+        <div class="judul-baris">
+          <div>
+            <h1 id="d-judul"></h1>
+            <div class="sub" id="d-pihak"></div>
+          </div>
+          <div class="aksi">
+            <button class="btn" id="btn-unduh">Unduh Draft Akta</button>
+            <button class="btn btn-accent" id="btn-kirim">Kirim Akta</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="view">
+        <div class="baris-panel">
+
+          <div class="panel">
+            <h3><span class="tanda">3</span>Riwayat versi</h3>
+            <div id="d-versi"></div>
+          </div>
+
+          <div>
+            <div class="panel">
+              <h3><span class="tanda">4</span>Dokumen versi <span id="d-vnomor"></span></h3>
+              <div class="kotak">
+                <table>
+                  <thead><tr><th>Dokumen</th><th style="width:150px">Status</th><th style="width:150px"></th></tr></thead>
+                  <tbody id="d-dokumen"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top:16px">
+              <h3><span class="tanda">5</span>Riwayat pengiriman</h3>
+              <div class="kotak">
+                <table>
+                  <thead><tr><th>Tanggal</th><th>Dokumen</th><th>Penerima</th><th>Kanal</th><th>Versi</th></tr></thead>
+                  <tbody id="d-kirim"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="catatan" id="d-catatan"></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ MODAL KIRIM AKTA ============ -->
+<div class="tirai" id="tirai" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-judul">
+    <header>
+      <div>
+        <h2 id="m-judul">Kirim Akta</h2>
+        <div class="sub" id="m-sub"></div>
+      </div>
+      <button class="tutup" id="m-tutup" aria-label="Tutup">&#215;</button>
+    </header>
+
+    <div class="isi">
+      <p class="langkah"><span class="tanda">1</span>Dokumen</p>
+      <div class="pilihan" id="m-dokumen">
+        <label class="cek"><input type="checkbox" data-dok="semua"> Semua dokumen</label>
+        <label class="cek"><input type="checkbox" data-dok="minuta1"> Minuta Lembar Pertama</label>
+        <label class="cek"><input type="checkbox" data-dok="minuta2"> Minuta Lembar Kedua</label>
+        <label class="cek"><input type="checkbox" data-dok="salinan"> Akta Salinan</label>
+      </div>
+
+      <p class="langkah"><span class="tanda">2</span>Penerima</p>
+      <p class="ket">Akta dikirim otomatis ke email dan WhatsApp yang tercatat di order.
+        Tidak ada pilihan kanal — label di tiap baris menunjukkan kanal yang akan dipakai.</p>
+      <div class="penerima" id="m-penerima"></div>
+    </div>
+
+    <footer>
+      <span class="sisa" id="m-sisa"></span>
+      <button class="btn" id="m-batal">Batal</button>
+      <button class="btn btn-accent" id="m-kirim" disabled>Kirim</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   Prototipe Bab 11 — Akta Repository
+   Data contoh mengikuti Gambar 23, 24, dan 25 pada dokumen rancangan.
+   ===================================================================== */
+
+const AKTA = [
+  { kode:'ORD-260916-003', nomor:'12/2026', jenis:'Akta Jual Beli', pihak:'Budi Santoso · Siti Rahma',
+    versi:'v1', status:'Menunggu tanda tangan',
+    daftarVersi:[ {v:2, label:null, aktif:true, ket:'Versi berjalan', tgl:'16 Sep 2026', nomor:1} ],
+    dokumen:[ ['Minuta Lembar Pertama','Belum ditandatangani'], ['Minuta Lembar Kedua','Belum ditandatangani'],
+              ['Akta Salinan','Belum ditandatangani'] ],
+    pengiriman:[],
+    penerima:[ ['Pihak Pertama','Budi Santoso','budi@contoh.id','0812-xxxx-1101'],
+               ['Pihak Kedua','Siti Rahma','siti@contoh.id',''] ] },
+
+  { kode:'ORD-260914-001', nomor:'09/2026', jenis:'Akta Jual Beli', pihak:'Rina Kartika · Dewi Lestari',
+    versi:'v2', status:'Proses tanda tangan',
+    daftarVersi:[ {v:2, label:null, aktif:true, ket:'Renvoi nama pihak kedua', tgl:'18 Sep 2026'},
+                  {v:1, label:'Diganti versi 2', aktif:false, ket:null, tgl:'14 Sep 2026'} ],
+    dokumen:[ ['Minuta Lembar Pertama','Ditandatangani'], ['Minuta Lembar Kedua','Belum ditandatangani'],
+              ['Akta Salinan','Belum ditandatangani'] ],
+    pengiriman:[],
+    penerima:[ ['Pihak Pertama','Rina Kartika','rina@contoh.id','0813-xxxx-2202'],
+               ['Pihak Kedua','Dewi Lestari','dewi@contoh.id','0813-xxxx-2203'] ] },
+
+  { kode:'ORD-260912-002', nomor:'08/2026', jenis:'Akta Jual Beli', pihak:'Ahmad Fauzi · Maya Putri',
+    versi:'v2', status:'Berlaku',
+    daftarVersi:[ {v:2, label:'Berlaku', aktif:true, ket:'Renvoi luas tanah pada uraian objek', tgl:'20 Sep 2026'},
+                  {v:1, label:'Diganti versi 2 — tanda tangan belum lengkap', aktif:false, ket:null, tgl:'16 Sep 2026'} ],
+    dokumen:[ ['Minuta Lembar Pertama','Ditandatangani'], ['Minuta Lembar Kedua','Ditandatangani'],
+              ['Akta Salinan','Ditandatangani'], ['Lampiran — KTP para pihak.pdf','Diunggah'] ],
+    pengiriman:[ ['21 Sep 2026','Akta Salinan','Ahmad Fauzi, Maya Putri','Email, WhatsApp','v2'] ],
+    penerima:[ ['Pihak Pertama','Ahmad Fauzi','ahmad@contoh.id','0812-xxxx-3303'],
+               ['Pihak Kedua','Maya Putri','maya@contoh.id',''],
+               ['Pihak Lainnya','Joko Prasetyo','',''] ] },
+
+  { kode:'ORD-260915-004', nomor:'11/2026', jenis:'Akta Jual Beli', pihak:'PT Contoh Sejahtera · Andi Wijaya',
+    versi:'v1', status:'Sedang direvisi',
+    daftarVersi:[ {v:1, label:null, aktif:true, ket:'Drafting dibuka kembali sebelum ada tanda tangan', tgl:'15 Sep 2026'} ],
+    dokumen:[ ['Minuta Lembar Pertama','Belum ditandatangani'], ['Minuta Lembar Kedua','Belum ditandatangani'],
+              ['Akta Salinan','Belum ditandatangani'] ],
+    pengiriman:[],
+    penerima:[ ['Pihak Pertama','PT Contoh Sejahtera','legal@contoh.id','0811-xxxx-4404'],
+               ['Pihak Kedua','Andi Wijaya','andi@contoh.id','0811-xxxx-4405'] ] }
+];
+
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function kelasStatus(s){
+  if (s === 'Berlaku') return 'berlaku';
+  if (s === 'Sedang direvisi') return 'revisi';
+  if (s === 'Proses tanda tangan') return 'proses';
+  return '';
+}
+
+/* ---------- daftar ---------- */
+function gambarDaftar(){
+  const q = $('#cari').value.trim().toLowerCase();
+  const st = $('#saring-status').value;
+  const baris = AKTA.filter(a =>
+    (!st || a.status === st) &&
+    (!q || (a.nomor + ' ' + a.kode + ' ' + a.pihak).toLowerCase().includes(q)));
+
+  $('#baris-akta').innerHTML = baris.length ? baris.map(a =>
+    '<tr>' +
+      '<td class="utama mono">' + esc(a.nomor) + '</td>' +
+      '<td class="mono">' + esc(a.kode) + '</td>' +
+      '<td>' + esc(a.pihak) + '</td>' +
+      '<td><span class="lencana versi">' + esc(a.versi) + '</span></td>' +
+      '<td><span class="lencana ' + kelasStatus(a.status) + '">' + esc(a.status) + '</span></td>' +
+      '<td class="kanan"><button class="btn btn-kecil" data-buka="' + esc(a.kode) + '">Buka</button></td>' +
+    '</tr>').join('')
+    : '<tr><td colspan="6" style="text-align:center;padding:26px;color:var(--text-faint)">Tidak ada entri yang cocok.</td></tr>';
+
+  $$('[data-buka]').forEach(b => b.addEventListener('click', () => bukaDetail(b.dataset.buka)));
+}
+
+/* ---------- detail ---------- */
+let aktif = null;
+
+function bukaDetail(kode){
+  aktif = AKTA.find(a => a.kode === kode);
+  $('[data-layar="daftar"]').hidden = true;
+  $('[data-layar="detail"]').hidden = false;
+  window.scrollTo(0,0);
+
+  $('#d-kode').textContent  = aktif.kode;
+  $('#d-judul').textContent = aktif.jenis + ' ' + aktif.nomor;
+  $('#d-pihak').textContent = aktif.pihak;
+  $('#d-vnomor').textContent = aktif.versi.replace('v','');
+
+  $('#d-versi').innerHTML = aktif.daftarVersi.map(v =>
+    '<div class="versi-item' + (v.aktif ? ' aktif' : '') + '">' +
+      '<div class="vk"><b>Versi ' + v.v + '</b>' +
+        (v.label ? '<span class="lencana ' + (v.label === 'Berlaku' ? 'berlaku' : '') + '">' + esc(v.label) + '</span>' : '') +
+      '</div>' +
+      (v.ket ? '<p>' + esc(v.ket) + '</p>' : '') +
+      '<div class="tgl">' + esc(v.tgl) + '</div>' +
+    '</div>').join('');
+
+  $('#d-dokumen').innerHTML = aktif.dokumen.map(d =>
+    '<tr><td class="utama">' + esc(d[0]) + '</td>' +
+      '<td><span class="lencana ' + (d[1] === 'Ditandatangani' ? 'berlaku' : '') + '">' + esc(d[1]) + '</span></td>' +
+      '<td class="kanan"><button class="btn btn-kecil">Lihat</button> ' +
+        '<button class="btn btn-kecil">Unduh</button></td></tr>').join('');
+
+  $('#d-kirim').innerHTML = aktif.pengiriman.length
+    ? aktif.pengiriman.map(r => '<tr>' + r.map((c,i) =>
+        '<td' + (i === 0 ? ' class="mono"' : '') + '>' + esc(c) + '</td>').join('') + '</tr>').join('')
+    : '<tr><td colspan="5" style="text-align:center;padding:22px;color:var(--text-faint)">Belum pernah dikirim.</td></tr>';
+
+  const bisaKirim = aktif.status === 'Berlaku';
+  $('#btn-kirim').disabled = !bisaKirim;
+  $('#d-catatan').innerHTML = bisaKirim
+    ? '<b>Unduh Draft Akta</b> mengunduh PDF bersih tanpa stempel, tanda tangan, dan meterai untuk dicetak dan diperbaiki. ' +
+      'Tersedia sejak finalisasi. Untuk versi 2 dan seterusnya, yang diunduh adalah PDF hasil unggahan versi terakhir.'
+    : '<b>Kirim Akta belum dapat dipakai.</b> Hanya versi terbaru yang tanda tangannya lengkap — berstatus ' +
+      '<span class="lencana berlaku">Berlaku</span> — yang dapat dikirim. Entri ini berstatus ' +
+      '<span class="lencana ' + kelasStatus(aktif.status) + '">' + esc(aktif.status) + '</span>. ' +
+      'Unduh Draft Akta tetap tersedia sejak finalisasi.';
+}
+
+$('#balik').addEventListener('click', e => {
+  e.preventDefault();
+  $('[data-layar="detail"]').hidden = true;
+  $('[data-layar="daftar"]').hidden = false;
+  window.scrollTo(0,0);
+});
+
+/* ---------- modal kirim akta ---------- */
+function bukaModal(){
+  $('#m-sub').textContent = aktif.jenis + ' ' + aktif.nomor + ' · versi berlaku: ' + aktif.versi;
+  $$('#m-dokumen input').forEach(c => c.checked = false);
+
+  let h = '', peranTerakhir = null;
+  aktif.penerima.forEach((p, i) => {
+    if (p[0] !== peranTerakhir) { h += '<div class="peran">' + esc(p[0]) + '</div>'; peranTerakhir = p[0]; }
+    const email = p[2], wa = p[3];
+    const adaKontak = !!(email || wa);
+    const kanal = !adaKontak ? 'Kontak belum ada'
+      : (email && wa) ? 'Email + WhatsApp' : (email ? 'Email saja' : 'WhatsApp saja');
+    h += '<div class="orang">' +
+      '<label class="cek' + (adaKontak ? '' : ' mati') + '">' +
+        '<input type="checkbox" data-penerima="' + i + '"' + (adaKontak ? '' : ' disabled') + '> ' + esc(p[1]) +
+      '</label>' +
+      '<span class="kontak">' + esc(email || '—') + '</span>' +
+      '<span class="kontak">' + esc(wa || '—') + '</span>' +
+      '<span class="kanal"><span class="lencana' + (adaKontak ? '' : ' kanal-kosong') + '">' + esc(kanal) + '</span></span>' +
+    '</div>';
+  });
+  $('#m-penerima').innerHTML = h;
+
+  $$('#m-penerima input').forEach(c => c.addEventListener('change', periksa));
+  periksa();
+  $('#tirai').hidden = false;
+}
+
+function periksa(){
+  const dok = $$('#m-dokumen input').filter(c => c.checked).length;
+  const pen = $$('#m-penerima input').filter(c => c.checked).length;
+  $('#m-kirim').disabled = !(dok && pen);
+  $('#m-sisa').textContent = (dok && pen)
+    ? dok + ' dokumen · ' + pen + ' penerima'
+    : 'Pilih minimal satu dokumen dan satu penerima.';
+}
+
+$('#m-dokumen').addEventListener('change', e => {
+  const c = e.target;
+  if (c.dataset.dok === 'semua') {
+    $$('#m-dokumen input').forEach(x => { if (x !== c) x.checked = c.checked; });
+  } else {
+    const lain = $$('#m-dokumen input').filter(x => x.dataset.dok !== 'semua');
+    $('#m-dokumen input[data-dok="semua"]').checked = lain.every(x => x.checked);
+  }
+  periksa();
+});
+
+$('#btn-kirim').addEventListener('click', bukaModal);
+$('#btn-unduh').addEventListener('click', () => {
+  alert('Simulasi: PDF bersih tanpa stempel, tanda tangan, dan meterai diunduh.');
+});
+['#m-tutup','#m-batal'].forEach(s => $(s).addEventListener('click', () => $('#tirai').hidden = true));
+$('#tirai').addEventListener('mousedown', e => { if (e.target === $('#tirai')) $('#tirai').hidden = true; });
+$('#m-kirim').addEventListener('click', () => {
+  $('#tirai').hidden = true;
+  alert('Simulasi: akta dikirim. Baris baru akan muncul pada Riwayat pengiriman.');
+});
+
+$('#cari').addEventListener('input', gambarDaftar);
+$('#saring-status').addEventListener('change', gambarDaftar);
+gambarDaftar();
+</script>
+</body>
+</html>
